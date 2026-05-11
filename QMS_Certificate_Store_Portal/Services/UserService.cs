@@ -1,4 +1,4 @@
-﻿using QMS_Certificate_Store_Portal.Models;
+using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Models.Common;
 using QMS_Certificate_Store_Portal.Repositories;
 
@@ -13,8 +13,8 @@ namespace QMS_Certificate_Store_Portal.Services
             _repo = repo;
         }
 
-        public async Task<IEnumerable<Users>> GetAllAsync(int idDept = 0, int idDesig = 0)
-            => await _repo.GetAllAsync(idDept, idDesig);
+        public async Task<IEnumerable<Users>> GetAllAsync()
+            => await _repo.GetAllAsync();
 
         public async Task<Users?> GetByIdAsync(int id)
             => await _repo.GetByIdAsync(id);
@@ -24,5 +24,9 @@ namespace QMS_Certificate_Store_Portal.Services
 
         public async Task<SaveResult> DeleteAsync(int id, string deletedBy)
             => await _repo.DeleteAsync(id, deletedBy);
+
+        public async Task<Users?> LoginAsync(string userName, string password)
+    => await _repo.LoginAsync(userName, password);
+
     }
 }

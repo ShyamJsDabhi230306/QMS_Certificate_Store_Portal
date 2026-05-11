@@ -27,18 +27,7 @@
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [
-      {
-        "Name": "idDept",
-        "Type": "System.Int32",
-        "IsRequired": false
-      },
-      {
-        "Name": "idDesig",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
+    "Parameters": [],
     "ReturnTypes": []
   },
   {
@@ -52,6 +41,22 @@
       {
         "Name": "id",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
+    "Method": "Login",
+    "RelativePath": "api/master/user/login",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Models.LoginRequest",
         "IsRequired": true
       }
     ],

@@ -1,4 +1,4 @@
-﻿using Airmax_Payroll_System.Helpers;
+using Airmax_Payroll_System.Helpers;
 using Dapper;
 using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Models.Common;
@@ -17,14 +17,11 @@ namespace QMS_Certificate_Store_Portal.Repositories
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Users>> GetAllAsync(int idDept = 0, int idDesig = 0)
+        public async Task<IEnumerable<Users>> GetAllAsync()
         {
             try
             {
-                var param = new DynamicParameters();
-                param.Add("@IDDepartment", idDept);
-                param.Add("@IDDesignation", idDesig);
-                return await _dapper.QueryAsync<Users>("usp_Master_User_SelectAll", param);
+                return await _dapper.QueryAsync<Users>("usp_Master_User_SelectAll", null);
             }
             catch (Exception ex)
             {
@@ -88,5 +85,24 @@ namespace QMS_Certificate_Store_Portal.Repositories
                 return SaveResult.Fail(ex.Message);
             }
         }
+
+        public async Task<Users?> LoginAsync(string userName, string password)
+        {
+            try
+            {
+                var param = new DynamicParameters();
+                param.Add("@userName", userName);
+                param.Add("@Password", password);
+
+                // This calls the usp_Master_User_Login SP
+                return await _dapper.QueryFirstOrDefaultAsync<Users>("usp_Master_User_Login", param);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Error in UserRepo.LoginAsync");
+                return null;
+            }
+        }
+
     }
 }

@@ -3,7 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace DRSPortal.Helpers
+namespace QMS_Certificate_Store_Portal.Helpers
 {
     public class JwtHelper
     {
