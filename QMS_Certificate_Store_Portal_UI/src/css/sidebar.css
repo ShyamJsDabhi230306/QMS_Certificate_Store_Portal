@@ -1,0 +1,76 @@
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+    background-color: var(--bg-dark);
+    /* Using the variable */
+    border-right: 1px solid var(--border);
+    color: var(--text-white);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+}
+
+.sidebar-logo {
+    padding: 35px 20px;
+    font-size: 22px;
+    font-weight: 800;
+    text-align: center;
+    color: var(--accent);
+    /* Yellow logo text */
+    letter-spacing: 2px;
+    border-bottom: 1px solid var(--border);
+}
+
+.sidebar-nav {
+    flex: 1;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.sidebar-link {
+    padding: 14px 20px;
+    color: var(--text-gray);
+    text-decoration: none;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.sidebar-link:hover {
+    background-color: var(--hover);
+    color: var(--accent);
+    /* Changes to yellow on hover */
+    padding-left: 25px;
+}
+
+/* Style for the active link */
+.sidebar-link.active {
+    background-color: rgba(255, 204, 0, 0.1);
+    color: var(--accent);
+    border-left: 4px solid var(--accent);
+}
+
+.logout-btn {
+    margin: 20px;
+    padding: 12px;
+    background-color: #e53e3e;
+    /* Keep logout red for safety */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: filter 0.3s;
+}
+
+.logout-btn:hover {
+    filter: brightness(1.2);
+}

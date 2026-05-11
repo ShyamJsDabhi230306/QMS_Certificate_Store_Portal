@@ -1,0 +1,133 @@
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: radial-gradient(circle at center, #1a1c23 0%, #0f1014 100%);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+}
+
+.login-card {
+    background: #1e2029;
+    padding: 60px 45px;
+    /* Increased side padding to 45px for better balance */
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+    width: 90%;
+    /* Responsive width */
+    max-width: 420px;
+    /* Fixed max width */
+    min-height: 580px;
+    text-align: center;
+    border: 1px solid #2d303e;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.login-logo {
+    background: #ffcc00;
+    color: #111;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+    border-radius: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.login-header h2 {
+    color: #fff;
+    font-size: 26px;
+    margin-bottom: 8px;
+}
+
+.login-header p {
+    color: #888;
+    font-size: 14px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    color: #bbb;
+    font-size: 13px;
+    margin-bottom: 8px;
+}
+
+
+.input-group input {
+    display: block;
+    width: 100%;
+    /* Take full available width inside the padding */
+    padding: 14px 15px;
+    /* Consistent padding */
+    background: #252833;
+    border: 1px solid #3b3f51;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 15px;
+    outline: none;
+    box-sizing: border-box;
+    /* CRITICAL: Ensures padding doesn't add to width */
+    transition: all 0.3s;
+}
+
+.input-group input:focus {
+    border-color: #ffcc00;
+}
+
+.login-btn {
+    display: block;
+    width: 100%;
+    /* Take full available width inside the padding */
+    padding: 16px;
+    background: #ffcc00;
+    color: #111;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-sizing: border-box;
+    /* CRITICAL: Ensures padding doesn't add to width */
+    transition: all 0.3s ease;
+    margin-top: 25px;
+}
+
+.input-group input:focus {
+    border-color: #ffcc00;
+    background: #2a2d3a;
+}
+
+.login-btn:hover {
+    background: #f0c000;
+    transform: translateY(-1px);
+}
+
+.login-btn:disabled {
+    background: #666;
+    cursor: not-allowed;
+}
+
+.error-msg {
+    background: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}

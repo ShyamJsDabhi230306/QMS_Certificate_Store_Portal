@@ -1,0 +1,12 @@
+.dashboard-container {
+    display: flex;
+}
+
+.main-content {
+    margin-left: 250px;
+    /* This matches the sidebar width */
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f7fafc;
+    padding: 30px;
+}

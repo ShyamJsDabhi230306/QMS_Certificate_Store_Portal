@@ -66,6 +66,15 @@ builder.Services.AddSwaggerGen(options =>
 
 });
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()   // This allows any website to talk to your API
+              .AllowAnyMethod()   // This allows GET, POST, DELETE, etc.
+              .AllowAnyHeader();  // This allows JSON headers
+    });
+});
 
 var app = builder.Build();
 
@@ -79,7 +88,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
-
+app.UseCors("AllowAll");
 app.MapControllers();
 
 app.Run();

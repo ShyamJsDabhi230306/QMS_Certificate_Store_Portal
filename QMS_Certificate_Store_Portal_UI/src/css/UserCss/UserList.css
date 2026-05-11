@@ -1,0 +1,68 @@
+.user-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.user-add-btn {
+    padding: 10px 20px;
+    background-color: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s;
+}
+
+.user-add-btn:hover {
+    background-color: #219150;
+}
+
+.user-table-wrapper {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.user-master-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.user-master-table th {
+    text-align: left;
+    padding: 15px;
+    background: #f1f3f5;
+    border-bottom: 2px solid #dee2e6;
+    color: #495057;
+    font-size: 14px;
+}
+
+.user-master-table td {
+    padding: 15px;
+    border-bottom: 1px solid #f1f1f1;
+    color: #444;
+    font-size: 14px;
+}
+
+.user-edit-btn {
+    background: #f39c12;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+.user-delete-btn {
+    background: #e74c3c;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 4px;
+    cursor: pointer;
+}
