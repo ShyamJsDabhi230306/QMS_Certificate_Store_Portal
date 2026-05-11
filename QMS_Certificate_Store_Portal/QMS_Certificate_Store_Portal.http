@@ -1,0 +1,6 @@
+@QMS_Certificate_Store_Portal_HostAddress = http://localhost:5234
+
+GET {{QMS_Certificate_Store_Portal_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
