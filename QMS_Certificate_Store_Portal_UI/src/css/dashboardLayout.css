@@ -1,12 +1,17 @@
 .dashboard-container {
     display: flex;
+    background-color: #14151a;
+    /* Match the dark theme */
+    min-height: 100vh;
 }
 
 .main-content {
-    margin-left: 250px;
-    /* This matches the sidebar width */
-    width: 100%;
+    margin-left: 260px;
+    /* Sidebar width */
+    flex: 1;
+    /* Take remaining space */
     min-height: 100vh;
-    background-color: #f7fafc;
-    padding: 30px;
+    background-color: #14151a;
+    padding: 40px;
+    color: white;
 }

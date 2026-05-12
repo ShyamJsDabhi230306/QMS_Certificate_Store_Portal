@@ -13,7 +13,7 @@ namespace QMS_Certificate_Store_Portal.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly UserService _service;
+        private readonly UserService _service; 
         private readonly JwtHelper _jwtHelper;
         public UserController(UserService service, JwtHelper jwtHelper)
         {

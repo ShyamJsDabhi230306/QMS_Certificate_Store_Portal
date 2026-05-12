@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+:root {
+    --background: #f8fafc;
+    /* Light grey-blue background */
+    --foreground: #0f172a;
+    /* Deep Slate text */
+    --card: #ffffff;
+    --sidebar: #ffffff;
+    --sidebar-foreground: #334155;
+    --sidebar-active: #ffcc00;
+    --border: #e2e8f0;
+    --muted: #f1f5f9;
+    --muted-foreground: #64748b;
+    --radius: 0.75rem;
+    /* Clean, professional rounding */
+}
+
+.dark {
+    --background: #020617;
+    /* Deep midnight */
+    --foreground: #f8fafc;
+    --card: #0f172a;
+    --sidebar: #0f172a;
+    --sidebar-foreground: #94a3b8;
+    --sidebar-active: #ffcc00;
+    --border: #1e293b;
+    --muted: #1e293b;
+    --muted-foreground: #94a3b8;
+}
+
+@layer base {
+    body {
+        @apply bg-background text-foreground transition-colors duration-300 font-sans antialiased;
+    }
+}
