@@ -37,7 +37,7 @@ namespace QMS_Certificate_Store_Portal.Controllers
         public async Task<IActionResult> Save([FromBody] Users model)
         {
             // Set current user if not provided (you can get this from JWT later)
-            if (string.IsNullOrEmpty(model.E_By)) model.E_By = "System";
+           model.UserAction = User.FindFirst("UserFullName")?.Value ?? "System";
 
             var result = await _service.SaveAsync(model);
             if (result.Result != 1) return BadRequest(new { success = false, message = result.Message });
@@ -45,13 +45,12 @@ namespace QMS_Certificate_Store_Portal.Controllers
             return Ok(new { success = true, message = result.Message, id = result.NewId });
         }
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> Delete(int id, string deletedBy = "System")
-        {
-            var result = await _service.DeleteAsync(id, deletedBy);
-            if (result.Result != 1) return BadRequest(new { success = false, message = result.Message });
-
-            return Ok(new { success = true, message = result.Message });
-        }
+        public async Task<IActionResult> Delete(int id)
+         {
+            var currentUserName = User.FindFirst("UserFullName")?.Value ?? "System";
+            var result = await _service.DeleteAsync(id, currentUserName);
+           return Ok(result);
+         }
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)

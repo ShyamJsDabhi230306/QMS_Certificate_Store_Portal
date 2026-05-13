@@ -1,181 +1,164 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getUserById, saveUser } from '@/api/userApi';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Save, ChevronLeft, Loader2, XCircle } from 'lucide-react';
+import { userApi } from '../../api/userApi';
+import { departmentService } from '../../api/departmentService';
+import { designationService } from '../../api/designationService';
+import { toast } from 'react-hot-toast';
 
 const UserForm = () => {
     const { id } = useParams();
     const navigate = useNavigate();
+
+    const [departments, setDepartments] = useState([]);
+    const [designations, setDesignations] = useState([]);
+
     const [formData, setFormData] = useState({
         idUser: 0,
         userFullName: '',
         userName: '',
-        password: '',
-        email: '',
-        idDepartment: 0,
-        idDesignation: 0,
-        isActive: true,
-        e_By: 'Admin'
+        userPassword: '',
+        idDepartment: '',
+        idDesignation: '',
+        isActive: true
     });
 
+    const [saving, setSaving] = useState(false);
+    const [loading, setLoading] = useState(true);
+
     useEffect(() => {
-        if (id) {
-            loadUser(id);
-        }
+        loadData();
     }, [id]);
 
-    const loadUser = async (userId) => {
-        const res = await getUserById(userId);
-        if (res.success) {
-            setFormData(res.data);
-        }
-    };
+    const loadData = async () => {
+        try {
+            setLoading(true);
+            const [deptRes, desigRes] = await Promise.all([
+                departmentService.getAll(),
+                designationService.getAll()
+            ]);
 
-    const handleChange = (e) => {
-        const { name, value, type, checked } = e.target;
-        setFormData({
-            ...formData,
-            [name]: type === 'checkbox' ? checked : value
-        });
+            if (deptRes.success) setDepartments(deptRes.data);
+            if (desigRes.success) setDesignations(desigRes.data);
+
+            if (id) {
+                const response = await userApi.getById(id);
+                if (response.success) {
+                    const data = response.data;
+                    setFormData({
+                        idUser: data.idUser || 0,
+                        userFullName: data.userFullName || '',
+                        userName: data.userName || '',
+                        userPassword: '', // Keep empty on edit
+                        idDepartment: data.idDepartment || '',
+                        idDesignation: data.idDesignation || '',
+                        isActive: data.isActive ?? true
+                    });
+                }
+            }
+        } catch (error) {
+            toast.error("Error loading master data");
+        } finally {
+            setLoading(false);
+        }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setSaving(true);
         try {
-            const res = await saveUser(formData);
-            if (res.success) {
+            const response = await userApi.save(formData);
+            // 🟢 Fix: Use == instead of === to handle both string "1" and number 1
+            if (response.result == 1) {
+                toast.success(response.message);
                 navigate('/users');
             } else {
-                alert(res.message);
+                toast.error(response.message || "Failed to update user");
             }
         } catch (error) {
-            console.error("Error saving user", error);
+            toast.error("Operation failed");
+        } finally {
+            setSaving(false);
         }
     };
 
+    const inputClass = "w-full bg-background border-2 border-border/60 rounded-xl px-4 py-3.5 text-sm font-bold text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all shadow-sm";
+
+    if (loading) return <div className="h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-gold" size={48} /></div>;
+
     return (
-        <div className="p-10 lg:p-16 max-w-5xl mx-auto space-y-12 animate-in fade-in slide-in-from-bottom-8 duration-1000">
-            
-            <header className="space-y-4">
-                <div className="flex items-center gap-4">
-                    <button 
-                        onClick={() => navigate('/users')}
-                        className="h-12 w-12 flex items-center justify-center rounded-2xl bg-muted/50 hover:bg-gold/10 hover:text-gold transition-all duration-300 border border-border/50"
-                    >
-                        ←
-                    </button>
-                    <div>
-                        <h1 className="text-4xl md:text-5xl font-black italic tracking-tighter uppercase text-foreground leading-none">
-                            {id ? 'Modify' : 'Initialize'} <span className="text-gold">Entity</span>
-                        </h1>
-                        <p className="text-muted-foreground text-[10px] font-black uppercase tracking-[0.4em] mt-2">
-                            Secure Access Provisioning Protocol
-                        </p>
+        <div className="p-8 max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-10 duration-700">
+            <button onClick={() => navigate('/users')} className="flex items-center gap-2 text-[10px] font-black uppercase text-muted-foreground hover:text-gold tracking-widest">
+                <ChevronLeft size={16} /> Back to registry
+            </button>
+
+            <h1 className="text-4xl font-black tracking-tight uppercase italic">
+                {id ? 'Modify Identity' : 'Establish Entity'}
+            </h1>
+
+            <form onSubmit={handleSubmit} className="bg-card border-2 border-border shadow-2xl p-8 md:p-12 rounded-[2.5rem] space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+                    <div className="space-y-2">
+                        <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Full Identity Name</label>
+                        <input required type="text" value={formData.userFullName} onChange={e => setFormData({ ...formData, userFullName: e.target.value })} className={inputClass} placeholder="e.g. John Doe" />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Access ID (Username)</label>
+                        <input required type="text" value={formData.userName} onChange={e => setFormData({ ...formData, userName: e.target.value })} className={inputClass} placeholder="username123" />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Secure Passkey</label>
+                        <input required={!id} type="password" value={formData.userPassword} onChange={e => setFormData({ ...formData, userPassword: e.target.value })} className={inputClass} placeholder={id ? "•••••••• (Leave blank to keep current)" : "••••••••"} />
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Sector (Department)</label>
+                        <select required value={formData.idDepartment} onChange={e => setFormData({ ...formData, idDepartment: e.target.value })} className={inputClass}>
+                            <option value="">-- Select Department --</option>
+                            {departments.map(d => <option key={d.idDepartment} value={d.idDepartment}>{d.departmentName}</option>)}
+                        </select>
+                    </div>
+
+                    <div className="space-y-2">
+                        <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Role (Designation)</label>
+                        <select required value={formData.idDesignation} onChange={e => setFormData({ ...formData, idDesignation: e.target.value })} className={inputClass}>
+                            <option value="">-- Select Designation --</option>
+                            {designations.map(d => <option key={d.idDesignation} value={d.idDesignation}>{d.designationName}</option>)}
+                        </select>
+                    </div>
+
+                    <div className="flex items-center gap-3 pt-8">
+                        <label className="flex items-center gap-3 cursor-pointer group">
+                            <input type="checkbox" checked={formData.isActive} onChange={e => setFormData({ ...formData, isActive: e.target.checked })} className="accent-gold w-6 h-6 rounded cursor-pointer" />
+                            <span className="text-[14px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">Authorization Active</span>
+                        </label>
                     </div>
                 </div>
-            </header>
 
-            <Card className="rounded-[3rem] border-none shadow-[0_32px_64px_-15px_rgba(0,0,0,0.15)] overflow-hidden bg-card/60 backdrop-blur-2xl border border-white/10">
-                <CardHeader className="bg-muted/30 p-12 border-b border-border">
-                    <CardTitle className="text-xs font-black uppercase tracking-[0.6em] text-gold">System Configuration Manifest</CardTitle>
-                </CardHeader>
-                <CardContent className="p-12">
-                    <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Full Identity</label>
-                            <Input 
-                                type="text" 
-                                name="userFullName" 
-                                value={formData.userFullName || ''} 
-                                onChange={handleChange} 
-                                required 
-                                className="h-16 bg-muted/20 border-2 border-border/50 focus:border-gold rounded-2xl font-bold tracking-tight px-6 transition-all"
-                            />
-                        </div>
+                <div className="flex items-center justify-end gap-4 pt-6 border-t border-border mt-4">
+                    {/* 🔴 Abort Button Added Back */}
+                    <button
+                        type="button"
+                        onClick={() => navigate('/users')}
+                        className="px-8 py-4 bg-muted text-foreground border-2 border-border rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-all flex items-center gap-2"
+                    >
+                        <XCircle size={18} /> Abort
+                    </button>
 
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Credential ID</label>
-                            <Input 
-                                type="text" 
-                                name="userName" 
-                                value={formData.userName || ''} 
-                                onChange={handleChange} 
-                                required 
-                                className="h-16 bg-muted/20 border-2 border-border/50 focus:border-gold rounded-2xl font-bold tracking-widest px-6 transition-all"
-                            />
-                        </div>
-
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Digital Address</label>
-                            <Input 
-                                type="email" 
-                                name="email" 
-                                value={formData.email || ''} 
-                                onChange={handleChange} 
-                                required 
-                                className="h-16 bg-muted/20 border-2 border-border/50 focus:border-gold rounded-2xl font-bold italic px-6 transition-all"
-                            />
-                        </div>
-
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Access Cipher</label>
-                            <Input 
-                                type="password" 
-                                name="password" 
-                                value={formData.password || ''} 
-                                onChange={handleChange} 
-                                required={!id} 
-                                placeholder={id ? "Leave empty to retain current" : "••••••••"}
-                                className="h-16 bg-muted/20 border-2 border-border/50 focus:border-gold rounded-2xl font-bold px-6 transition-all"
-                            />
-                        </div>
-
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Sector Code (Dept)</label>
-                            <Input 
-                                type="number" 
-                                name="idDepartment" 
-                                value={formData.idDepartment || 0} 
-                                onChange={handleChange} 
-                                className="h-16 bg-muted/20 border-2 border-border/50 focus:border-gold rounded-2xl font-bold px-6 transition-all"
-                            />
-                        </div>
-
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">Role Classification (Desig)</label>
-                            <Input 
-                                type="number" 
-                                name="idDesignation" 
-                                value={formData.idDesignation || 0} 
-                                onChange={handleChange} 
-                                className="h-16 bg-muted/20 border-2 border-border/50 focus:border-gold rounded-2xl font-bold px-6 transition-all"
-                            />
-                        </div>
-
-                        <div className="md:col-span-2 pt-8 flex items-center gap-6">
-                            <Button 
-                                type="submit" 
-                                className="h-16 flex-1 bg-gold text-white font-black italic uppercase tracking-widest rounded-2xl shadow-2xl shadow-gold/30 hover:shadow-gold/50 hover:bg-gold-hover hover:-translate-y-1 transition-all duration-300"
-                            >
-                                {id ? 'Commit Changes' : 'Authorize Entity'}
-                            </Button>
-                            <Button 
-                                type="button" 
-                                variant="outline"
-                                onClick={() => navigate('/users')}
-                                className="h-16 px-12 border-2 border-border hover:bg-muted text-[10px] font-black uppercase tracking-widest rounded-2xl transition-all"
-                            >
-                                Abort
-                            </Button>
-                        </div>
-                    </form>
-                </CardContent>
-            </Card>
+                    <button
+                        disabled={saving}
+                        className="px-10 py-4 bg-gold hover:bg-gold-hover text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl shadow-gold/20 hover:scale-105 transition-all flex items-center gap-3 active:scale-95"
+                    >
+                        {saving ? <Loader2 className="animate-spin" size={18} /> : <Save size={18} strokeWidth={3} />}
+                        {id ? 'Commit Changes' : 'Authorize Entity'}
+                    </button>
+                </div>
+            </form>
         </div>
     );
 };
 
 export default UserForm;
-

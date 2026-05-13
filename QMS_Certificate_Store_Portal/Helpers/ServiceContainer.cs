@@ -16,12 +16,19 @@ namespace QMS_Certificate_Store_Portal.Helpers
 
             // repository Layer for registration
             services.AddScoped<UserRepo>();
-
-
-
+            services.AddScoped<CompanyRepo>();
+            services.AddScoped<LocationRepo>();
+            services.AddScoped<DepartmentRepo>();
+            services.AddScoped<DesignationRepo>();
 
             // Services Layer for registration 
             services.AddScoped<UserService>();
+            services.AddScoped<CompanyService>();
+            services.AddScoped<LocationService>();
+            services.AddScoped<DepartmentService>();
+            services.AddScoped<DesignationService>();
+
+
             return services;
         }
     }

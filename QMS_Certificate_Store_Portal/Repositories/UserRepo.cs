@@ -59,7 +59,7 @@ namespace QMS_Certificate_Store_Portal.Repositories
                 param.Add("@Password", model.Password);
                 param.Add("@IsActive", model.IsActive);
                 param.Add("@Phone", model.Phone);
-                param.Add("@ActionUser", model.E_By); // Maps to @ActionUser in SP
+                param.Add("@ActionUser", model.UserAction); // Maps to @ActionUser in SP
 
                 return await _dapper.QueryFirstOrDefaultAsync<SaveResult>("usp_Master_User_Save", param)
                        ?? SaveResult.Fail("Database error");

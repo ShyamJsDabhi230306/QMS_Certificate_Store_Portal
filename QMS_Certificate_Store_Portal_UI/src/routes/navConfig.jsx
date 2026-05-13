@@ -1,5 +1,9 @@
 import { userRoutes } from '../pages/User/userRoutes.jsx';
+import { companyRoutes } from '../pages/Company/companyRoutes';
 import { LayoutDashboard } from "lucide-react";
+import { locationRoutes } from '@/pages/Location/locationRoutes.jsx';
+import { departmentRoutes } from '@/pages/Department/departmentRoutes.jsx';
+import { designationRoutes } from '@/pages/Designation/designationRoutes.jsx';
 
 
 
@@ -11,5 +15,9 @@ export const navConfig = [
         showInSidebar: true,
         icon: <LayoutDashboard size={18} strokeWidth={2.5} />
     },
-    ...userRoutes // Add user routes here
+    ...companyRoutes,
+    ...locationRoutes,
+    ...departmentRoutes,
+    ...designationRoutes,
+    ...userRoutes, // Add user routes here
 ];

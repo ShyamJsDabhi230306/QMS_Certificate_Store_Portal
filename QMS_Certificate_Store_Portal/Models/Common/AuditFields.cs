@@ -2,6 +2,7 @@
 {
     public class AuditFields
     {
+         public string? UserAction { get; set; }
         public string? Remarks { get; set; }
 
         public bool? IsActive { get; set; }
@@ -19,5 +20,6 @@
         public DateTime? D_Date { get; set; }
 
         public string? D_By { get; set; }
+        public DateTime? CreatedOn { get; set; }
     }
 }
