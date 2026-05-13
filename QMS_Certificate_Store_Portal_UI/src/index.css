@@ -1,36 +1,61 @@
 @import "tailwindcss";
 
+@theme {
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-active: var(--sidebar-active);
+    --color-border: var(--border);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    
+    --color-gold: #c5a059;
+    --color-gold-hover: #b48e46;
+    --color-gold-text: #8b6e3a;
+    --color-neutral-950: #0a0a0a;
+    --color-neutral-900: #171717;
+    --color-neutral-800: #262626;
+    --color-neutral-100: #f5f5f5;
+}
+
+
 :root {
-    --background: #f8fafc;
-    /* Light grey-blue background */
-    --foreground: #0f172a;
-    /* Deep Slate text */
+    --background: #fafafa;
+    --foreground: #171717;
     --card: #ffffff;
     --sidebar: #ffffff;
-    --sidebar-foreground: #334155;
-    --sidebar-active: #ffcc00;
-    --border: #e2e8f0;
-    --muted: #f1f5f9;
-    --muted-foreground: #64748b;
-    --radius: 0.75rem;
-    /* Clean, professional rounding */
+    --sidebar-foreground: #525252;
+    --sidebar-active: #c5a059;
+    --border: #e5e5e5;
+    --muted: #f5f5f5;
+    --muted-foreground: #737373;
+    --radius: 1rem;
+    
+    /* Gold Accent */
+    --gold: #c5a059;
+    --gold-foreground: #ffffff;
 }
 
 .dark {
-    --background: #020617;
-    /* Deep midnight */
-    --foreground: #f8fafc;
-    --card: #0f172a;
-    --sidebar: #0f172a;
-    --sidebar-foreground: #94a3b8;
-    --sidebar-active: #ffcc00;
-    --border: #1e293b;
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
+    --background: #0a0a0a;
+    --foreground: #fafafa;
+    --card: #171717;
+    --sidebar: #111111;
+    --sidebar-foreground: #a3a3a3;
+    --sidebar-active: #c5a059;
+    --border: #262626;
+    --muted: #262626;
+    --muted-foreground: #737373;
+
+    /* Gold Accent Dark */
+    --gold: #c5a059;
+    --gold-foreground: #0a0a0a;
 }
 
 @layer base {
     body {
-        @apply bg-background text-foreground transition-colors duration-300 font-sans antialiased;
+        @apply bg-background text-foreground transition-colors duration-300 font-sans antialiased selection:bg-gold/30;
     }
-}
+}

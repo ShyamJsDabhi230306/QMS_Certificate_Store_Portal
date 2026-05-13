@@ -1,7 +1,7 @@
 using Dapper;
 using Microsoft.Data.SqlClient;
 using System.Data;
-namespace Airmax_Payroll_System.Helpers
+namespace QMS_Certificate_Store_Portal.Helpers
 {
 
     public interface IDapperHelper
@@ -25,10 +25,11 @@ namespace Airmax_Payroll_System.Helpers
             _connectionString = config.GetConnectionString("DefaultConnection")
                  ?? throw new Exception("connection string 'DefaultConnection' not found");
             _showSqlError = 
-                (config["ASPNETCORE_ENVIRONMENT" ?? "Production"])
-                        .Equals("Devlopment", StringComparison.OrdinalIgnoreCase);
+                (config["ASPNETCORE_ENVIRONMENT"] ?? "Production")
+                        .Equals("Development", StringComparison.OrdinalIgnoreCase);
 
         }
+
         private SqlConnection CreateConnection() => new SqlConnection(_connectionString);
         public async Task<int> ExecuteAsync(string sp, object? param = null, CommandType commandType = CommandType.StoredProcedure)
         {

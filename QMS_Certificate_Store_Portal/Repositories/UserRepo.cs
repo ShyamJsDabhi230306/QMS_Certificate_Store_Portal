@@ -1,4 +1,4 @@
-using Airmax_Payroll_System.Helpers;
+using QMS_Certificate_Store_Portal.Helpers;
 using Dapper;
 using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Models.Common;

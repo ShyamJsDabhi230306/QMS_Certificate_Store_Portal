@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 
-namespace Airmax_Payroll_System.Helpers
+namespace QMS_Certificate_Store_Portal.Helpers
 {
     public static class ClaimsExtensions
     {

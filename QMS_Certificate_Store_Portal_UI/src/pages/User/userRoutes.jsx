@@ -1,7 +1,7 @@
 import React from 'react';
 import UserList from './UserList';
 import UserForm from './UserForm';
-
+import { Users } from "lucide-react";
 
 export const userRoutes = [
     {
@@ -9,7 +9,7 @@ export const userRoutes = [
         path: "/users",
         element: <UserList />,
         showInSidebar: true,
-        icon: "👥"
+        icon: <Users size={18} strokeWidth={2.5} />
     },
     {
         title: "Add User",
