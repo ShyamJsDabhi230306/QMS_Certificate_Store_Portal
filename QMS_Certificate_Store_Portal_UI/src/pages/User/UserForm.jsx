@@ -17,7 +17,9 @@ const UserForm = () => {
         idUser: 0,
         userFullName: '',
         userName: '',
-        userPassword: '',
+        password: '', // 🟢 Changed from userPassword
+        email: '',
+        phone: '',
         idDepartment: '',
         idDesignation: '',
         isActive: true
@@ -49,7 +51,9 @@ const UserForm = () => {
                         idUser: data.idUser || 0,
                         userFullName: data.userFullName || '',
                         userName: data.userName || '',
-                        userPassword: '', // Keep empty on edit
+                        password: data.password || '', // 🟢 Map password so it's visible
+                        email: data.email || '',           // 🟢 Map email
+                        phone: data.phone || '',           // 🟢 Map phone
                         idDepartment: data.idDepartment || '',
                         idDesignation: data.idDesignation || '',
                         isActive: data.isActive ?? true
@@ -68,8 +72,9 @@ const UserForm = () => {
         setSaving(true);
         try {
             const response = await userApi.save(formData);
-            // 🟢 Fix: Use == instead of === to handle both string "1" and number 1
-            if (response.result == 1) {
+
+            // 🟢 Fix: Check for both 'success' OR 'result' to be safe
+            if (response.success || response.result == 1) {
                 toast.success(response.message);
                 navigate('/users');
             } else {
@@ -81,6 +86,7 @@ const UserForm = () => {
             setSaving(false);
         }
     };
+
 
     const inputClass = "w-full bg-background border-2 border-border/60 rounded-xl px-4 py-3.5 text-sm font-bold text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all shadow-sm";
 
@@ -103,6 +109,29 @@ const UserForm = () => {
                         <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Full Identity Name</label>
                         <input required type="text" value={formData.userFullName} onChange={e => setFormData({ ...formData, userFullName: e.target.value })} className={inputClass} placeholder="e.g. John Doe" />
                     </div>
+                    {/* Email Identity */}
+                    <div className="space-y-2">
+                        <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Email Address</label>
+                        <input
+                            type="email"
+                            value={formData.email}
+                            onChange={e => setFormData({ ...formData, email: e.target.value })}
+                            className={inputClass}
+                            placeholder="example@mail.com"
+                        />
+                    </div>
+
+                    {/* Phone Number */}
+                    <div className="space-y-2">
+                        <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Phone Number</label>
+                        <input
+                            type="text"
+                            value={formData.phone}
+                            onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                            className={inputClass}
+                            placeholder="98765 43210"
+                        />
+                    </div>
 
                     <div className="space-y-2">
                         <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Access ID (Username)</label>
@@ -111,7 +140,7 @@ const UserForm = () => {
 
                     <div className="space-y-2">
                         <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Secure Passkey</label>
-                        <input required={!id} type="password" value={formData.userPassword} onChange={e => setFormData({ ...formData, userPassword: e.target.value })} className={inputClass} placeholder={id ? "•••••••• (Leave blank to keep current)" : "••••••••"} />
+                        <input required={!id} type="password" value={formData.password} onChange={e => setFormData({ ...formData, password: e.target.value })} className={inputClass} placeholder={id ? "•••••••• (Leave blank to keep current)" : "••••••••"} />
                     </div>
 
                     <div className="space-y-2">

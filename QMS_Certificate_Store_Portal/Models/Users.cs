@@ -4,17 +4,17 @@ namespace QMS_Certificate_Store_Portal.Models
 {
     public class Users : AuditFields
     {
-        public int idUser { get; set; } // Match React 'idUser'
-        public string? userFullName { get; set; } // Match React 'userFullName'
-        public string? userName { get; set; } // Match React 'userName'
-        public string? userPassword { get; set; } // Match React 'userPassword'
-        public int? idDepartment { get; set; } // Match React 'idDepartment'
-        public int? idDesignation { get; set; } // Match React 'idDesignation'
-        public string? email { get; set; }
-        public string? phone { get; set; }
+        public int IDUser { get; set; } // Match React 'idUser'
+        public string? UserFullName { get; set; } // Match React 'userFullName'
+        public string? UserName { get; set; } // Match React 'userName'
+        public string? Password { get; set; } // Match React 'userPassword'
+        public int? IDDepartment { get; set; } // Match React 'idDepartment'
+        public int? IDDesignation { get; set; } // Match React 'idDesignation'
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
         
         // Joined fields for the list view
-        public string? departmentName { get; set; }
-        public string? designationName { get; set; }
+        public string? DepartmentName { get; set; }
+        public string? DesignationName { get; set; }
     }
 }

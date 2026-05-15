@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { UserPlus, Edit2, Trash2, Users, RefreshCw } from 'lucide-react';
+import { UserPlus, Edit2, Trash2, Users, RefreshCw, EyeOff, Eye, } from 'lucide-react';
 import { userApi } from '../../api/userApi';
 import { toast } from 'react-hot-toast';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [visiblePasswords, setVisiblePasswords] = useState({}); // 🟢 Track visibility by User ID
+
+    const togglePassword = (id) => {
+        setVisiblePasswords(prev => ({ ...prev, [id]: !prev[id] }));
+    };
+
     const navigate = useNavigate();
 
     useEffect(() => { loadUsers(); }, []);
@@ -62,7 +68,10 @@ const UserList = () => {
                             <tr>
                                 <th className="px-6 py-5 w-20">#</th>
                                 <th className="px-6 py-5">Full Name</th>
+                                <th className="px-6 py-5">Email</th>
+                                <th className="px-6 py-5">Phone</th>
                                 <th className="px-6 py-5">User Name</th>
+                                <th className="px-6 py-5">Password</th>
                                 <th className="px-6 py-5">Department</th>
                                 <th className="px-6 py-5">Designation</th>
                                 <th className="px-6 py-5 text-center">Status</th>
@@ -89,8 +98,31 @@ const UserList = () => {
                                         {item.userFullName}
                                     </td>
                                     <td className="px-6 py-4 font-black text-gold tracking-widest text-xs">
+                                        {item.email}
+                                    </td>
+                                    <td className="px-6 py-4 font-black text-gold tracking-widest text-xs">
+                                        {item.phone}
+                                    </td>
+                                    <td className="px-6 py-4 font-black text-gold tracking-widest text-xs">
                                         {item.userName}
                                     </td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2 group">
+                                            <span className="font-mono text-[11px] text-muted-foreground min-w-[80px]">
+                                                {visiblePasswords[item.idUser] ? (item.password || 'N/A') : '••••••••'}
+                                            </span>
+                                            <button
+                                                onClick={() => togglePassword(item.idUser)}
+                                                className="p-1.5 rounded-md hover:bg-gold/10 text-muted-foreground/40 hover:text-gold transition-all"
+                                                title={visiblePasswords[item.idUser] ? "Hide Password" : "Show Password"}
+                                            >
+                                                {visiblePasswords[item.idUser] ? <EyeOff size={12} /> : <Eye size={12} />}
+                                            </button>
+                                        </div>
+                                    </td>
+
+
+
                                     <td className="px-6 py-4">
                                         <span className="px-3 py-1 bg-muted rounded-lg text-[11px] font-black uppercase text-muted-foreground">
                                             {item.departmentName || 'General'}

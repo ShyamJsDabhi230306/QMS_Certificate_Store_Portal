@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
-
+import air from "../assets/air.jpeg"
 const DashboardLayout = ({ children }) => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
@@ -40,7 +40,7 @@ const DashboardLayout = ({ children }) => {
             "
                             >
                                 <img
-                                    src="src/assets/air.jpeg"
+                                    src={air}
                                     alt="Aira Euro Automation"
                                     className=" w-full
         h-full object-contain"

@@ -1,4 +1,4 @@
-using QMS_Certificate_Store_Portal.Helpers;
+﻿using QMS_Certificate_Store_Portal.Helpers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using QMS_Certificate_Store_Portal.Models;
@@ -33,17 +33,26 @@ namespace QMS_Certificate_Store_Portal.Controllers
             if (data == null) return NotFound(new { success = false, message = "User not found" });
             return Ok(new { success = true, data });
         }
+        // c:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\Controllers\UserController.cs
+
         [HttpPost("save")]
         public async Task<IActionResult> Save([FromBody] Users model)
         {
-            // Set current user if not provided (you can get this from JWT later)
-           model.UserAction = User.FindFirst("UserFullName")?.Value ?? "System";
-
+            model.UserAction = User.FindFirst("UserFullName")?.Value ?? "System";
             var result = await _service.SaveAsync(model);
+
             if (result.Result != 1) return BadRequest(new { success = false, message = result.Message });
 
-            return Ok(new { success = true, message = result.Message, id = result.NewId });
+            // 🟢 Fix: Add 'result' property to match frontend expectation
+            return Ok(new
+            {
+                success = true,
+                result = result.Result, // Add this!
+                message = result.Message,
+                id = result.NewId
+            });
         }
+
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
          {
@@ -63,7 +72,7 @@ namespace QMS_Certificate_Store_Portal.Controllers
             // Generate JWT Token (Mapping fields from the user record)
             var token = _jwtHelper.GenerateToken(
                 user.IDUser,
-                user.userName ?? "",
+                user.UserName ?? "",
                 user.UserFullName ?? "",
                 "User", //Default Role
         
@@ -79,7 +88,7 @@ namespace QMS_Certificate_Store_Portal.Controllers
                 {
                     user.IDUser,
                     user.UserFullName,
-                    user.userName,
+                    user.UserName,
                     user.Email,
                     user.DepartmentName,
                     user.DesignationName

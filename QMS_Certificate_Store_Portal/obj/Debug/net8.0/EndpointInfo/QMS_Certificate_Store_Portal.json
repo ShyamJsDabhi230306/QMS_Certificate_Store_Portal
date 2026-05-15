@@ -880,20 +880,6 @@
             "type": "string",
             "nullable": true
           },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "idDesignation": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "idDepartment": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
           "userName": {
             "type": "string",
             "nullable": true
@@ -902,13 +888,22 @@
             "type": "string",
             "nullable": true
           },
-          "phone": {
+          "idDepartment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idDesignation": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "email": {
             "type": "string",
             "nullable": true
           },
-          "login_At": {
+          "phone": {
             "type": "string",
-            "format": "date-time",
             "nullable": true
           },
           "departmentName": {

@@ -55,7 +55,7 @@ namespace QMS_Certificate_Store_Portal.Repositories
                 param.Add("@Email", model.Email);
                 param.Add("@IDDesignation", model.IDDesignation);
                 param.Add("@IDDepartment", model.IDDepartment);
-                param.Add("@userName", model.userName);
+                param.Add("@userName", model.UserName);
                 param.Add("@Password", model.Password);
                 param.Add("@IsActive", model.IsActive);
                 param.Add("@Phone", model.Phone);
