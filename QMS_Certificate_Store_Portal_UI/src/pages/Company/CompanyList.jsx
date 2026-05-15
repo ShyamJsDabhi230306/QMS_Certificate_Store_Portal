@@ -3,10 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Edit2, Trash2, Building2, RefreshCw } from 'lucide-react';
 import { companyService } from '../../api/companyService';
 import { toast } from 'react-hot-toast';
+import { usePagination } from '../../components/usePagination';
+import Pagination from '../../components/Pagination';
+import SearchInput from '../../components/SearchInput';
+import { useSearch } from '../../hooks/useSearch';
 
 const CompanyList = () => {
     const [companies, setCompanies] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { searchTerm, setSearchTerm, filteredItems } = useSearch(companies);
+    const { currentItems, paginationProps } = usePagination(filteredItems, 10);
     const navigate = useNavigate();
 
     useEffect(() => { loadCompanies(); }, []);
@@ -32,13 +38,29 @@ const CompanyList = () => {
 
     return (
         <div className="p-6 space-y-6 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
                     <Building2 className="text-gold" size={32} /> Company Master
                 </h1>
-                <button onClick={() => navigate('/company/add')} className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105">
-                    <Plus size={18} strokeWidth={3} /> Add New
-                </button>
+
+                {/* 🟢 Group Search and Button together to remove the large gap */}
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                    <div className="flex-1 md:w-80">
+                        <SearchInput
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            placeholder="Search anything..."
+                        />
+                    </div>
+
+                    <button
+                        onClick={() => navigate('/company/add')}
+                        className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
+                    >
+                        <Plus size={18} strokeWidth={3} /> Add New
+                    </button>
+                </div>
             </div>
 
             <div className="bg-card/40 backdrop-blur-md rounded-3xl border border-border shadow-2xl overflow-hidden">
@@ -60,7 +82,7 @@ const CompanyList = () => {
                         <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr><td colSpan="9" className="py-20 text-center"><RefreshCw className="animate-spin text-gold mx-auto" /></td></tr>
-                            ) : companies.map((item, index) => (
+                            ) : currentItems.map((item, index) => (
                                 <tr key={item.idCompany} className="group hover:bg-gold/[0.03] transition-colors">
                                     <td className="px-6 py-4 text-[14px] font-black text-muted-foreground">{index + 1}</td>
                                     <td className="px-6 py-4 font-black text-sm text-foreground">{item.companyName}</td>
@@ -85,6 +107,7 @@ const CompanyList = () => {
                         </tbody>
                     </table>
                 </div>
+                <Pagination {...paginationProps} />
             </div>
         </div>
     );

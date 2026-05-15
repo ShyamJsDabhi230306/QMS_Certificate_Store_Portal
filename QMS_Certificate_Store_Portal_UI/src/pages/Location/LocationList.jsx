@@ -3,10 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { Plus, Edit2, Trash2, MapPin, RefreshCw } from 'lucide-react';
 import { locationService } from '../../api/locationService';
 import { toast } from 'react-hot-toast';
+import { usePagination } from '../../components/usePagination';
+import SearchInput from '../../components/SearchInput';
+import { useSearch } from '../../hooks/useSearch';
+import Pagination from '../../components/Pagination';
 
 const LocationList = () => {
     const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(true);
+    const { searchTerm, setSearchTerm, filteredItems } = useSearch(locations);
+    const { currentItems, paginationProps } = usePagination(filteredItems, 10);
     const navigate = useNavigate();
 
     useEffect(() => { loadLocations(); }, []);
@@ -32,14 +38,31 @@ const LocationList = () => {
 
     return (
         <div className="p-6 space-y-6 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
                     <MapPin className="text-gold" size={32} /> Location Master
                 </h1>
-                <button onClick={() => navigate('/location/add')} className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105">
-                    <Plus size={18} strokeWidth={3} /> Add New
-                </button>
+
+                {/* 🟢 Group Search and Button together */}
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                    <div className="flex-1 md:w-80">
+                        <SearchInput
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            placeholder="Search locations..."
+                        />
+                    </div>
+
+                    <button
+                        onClick={() => navigate('/location/add')}
+                        className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
+                    >
+                        <Plus size={18} strokeWidth={3} /> Add New
+                    </button>
+                </div>
             </div>
+
 
             <div className="bg-card/40 backdrop-blur-md rounded-3xl border border-border shadow-2xl overflow-hidden text-[14px]">
                 <table className="w-full text-left border-collapse">
@@ -55,9 +78,9 @@ const LocationList = () => {
                     <tbody className="divide-y divide-border">
                         {loading ? (
                             <tr><td colSpan="5" className="py-20 text-center"><RefreshCw className="animate-spin text-gold mx-auto" /></td></tr>
-                        ) : locations.length === 0 ? (
+                        ) : currentItems.length === 0 ? (
                             <tr><td colSpan="5" className="py-20 text-center text-muted-foreground font-black text-xs uppercase tracking-widest">No Records Found</td></tr>
-                        ) : locations.map((item, index) => (
+                        ) : currentItems.map((item, index) => (
                             <tr key={item.idLocation} className="group hover:bg-gold/[0.03] transition-colors">
                                 <td className="px-6 py-4 font-black text-muted-foreground">{index + 1}</td>
                                 <td className="px-6 py-4 font-black text-gold uppercase tracking-wider">{item.companyName}</td>
@@ -77,6 +100,7 @@ const LocationList = () => {
                         ))}
                     </tbody>
                 </table>
+                <Pagination {...paginationProps} />
             </div>
         </div>
     );

@@ -3,11 +3,20 @@ import { useNavigate } from 'react-router-dom';
 import { UserPlus, Edit2, Trash2, Users, RefreshCw, EyeOff, Eye, } from 'lucide-react';
 import { userApi } from '../../api/userApi';
 import { toast } from 'react-hot-toast';
+import { usePagination } from '../../components/usePagination';
+import Pagination from '../../components/Pagination';
+import SearchInput from '../../components/SearchInput'; // 👈 NEW
+import { useSearch } from '../../hooks/useSearch';     // 👈 NEW
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [visiblePasswords, setVisiblePasswords] = useState({}); // 🟢 Track visibility by User ID
+    // Inside UserList component
+    const { searchTerm, setSearchTerm, filteredItems } = useSearch(users);
+    const { currentItems, paginationProps } = usePagination(filteredItems, 10);
+    // It will automatically search every column (Name, Email, Phone, Username, etc.)
+
 
     const togglePassword = (id) => {
         setVisiblePasswords(prev => ({ ...prev, [id]: !prev[id] }));
@@ -48,17 +57,31 @@ const UserList = () => {
     return (
         <div className="p-6 space-y-6 animate-in fade-in duration-500">
             {/* Header */}
-            <div className="flex items-center justify-between">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
                     <Users className="text-gold" size={32} /> User Master
                 </h1>
-                <button
-                    onClick={() => navigate('/users/add')}
-                    className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105"
-                >
-                    <UserPlus size={18} strokeWidth={3} /> Add New
-                </button>
+
+                {/* 🟢 Search and Add Button grouped together with a small gap */}
+                <div className="flex items-center gap-4 w-full md:w-auto">
+                    <div className="flex-1 md:w-80">
+                        <SearchInput
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                            placeholder="Search anything..."
+                        />
+                    </div>
+
+                    <button
+                        onClick={() => navigate('/users/add')}
+                        className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
+                    >
+                        <UserPlus size={18} strokeWidth={3} /> Add New
+                    </button>
+                </div>
             </div>
+
 
             {/* Table Container */}
             <div className="bg-card/40 backdrop-blur-md rounded-3xl border border-border shadow-2xl overflow-hidden text-[14px]">
@@ -91,7 +114,7 @@ const UserList = () => {
                                         No Users Found
                                     </td>
                                 </tr>
-                            ) : users.map((item, index) => (
+                            ) : currentItems.map((item, index) => (
                                 <tr key={item.idUser} className="group hover:bg-gold/[0.03] transition-colors">
                                     <td className="px-6 py-4 font-black text-muted-foreground">{index + 1}</td>
                                     <td className="px-6 py-4 font-black text-foreground uppercase tracking-tight">
@@ -157,6 +180,7 @@ const UserList = () => {
                         </tbody>
                     </table>
                 </div>
+                <Pagination {...paginationProps} />
             </div>
         </div>
     );
