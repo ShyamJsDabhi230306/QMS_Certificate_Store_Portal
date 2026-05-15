@@ -7,6 +7,7 @@ C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_P
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\QMS_Certificate_Store_Portal.dll
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\QMS_Certificate_Store_Portal.pdb
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\Dapper.dll
+C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\Microsoft.Bcl.Cryptography.dll
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\Microsoft.Data.SqlClient.dll
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\Microsoft.Data.SqlClient.Extensions.Abstractions.dll
@@ -53,6 +54,7 @@ C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_P
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.csproj.CoreCompileInputs.cache
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.MvcApplicationPartsAssemblyInfo.cache
+C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.sourcelink.json
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\rjimswa.dswa.cache.json
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\rjsmrazor.dswa.cache.json
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\rjsmcshtml.dswa.cache.json
@@ -69,5 +71,3 @@ C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_P
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.pdb
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.genruntimeconfig.cache
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\ref\QMS_Certificate_Store_Portal.dll
-C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.sourcelink.json
-C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
