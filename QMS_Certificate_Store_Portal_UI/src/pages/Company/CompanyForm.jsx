@@ -20,7 +20,7 @@ const CompanyForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
-        const res = await companyService.save(formData);
+        const res = await companyService.save();
         if (res.result === 1) { toast.success(res.message); navigate('/company'); }
         else toast.error(res.message);
         setSaving(false);
@@ -47,7 +47,10 @@ const CompanyForm = () => {
 
                 <div className="space-y-2">
                     <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">Contact Number</label>
-                    <input required type="text" value={formData.contactNo} onChange={e => setFormData({ ...formData, contactNo: e.target.value })} className={inputClass} placeholder="+91 ..." />
+                    <input required type="text"
+                        value={formData.contactNo}
+                        onChange={e => setFormData({ ...formData, contactNo: e.target.value })}
+                        className={inputClass} placeholder="+91 ..." />
                 </div>
 
                 <div className="space-y-2">

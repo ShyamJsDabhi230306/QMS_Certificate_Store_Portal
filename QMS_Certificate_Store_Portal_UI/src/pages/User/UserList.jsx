@@ -72,13 +72,12 @@ const UserList = () => {
                             placeholder="Search anything..."
                         />
                     </div>
-
-                    <button
+                    {canCreate && (<button
                         onClick={() => navigate('/users/add')}
                         className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
                     >
                         <UserPlus size={18} strokeWidth={3} /> Add New
-                    </button>
+                    </button>)}
                 </div>
             </div>
 
@@ -161,18 +160,24 @@ const UserList = () => {
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <button
-                                                onClick={() => navigate(`/users/edit/${item.idUser}`)}
-                                                className="p-2 bg-gold/10 text-gold rounded-lg hover:bg-gold hover:text-white transition-all"
-                                            >
-                                                <Edit2 size={14} />
-                                            </button>
-                                            <button
-                                                onClick={() => handleDelete(item.idUser)}
-                                                className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
-                                            >
-                                                <Trash2 size={14} />
-                                            </button>
+
+                                            {canEdit && (
+                                                <button
+                                                    onClick={() => navigate(`/users/edit/${item.idUser}`)}
+                                                    className="p-2 bg-gold/10 text-gold rounded-lg hover:bg-gold hover:text-white transition-all"
+                                                >
+                                                    <Edit2 size={14} />
+                                                </button>
+                                            )}
+                                            {
+                                                canDelete && (
+                                                    <button
+                                                        onClick={() => handleDelete(item.idUser)}
+                                                        className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                )}
                                         </div>
                                     </td>
                                 </tr>

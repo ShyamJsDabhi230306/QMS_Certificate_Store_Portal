@@ -10,7 +10,7 @@
     --color-border: var(--border);
     --color-muted: var(--muted);
     --color-muted-foreground: var(--muted-foreground);
-    
+
     --color-gold: #c5a059;
     --color-gold-hover: #b48e46;
     --color-gold-text: #8b6e3a;
@@ -32,7 +32,7 @@
     --muted: #f5f5f5;
     --muted-foreground: #737373;
     --radius: 1rem;
-    
+
     /* Gold Accent */
     --gold: #c5a059;
     --gold-foreground: #ffffff;
@@ -58,4 +58,4 @@
     body {
         @apply bg-background text-foreground transition-colors duration-300 font-sans antialiased selection:bg-gold/30;
     }
-}
+}

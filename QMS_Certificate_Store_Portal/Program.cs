@@ -77,7 +77,11 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
-
+using (var scope = app.Services.CreateScope())
+{
+    // Pass 'scope.ServiceProvider' instead of 'app.Services'
+    await DataSeeder.SeedAdminUser(scope.ServiceProvider); 
+}
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

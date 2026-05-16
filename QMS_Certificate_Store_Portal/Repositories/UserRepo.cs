@@ -61,8 +61,22 @@ namespace QMS_Certificate_Store_Portal.Repositories
                 param.Add("@Phone", model.Phone);
                 param.Add("@ActionUser", model.UserAction); // Maps to @ActionUser in SP
 
-                return await _dapper.QueryFirstOrDefaultAsync<SaveResult>("usp_Master_User_Save", param)
-                       ?? SaveResult.Fail("Database error");
+                var result = await _dapper.QueryFirstOrDefaultAsync<SaveResult>("usp_Master_User_Save", param)
+            ?? SaveResult.Fail("Database error");
+
+                // Step 3: If user was created (Result == 1), initialize their rights
+                if (result.Result > 0 && model.IDUser == 0)
+                {
+                    var rightParam = new DynamicParameters();
+                    rightParam.Add("@IDUser", result.Result);
+                    rightParam.Add("@ActionUser", model.UserAction);
+
+                    // This calls the SP we created earlier to insert the 0-rows
+                    await _dapper.ExecuteAsync("usp_Master_UserRight_InitializeForUser", rightParam);
+                }
+
+                return result;
+
             }
             catch (Exception ex)
             {

@@ -232,6 +232,64 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.PageController",
+    "Method": "Delete",
+    "RelativePath": "api/master/Page/delete/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.PageController",
+    "Method": "GetAll",
+    "RelativePath": "api/master/Page/get-all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.PageController",
+    "Method": "GetById",
+    "RelativePath": "api/master/Page/get-by-id/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.PageController",
+    "Method": "Save",
+    "RelativePath": "api/master/Page/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.MasterPage",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
     "Method": "Delete",
     "RelativePath": "api/master/user/delete/{id}",
@@ -300,6 +358,54 @@
       {
         "Name": "model",
         "Type": "QMS_Certificate_Store_Portal.Models.Users",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
+    "Method": "GetByUserId",
+    "RelativePath": "api/master/UserRight/get-by-user/{idUser}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idUser",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
+    "Method": "Initialize",
+    "RelativePath": "api/master/UserRight/initialize/{idUser}",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idUser",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
+    "Method": "UpdateBulk",
+    "RelativePath": "api/master/UserRight/update-bulk",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "rights",
+        "Type": "System.Collections.Generic.List\u00601[[QMS_Certificate_Store_Portal.Models.MasterUserRight, QMS_Certificate_Store_Portal, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "IsRequired": true
       }
     ],

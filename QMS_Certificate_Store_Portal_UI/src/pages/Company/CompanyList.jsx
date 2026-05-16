@@ -7,6 +7,7 @@ import { usePagination } from '../../components/usePagination';
 import Pagination from '../../components/Pagination';
 import SearchInput from '../../components/SearchInput';
 import { useSearch } from '../../hooks/useSearch';
+import { usePermissions } from '@/hooks/usePermissions';
 
 const CompanyList = () => {
     const [companies, setCompanies] = useState([]);
@@ -14,6 +15,7 @@ const CompanyList = () => {
     const { searchTerm, setSearchTerm, filteredItems } = useSearch(companies);
     const { currentItems, paginationProps } = usePagination(filteredItems, 10);
     const navigate = useNavigate();
+    const { canCreate, canEdit, canDelete, } = usePermissions("Company Master");
 
     useEffect(() => { loadCompanies(); }, []);
 
@@ -54,12 +56,13 @@ const CompanyList = () => {
                         />
                     </div>
 
-                    <button
+                    {canCreate && (<button
                         onClick={() => navigate('/company/add')}
                         className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
                     >
                         <Plus size={18} strokeWidth={3} /> Add New
-                    </button>
+                    </button>)}
+
                 </div>
             </div>
 
@@ -98,8 +101,8 @@ const CompanyList = () => {
                                     </td>
                                     <td className="px-6 py-4 text-right">
                                         <div className="flex justify-end gap-2">
-                                            <button onClick={() => navigate(`/company/edit/${item.idCompany}`)} className="p-2 bg-gold/10 text-gold rounded-lg hover:bg-gold hover:text-white transition-all"><Edit2 size={14} /></button>
-                                            <button onClick={() => handleDelete(item.idCompany)} className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"><Trash2 size={14} /></button>
+                                            {canEdit && (<button onClick={() => navigate(`/company/edit/${item.idCompany}`)} className="p-2 bg-gold/10 text-gold rounded-lg hover:bg-gold hover:text-white transition-all"><Edit2 size={14} /></button>)}
+                                            {canDelete && (<button onClick={() => handleDelete(item.idCompany)} className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"><Trash2 size={14} /></button>)}
                                         </div>
                                     </td>
                                 </tr>

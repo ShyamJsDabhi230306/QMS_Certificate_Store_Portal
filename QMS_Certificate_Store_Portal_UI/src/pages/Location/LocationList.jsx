@@ -14,7 +14,7 @@ const LocationList = () => {
     const { searchTerm, setSearchTerm, filteredItems } = useSearch(locations);
     const { currentItems, paginationProps } = usePagination(filteredItems, 10);
     const navigate = useNavigate();
-
+    const { canCreate, canEdit, canDelete, } = usePermissions("Location Master");
     useEffect(() => { loadLocations(); }, []);
 
     const loadLocations = async () => {
@@ -53,13 +53,12 @@ const LocationList = () => {
                             placeholder="Search locations..."
                         />
                     </div>
-
-                    <button
+                    {canCreate && (<button
                         onClick={() => navigate('/location/add')}
                         className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
                     >
                         <Plus size={18} strokeWidth={3} /> Add New
-                    </button>
+                    </button>)}
                 </div>
             </div>
 
@@ -92,8 +91,8 @@ const LocationList = () => {
                                 </td>
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
-                                        <button onClick={() => navigate(`/location/edit/${item.idLocation}`)} className="p-2 bg-gold/10 text-gold rounded-lg hover:bg-gold hover:text-white transition-all"><Edit2 size={14} /></button>
-                                        <button onClick={() => handleDelete(item.idLocation)} className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"><Trash2 size={14} /></button>
+                                        {canEdit && (<button onClick={() => navigate(`/location/edit/${item.idLocation}`)} className="p-2 bg-gold/10 text-gold rounded-lg hover:bg-gold hover:text-white transition-all"><Edit2 size={14} /></button>)}
+                                        {canDelete && (<button onClick={() => handleDelete(item.idLocation)} className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"><Trash2 size={14} /></button>)}
                                     </div>
                                 </td>
                             </tr>
