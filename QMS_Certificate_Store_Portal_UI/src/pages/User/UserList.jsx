@@ -7,6 +7,7 @@ import { usePagination } from '../../components/usePagination';
 import Pagination from '../../components/Pagination';
 import SearchInput from '../../components/SearchInput'; // 👈 NEW
 import { useSearch } from '../../hooks/useSearch';     // 👈 NEW
+import { usePermissions } from '@/hooks/usePermissions';
 
 const UserList = () => {
     const [users, setUsers] = useState([]);
@@ -15,6 +16,7 @@ const UserList = () => {
     // Inside UserList component
     const { searchTerm, setSearchTerm, filteredItems } = useSearch(users);
     const { currentItems, paginationProps } = usePagination(filteredItems, 10);
+    const { canCreate, canEdit, canDelete, } = usePermissions("User Master");
     // It will automatically search every column (Name, Email, Phone, Username, etc.)
 
 

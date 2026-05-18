@@ -1,11 +1,12 @@
 import { userRoutes } from '../pages/User/userRoutes.jsx';
 import { companyRoutes } from '../pages/Company/companyRoutes';
-import { LayoutDashboard } from "lucide-react";
+import { CloudCog, LayoutDashboard } from "lucide-react";
 import { locationRoutes } from '@/pages/Location/locationRoutes.jsx';
 import { departmentRoutes } from '@/pages/Department/departmentRoutes.jsx';
 import { designationRoutes } from '@/pages/Designation/designationRoutes.jsx';
 import pageRoutes from '@/pages/PageMaster/pageRoutes.jsx';
 import userRightRoutes from '@/pages/UserRight/userRightRoutes.jsx';
+import certificateTypeRoutes from '@/pages/CertificateType/certificateTypeRoutes.jsx';
 
 
 // 1. Get the rights from localStorage
@@ -13,6 +14,7 @@ const getRights = () => {
     try {
         const rights = localStorage.getItem('userRights');
         return rights ? JSON.parse(rights) : [];
+
     } catch (e) {
         return [];
     }
@@ -32,11 +34,13 @@ export const navConfig = [
     ...designationRoutes,
     ...userRoutes,
     ...pageRoutes,
-    ...userRightRoutes// Add user routes here
+    ...userRightRoutes,
+    ...certificateTypeRoutes,
     // ... rest of navConfig ...
 ].filter(route => {
     // 1. Dashboard is always visible
     if (route.title === "Dashboard") return true;
+    if (route.title === "CertificateType") return true;
 
     const userRights = getRights();
 
@@ -48,7 +52,7 @@ export const navConfig = [
         // Check if they are exactly equal OR if the UI name contains the DB name
         return dbName === uiName || uiName.includes(dbName) || dbName.includes(uiName);
     });
-
+    console.log(permission);
     if (!permission) return false;
 
     // 3. Check for View permission (Handles both 'canView' and 'CanView')

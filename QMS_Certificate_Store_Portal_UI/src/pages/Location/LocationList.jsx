@@ -7,6 +7,7 @@ import { usePagination } from '../../components/usePagination';
 import SearchInput from '../../components/SearchInput';
 import { useSearch } from '../../hooks/useSearch';
 import Pagination from '../../components/Pagination';
+import { usePermissions } from '@/hooks/usePermissions';
 
 const LocationList = () => {
     const [locations, setLocations] = useState([]);

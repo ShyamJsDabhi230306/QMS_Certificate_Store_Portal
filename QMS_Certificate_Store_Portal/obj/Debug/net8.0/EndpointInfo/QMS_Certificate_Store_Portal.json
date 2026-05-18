@@ -5,6 +5,95 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/master/CertificateType/get-all": {
+      "get": {
+        "tags": [
+          "CertificateType"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/CertificateType/get-by-id/{id}": {
+      "get": {
+        "tags": [
+          "CertificateType"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/CertificateType/save": {
+      "post": {
+        "tags": [
+          "CertificateType"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateType"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateType"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateType"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/CertificateType/delete/{id}": {
+      "delete": {
+        "tags": [
+          "CertificateType"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/master/Company/get-all": {
       "get": {
         "tags": [
@@ -698,6 +787,68 @@
   },
   "components": {
     "schemas": {
+      "CertificateType": {
+        "type": "object",
+        "properties": {
+          "userAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "e_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "e_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "u_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "u_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDelete": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "d_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "d_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "idCertificateType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "certificateTypeName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "Company": {
         "type": "object",
         "properties": {

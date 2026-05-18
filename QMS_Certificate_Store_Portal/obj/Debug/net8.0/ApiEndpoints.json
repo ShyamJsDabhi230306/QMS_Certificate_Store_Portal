@@ -1,5 +1,63 @@
 [
   {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateTypeController",
+    "Method": "Delete",
+    "RelativePath": "api/master/CertificateType/delete/{id}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateTypeController",
+    "Method": "GetAll",
+    "RelativePath": "api/master/CertificateType/get-all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateTypeController",
+    "Method": "GetById",
+    "RelativePath": "api/master/CertificateType/get-by-id/{id}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "id",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateTypeController",
+    "Method": "Save",
+    "RelativePath": "api/master/CertificateType/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.CertificateType",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CompanyController",
     "Method": "Delete",
     "RelativePath": "api/master/Company/delete/{id}",
