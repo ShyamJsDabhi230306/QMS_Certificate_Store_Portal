@@ -71,3 +71,4 @@ C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_P
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.pdb
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\QMS_Certificate_Store_Portal.genruntimeconfig.cache
 C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\obj\Debug\net8.0\ref\QMS_Certificate_Store_Portal.dll
+C:\Users\Admin\source\repos\QMS_Certificate_Store_Portal\QMS_Certificate_Store_Portal\bin\Debug\net8.0\QMS_Certificate_Store_Portal.staticwebassets.runtime.json

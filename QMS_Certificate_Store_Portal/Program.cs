@@ -93,6 +93,8 @@ app.UseHttpsRedirection();
 
 app.UseCors("AllowAll");
 
+app.UseStaticFiles(); // Serves files from wwwroot (e.g. /uploads/certificates/file.pdf)
+
 app.UseAuthentication();
 app.UseAuthorization();
 

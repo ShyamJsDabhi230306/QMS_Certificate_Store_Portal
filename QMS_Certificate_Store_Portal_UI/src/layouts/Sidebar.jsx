@@ -1,17 +1,54 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { navConfig } from '../routes/navConfig';
-
+import { ChevronDown, ChevronRight, Folder, Settings, ArrowLeftRight } from 'lucide-react';
 import { cn } from "@/lib/utils";
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const location = useLocation();
     const navigate = useNavigate();
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
-
-
-
     const [openProfile, setOpenProfile] = useState(false);
+
+    // 1. Sidebar dropdown toggle state
+    const [expandedCategories, setExpandedCategories] = useState({
+        Masters: true,
+        Transactions: true,
+        Configurations: true
+    });
+
+    // 2. Maps pages to categories
+    const getCategory = (title) => {
+        switch (title) {
+            case "Company Master":
+            case "Location Master":
+            case "Department Master":
+            case "Designation Master":
+            case "Certificate Type":
+                return "Masters";
+            case "User Management":
+            case "Page Master":
+            case "User Rights":
+                return "Configurations";
+            case "Transaction Page":
+            case "Transactions":
+            case "Certificate":
+                return "Transactions";
+            default:
+                return null; // Renders flat (e.g. Dashboard)
+        }
+    };
+
+    // 3. Smart Auto-Expand active page's group
+    useEffect(() => {
+        const activeItem = navConfig.find(item => item.path === location.pathname);
+        if (activeItem) {
+            const cat = getCategory(activeItem.title);
+            if (cat) {
+                setExpandedCategories(prev => ({ ...prev, [cat]: true }));
+            }
+        }
+    }, [location.pathname]);
 
     useEffect(() => {
         document.documentElement.classList.toggle('dark', theme === 'dark');
@@ -20,7 +57,6 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
 
     const userStr = localStorage.getItem('user');
     const user = userStr ? JSON.parse(userStr) : null;
-    const loginTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
     return (
         <>
@@ -39,7 +75,9 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     <div className="mb-4 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground px-4">
                         Main Navigation
                     </div>
-                    {navConfig.filter(i => i.showInSidebar).map((item) => {
+
+                    {/* Flat Items (Dashboard) */}
+                    {navConfig.filter(i => i.showInSidebar && getCategory(i.title) === null).map((item) => {
                         const isActive = location.pathname === item.path;
                         return (
                             <Link
@@ -51,200 +89,118 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                                         : "text-sidebar-foreground hover:bg-muted hover:text-foreground hover:translate-x-1"
                                 )}
                             >
-                                <span className={cn(
-                                    "text-lg transition-transform duration-300 group-hover:scale-110",
-                                    isActive ? "text-white" : "text-muted-foreground group-hover:text-gold"
-                                )}>
+                                <span className={cn("text-lg transition-transform", isActive ? "text-white" : "text-muted-foreground group-hover:text-gold")}>
                                     {item.icon}
                                 </span>
                                 <span className="tracking-tight">{item.title}</span>
-
-                                {isActive && (
-                                    <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-white rounded-full" />
-                                )}
+                                {isActive && <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-white rounded-full" />}
                             </Link>
+                        );
+                    })}
+
+                    {/* Categorized Dropdowns */}
+                    {[
+                        { id: 'Masters', title: 'Masters', icon: <Folder size={16} strokeWidth={2.5} className="text-gold" /> },
+                        { id: 'Transactions', title: 'Transactions', icon: <ArrowLeftRight size={16} strokeWidth={2.5} className="text-gold" /> },
+                        { id: 'Configurations', title: 'Configurations', icon: <Settings size={16} strokeWidth={2.5} className="text-gold" /> }
+                    ].map((cat) => {
+                        const categoryItems = navConfig.filter(i => i.showInSidebar && getCategory(i.title) === cat.id);
+                        if (categoryItems.length === 0) return null;
+
+                        const isExpanded = expandedCategories[cat.id];
+                        const hasActiveChild = categoryItems.some(i => location.pathname === i.path);
+
+                        return (
+                            <div key={cat.id} className="space-y-1">
+                                {/* Header Toggle Button */}
+                                <button
+                                    onClick={() => setExpandedCategories(prev => ({ ...prev, [cat.id]: !prev[cat.id] }))}
+                                    className={cn(
+                                        "w-full flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all duration-300 hover:bg-muted/50 group text-sidebar-foreground",
+                                        hasActiveChild && "text-gold font-extrabold"
+                                    )}
+                                >
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-lg transition-transform group-hover:scale-110">{cat.icon}</span>
+                                        <span className="tracking-tight">{cat.title}</span>
+                                    </div>
+                                    <span className="text-muted-foreground group-hover:text-gold transition-colors">
+                                        {isExpanded ? <ChevronDown size={16} strokeWidth={3} /> : <ChevronRight size={16} strokeWidth={3} />}
+                                    </span>
+                                </button>
+
+                                {/* Child Links */}
+                                {isExpanded && (
+                                    <div className="ml-5 pl-4 border-l-2 border-border/30 space-y-1 animate-in fade-in slide-in-from-top-1 duration-300">
+                                        {categoryItems.map((item) => {
+                                            const isActive = location.pathname === item.path;
+                                            return (
+                                                <Link
+                                                    key={item.path} to={item.path}
+                                                    className={cn(
+                                                        "flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all duration-300 group relative overflow-hidden",
+                                                        isActive
+                                                            ? "bg-gold text-white shadow-lg shadow-gold/10 translate-x-1"
+                                                            : "text-sidebar-foreground/80 hover:bg-muted hover:text-foreground hover:translate-x-1"
+                                                    )}
+                                                >
+                                                    <span className={cn("text-base transition-transform group-hover:scale-110", isActive ? "text-white" : "text-muted-foreground group-hover:text-gold")}>
+                                                        {item.icon}
+                                                    </span>
+                                                    <span className="tracking-tight">{item.title}</span>
+                                                    {isActive && <div className="absolute left-0 top-1/4 bottom-1/4 w-1 bg-white rounded-full" />}
+                                                </Link>
+                                            );
+                                        })}
+                                    </div>
+                                )}
+                            </div>
                         );
                     })}
                 </nav>
 
-
-
                 <div className="relative p-5 border-t border-[#1F2937] flex justify-start">
-
-                    {/* PROFILE BUTTON */}
+                    {/* Profile Button */}
                     <button
                         onClick={() => setOpenProfile(!openProfile)}
-                        className="
-        w-14 h-14
-        rounded-2xl
-        border-2 border-[#D4A95A]
-        bg-gradient-to-br from-[#7C3AED] to-[#5B21B6]
-        flex items-center justify-center
-        text-white
-        font-black
-        text-lg
-        shadow-[0_0_25px_rgba(124,58,237,0.45)]
-        hover:scale-105
-        transition-all duration-300
-        "
+                        className="w-14 h-14 rounded-2xl border-2 border-[#D4A95A] bg-gradient-to-br from-[#7C3AED] to-[#5B21B6] flex items-center justify-center text-white font-black text-lg shadow-lg hover:scale-105 transition-all duration-300"
                     >
-                        {user?.userFullName
-                            ? user.userFullName
-                                .split(" ")
-                                .map((n) => n[0])
-                                .join("")
-                                .slice(0, 2)
-                            : "Admin"}
+                        {user?.userFullName ? user.userFullName.split(" ").map((n) => n[0]).join("").slice(0, 2) : "AD"}
                     </button>
 
-                    {/* POPUP */}
+                    {/* Profile Modal Popup */}
                     {openProfile && (
-                        <div
-                            className="
-            fixed
-            bottom-24
-            left-24
-            w-[340px]
-            rounded-[30px]
-            overflow-hidden
-            bg-[#081120]
-            border border-[#1E293B]
-            shadow-[0_25px_90px_rgba(0,0,0,0.75)]
-            z-[99999]
-            "
-                        >
-
-                            {/* HEADER */}
+                        <div className="fixed bottom-24 left-24 w-[340px] rounded-[30px] overflow-hidden bg-[#081120] border border-[#1E293B] shadow-2xl z-[99999]">
                             <div className="px-7 py-7 bg-gradient-to-br from-[#101B32] to-[#0B1220] border-b border-[#1F2937]">
-
                                 <div className="flex items-center gap-5">
-
-                                    {/* AVATAR */}
-                                    <div
-                                        className="
-            w-20 h-20
-            rounded-full
-            border-[3px] border-[#D4A95A]
-            bg-gradient-to-br from-[#7C3AED] to-[#5B21B6]
-            flex items-center justify-center
-            text-white text-2xl font-black
-            shadow-[0_0_30px_rgba(124,58,237,0.45)]
-            "
-                                    >
-                                        {user?.userFullName
-                                            ? user.userFullName
-                                                .split(" ")
-                                                .map((n) => n[0])
-                                                .join("")
-                                                .slice(0, 2)
-                                            : "RD"}
+                                    <div className="w-20 h-20 rounded-full border-[3px] border-[#D4A95A] bg-gradient-to-br from-[#7C3AED] to-[#5B21B6] flex items-center justify-center text-white text-2xl font-black">
+                                        {user?.userFullName ? user.userFullName.split(" ").map((n) => n[0]).join("").slice(0, 2) : "RD"}
                                     </div>
-
-                                    {/* INFO */}
                                     <div className="flex flex-col">
-
-                                        {/* NAME */}
-                                        <h2 className="text-white text-xl font-black leading-tight tracking-tight">
-                                            {user?.userFullName || "Ram Dabhi"}
-                                        </h2>
-
-                                        {/* DESIGNATION */}
-                                        <p className="text-[#D4A95A] text-xs font-bold uppercase tracking-[0.2em] mt-2">
-                                            {user?.designationName || "Software Engineer"}
-                                        </p>
-
-                                        {/* DEPARTMENT */}
-                                        <div
-                                            className="
-                mt-3
-                px-4 py-1.5
-                rounded-full
-                bg-[#374151]
-                text-[#F3F4F6]
-                text-[10px]
-                font-black
-                tracking-[0.25em]
-                uppercase
-                inline-flex
-                w-fit
-                "
-                                        >
-                                            {user?.departmentName || "IT Department"}
+                                        <h2 className="text-white text-xl font-black leading-tight tracking-tight">{user?.userFullName || "Admin"}</h2>
+                                        <p className="text-[#D4A95A] text-xs font-bold uppercase tracking-[0.2em] mt-2">{user?.designationName || "Administrator"}</p>
+                                        <div className="mt-3 px-4 py-1.5 rounded-full bg-[#374151] text-[#F3F4F6] text-[10px] font-black tracking-[0.25em] uppercase inline-flex w-fit">
+                                            {user?.departmentName || "Management"}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
-
-
-                            {/* DIVIDER */}
-                            <div className="border-t border-[#1F2937]" />
-
-                            {/* ACTIONS */}
                             <div className="p-7 flex flex-col gap-4">
-
-                                {/* THEME */}
-                                <button
-                                    onClick={() =>
-                                        setTheme(theme === "light" ? "dark" : "light")
-                                    }
-                                    className="
-                    flex items-center gap-4
-                    px-4 py-4
-                    rounded-2xl
-                    bg-[#111827]
-                    border border-[#243041]
-                    hover:border-[#D4A95A]
-                    transition-all duration-300
-                    "
-                                >
-                                    <div className="w-11 h-11 rounded-xl bg-[#2A1F0A] flex items-center justify-center text-[#D4A95A]">
-                                        ☀
-                                    </div>
-
-                                    <span className="text-white font-bold text-sm">
-                                        {theme === "light"
-                                            ? "Dark Mode"
-                                            : "Light Mode"}
-                                    </span>
+                                <button onClick={() => setTheme(theme === "light" ? "dark" : "light")} className="flex items-center gap-4 px-4 py-4 rounded-2xl bg-[#111827] border border-[#243041] hover:border-[#D4A95A] transition-all">
+                                    <div className="w-11 h-11 rounded-xl bg-[#2A1F0A] flex items-center justify-center text-[#D4A95A]">☀</div>
+                                    <span className="text-white font-bold text-sm">{theme === "light" ? "Dark Mode" : "Light Mode"}</span>
                                 </button>
-
-                                {/* LOGOUT */}
-                                <button
-                                    onClick={() => {
-                                        localStorage.clear();
-                                        navigate("/login");
-                                    }}
-                                    className="
-                    flex items-center gap-4
-                    px-4 py-4
-                    rounded-2xl
-                    bg-[#111827]
-                    border border-[#243041]
-                    hover:border-red-500
-                    hover:bg-red-500/10
-                    transition-all duration-300
-                    "
-                                >
-                                    <div className="w-11 h-11 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500">
-                                        ↪
-                                    </div>
-
-                                    <span className="text-red-500 font-bold text-sm">
-                                        Sign Out
-                                    </span>
+                                <button onClick={() => { localStorage.clear(); navigate("/login"); }} className="flex items-center gap-4 px-4 py-4 rounded-2xl bg-[#111827] border border-[#243041] hover:border-red-500 hover:bg-red-500/10 transition-all">
+                                    <div className="w-11 h-11 rounded-xl bg-red-500/10 flex items-center justify-center text-red-500">↪</div>
+                                    <span className="text-red-500 font-bold text-sm">Sign Out</span>
                                 </button>
                             </div>
                         </div>
                     )}
                 </div>
-
-
             </aside>
-
         </>
     );
 };
 
 export default Sidebar;
-

@@ -5,6 +5,148 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/transaction/Certificate/get-all": {
+      "get": {
+        "tags": [
+          "Certificate"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/get-by-id/{id}": {
+      "get": {
+        "tags": [
+          "Certificate"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/save": {
+      "post": {
+        "tags": [
+          "Certificate"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Certificate"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Certificate"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Certificate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/delete/{id}": {
+      "delete": {
+        "tags": [
+          "Certificate"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/upload": {
+      "post": {
+        "tags": [
+          "Certificate"
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/download": {
+      "get": {
+        "tags": [
+          "Certificate"
+        ],
+        "parameters": [
+          {
+            "name": "path",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/master/CertificateType/get-all": {
       "get": {
         "tags": [
@@ -787,6 +929,175 @@
   },
   "components": {
     "schemas": {
+      "Certificate": {
+        "required": [
+          "certificateName",
+          "certificateNumber",
+          "expiryDate",
+          "idCertificateType",
+          "issueDate"
+        ],
+        "type": "object",
+        "properties": {
+          "userAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "e_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "e_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "u_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "u_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDelete": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "d_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "d_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "idCertificate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "certificateName": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "certificateNumber": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "idCertificateType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "certificateTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "idOwner": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "ownerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "idDepartment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validForYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "renewalCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "tags": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "filePath": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "reminders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateReminder"
+            },
+            "nullable": true
+          },
+          "remindersJson": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateReminder": {
+        "type": "object",
+        "properties": {
+          "idReminder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idCertificate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "daysBeforeExpiry": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "channel": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "CertificateType": {
         "type": "object",
         "properties": {

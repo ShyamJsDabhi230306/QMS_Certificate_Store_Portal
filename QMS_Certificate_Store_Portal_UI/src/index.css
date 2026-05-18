@@ -23,7 +23,8 @@
 
 :root {
     --background: #fafafa;
-    --foreground: #171717;
+    /* --foreground: #171717; */
+    --foreground: #1e2029;
     --card: #ffffff;
     --sidebar: #ffffff;
     --sidebar-foreground: #525252;

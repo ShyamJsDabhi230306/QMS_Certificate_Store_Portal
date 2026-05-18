@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("QMS_Certificate_Store_Portal")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fbf436ba614907442ca07b3e246871b66fed0f82")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a9de938055e840ba8c94a701054b4ca6d3e3dee6")]
 [assembly: System.Reflection.AssemblyProductAttribute("QMS_Certificate_Store_Portal")]
 [assembly: System.Reflection.AssemblyTitleAttribute("QMS_Certificate_Store_Portal")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

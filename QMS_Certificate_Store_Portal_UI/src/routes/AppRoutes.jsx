@@ -1,8 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { navConfig } from './navConfig';
+import { allRoutes } from './navConfig';
 import Login from '../pages/Login';
-import DashboardLayout from '../layouts/DashboardLayout'; // 1. Import the Layout
+import DashboardLayout from '../layouts/DashboardLayout';
 
 const AppRoutes = () => {
     return (
@@ -11,13 +11,13 @@ const AppRoutes = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/" element={<Navigate to="/login" />} />
 
-            {/* Protected Routes - WRAPPED IN LAYOUT */}
-            {navConfig.map((route, index) => (
+            {/* Protected Routes - uses allRoutes so every path is always reachable */}
+            {allRoutes.map((route, index) => (
                 <Route
                     key={index}
                     path={route.path}
                     element={
-                        <DashboardLayout>  {/* 2. Wrap here */}
+                        <DashboardLayout>
                             {route.element}
                         </DashboardLayout>
                     }
