@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { navConfig } from '../routes/navConfig';
 import { ChevronDown, ChevronRight, Folder, Settings, ArrowLeftRight } from 'lucide-react';
@@ -9,6 +9,17 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     const navigate = useNavigate();
     const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
     const [openProfile, setOpenProfile] = useState(false);
+    const profileRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (profileRef.current && !profileRef.current.contains(event.target)) {
+                setOpenProfile(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
     // 1. Sidebar dropdown toggle state
     const [expandedCategories, setExpandedCategories] = useState({
@@ -159,7 +170,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                     })}
                 </nav>
 
-                <div className="relative p-5 border-t border-[#1F2937] flex justify-start">
+                <div ref={profileRef} className="relative p-5 border-t border-[#1F2937] flex justify-start">
                     {/* Profile Button */}
                     <button
                         onClick={() => setOpenProfile(!openProfile)}
