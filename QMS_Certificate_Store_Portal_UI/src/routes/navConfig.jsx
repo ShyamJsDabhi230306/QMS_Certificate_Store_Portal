@@ -9,6 +9,8 @@ import userRightRoutes from '@/pages/UserRight/userRightRoutes.jsx';
 import certificateTypeRoutes from '@/pages/CertificateType/certificateTypeRoutes.jsx';
 import CertificateRoutes from '@/pages/Certificate/CertificateRoutes.jsx';
 
+import Dashboard from '../pages/Dashboard/Dashboard';
+
 // 1. Get the rights from localStorage
 const getRights = () => {
     try {
@@ -24,7 +26,7 @@ export const allRoutes = [
     {
         title: "Dashboard",
         path: "/dashboard",
-        element: <div style={{ padding: '20px' }}><h1>Dashboard</h1><p>Welcome to QMS Portal</p></div>,
+        element: <Dashboard />,
         showInSidebar: true,
         icon: <LayoutDashboard size={18} strokeWidth={2.5} />
     },

@@ -471,6 +471,16 @@
   },
   {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "GetDashboardStats",
+    "RelativePath": "api/transaction/Certificate/dashboard-stats",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
     "Method": "Delete",
     "RelativePath": "api/transaction/Certificate/delete/{id}",
     "HttpMethod": "DELETE",

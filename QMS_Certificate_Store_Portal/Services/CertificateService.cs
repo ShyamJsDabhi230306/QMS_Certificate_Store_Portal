@@ -34,5 +34,14 @@ namespace QMS_Certificate_Store_Portal.Services
         {
             return await _repo.DeleteAsync(id, user);
         }
+
+
+
+        // Dashboard Stats
+        public async Task<DashboardStats> GetDashboardStatsAsync()
+        {
+            return await _repo.GetDashboardStatsAsync();
+        }
+
     }
 }

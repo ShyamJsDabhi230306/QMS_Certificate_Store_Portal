@@ -145,5 +145,22 @@ namespace QMS_Certificate_Store_Portal.Controllers
             }
         }
 
+        // Dashboard Stats Endpoint
+        [HttpGet("dashboard-stats")]
+        public async Task<IActionResult> GetDashboardStats()
+        {
+            try
+            {
+                var data = await _service.GetDashboardStatsAsync();
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+
+
     }
 }

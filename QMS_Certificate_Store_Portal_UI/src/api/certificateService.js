@@ -19,4 +19,7 @@ export const certificateService = {
             'Content-Type': 'multipart/form-data'
         }
     }).then(res => res.data),
+
+    // 📊 Get Dashboard Statistics
+    getDashboardStats: () => axiosInstance.get('/transaction/Certificate/dashboard-stats').then(res => res.data),
 };

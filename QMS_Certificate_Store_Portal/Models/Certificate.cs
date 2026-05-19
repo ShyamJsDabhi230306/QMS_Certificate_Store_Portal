@@ -65,3 +65,63 @@ namespace QMS_Certificate_Store_Portal.Models
         public string Channel { get; set; } = string.Empty;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// --- DASHBOARD MODELS ---
+public class DashboardStats
+{
+    public DashboardSummary Summary { get; set; } = new DashboardSummary();
+    public List<MonthlyExpiry> ExpiriesNext12Months { get; set; } = new List<MonthlyExpiry>();
+    public List<CertificateByType> CertificatesByType { get; set; } = new List<CertificateByType>();
+    public List<RecentCertificate> RecentlyAdded { get; set; } = new List<RecentCertificate>();
+}
+
+public class DashboardSummary
+{
+    public int TotalCertificates { get; set; }
+    public int ValidCertificates { get; set; }
+    public int ExpiringIn30Days { get; set; }
+    public int ExpiredCertificates { get; set; }
+}
+
+public class MonthlyExpiry
+{
+    public string MonthName { get; set; } = string.Empty;
+    public int MonthNumber { get; set; }
+    public int YearNumber { get; set; }
+    public int Count { get; set; }
+}
+
+public class CertificateByType
+{
+    public string TypeName { get; set; } = string.Empty;
+    public int Count { get; set; }
+}
+
+public class RecentCertificate
+{
+    public int IDCertificate { get; set; }
+    public string CertificateName { get; set; } = string.Empty;
+    public string CertificateNumber { get; set; } = string.Empty;
+    public string CertificateTypeName { get; set; } = string.Empty;
+    public string OwnerName { get; set; } = string.Empty;
+    public DateTime ExpiryDate { get; set; }
+    public string Status { get; set; } = string.Empty;
+}

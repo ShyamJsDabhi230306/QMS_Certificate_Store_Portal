@@ -147,6 +147,18 @@
         }
       }
     },
+    "/api/transaction/Certificate/dashboard-stats": {
+      "get": {
+        "tags": [
+          "Certificate"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/master/CertificateType/get-all": {
       "get": {
         "tags": [

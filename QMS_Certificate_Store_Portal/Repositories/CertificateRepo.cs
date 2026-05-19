@@ -82,5 +82,29 @@ namespace QMS_Certificate_Store_Portal.Repositories
 
             return await _dapper.QueryFirstOrDefaultAsync<SaveResult>("usp_Transaction_Certificate_Delete", parameters);
         }
+
+
+
+
+
+
+        // Dashboard Stats
+        public async Task<DashboardStats> GetDashboardStatsAsync()
+        {
+            var stats = new DashboardStats();
+
+            var (reader, conn) = await _dapper.QueryMultipleAsync("usp_Dashboard_GetStats", null);
+            using (conn)
+            using (reader)
+            {
+                stats.Summary = await reader.ReadFirstOrDefaultAsync<DashboardSummary>() ?? new DashboardSummary();
+                stats.ExpiriesNext12Months = (await reader.ReadAsync<MonthlyExpiry>()).ToList();
+                stats.CertificatesByType = (await reader.ReadAsync<CertificateByType>()).ToList();
+                stats.RecentlyAdded = (await reader.ReadAsync<RecentCertificate>()).ToList();
+            }
+
+            return stats;
+        }
+
     }
 }
