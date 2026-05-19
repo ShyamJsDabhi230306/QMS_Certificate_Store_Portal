@@ -39,60 +39,59 @@ const UserList = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Delete this user permanently?")) {
+        if (window.confirm("Are you sure you want to delete this user?")) {
             try {
                 const res = await userApi.delete(id);
-                if (res.result === 1) {
+                if (res.success || res.result == 1) { // 🟢 Check both success or result
                     toast.success(res.message);
                     loadUsers();
                 } else {
                     toast.error(res.message);
                 }
             } catch (error) {
-                toast.error("Error deleting user");
+                toast.error("Failed to delete user");
             }
         }
     };
 
     return (
         <div className="p-6 space-y-6 animate-in fade-in duration-500">
-            {/* Header */}
-            {/* Header */}
+            {/* ── Header Section ───────────────────────────────────── */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
-                    <Users className="text-gold" size={32} /> User Master
+                    <Users className="text-gold" size={32} /> User Registry
                 </h1>
 
-                {/* 🟢 Search and Add Button grouped together with a small gap */}
+                {/* 🟢 Search Input and Add Button together */}
                 <div className="flex items-center gap-4 w-full md:w-auto">
                     <div className="flex-1 md:w-80">
                         <SearchInput
                             value={searchTerm}
                             onChange={setSearchTerm}
-                            placeholder="Search anything..."
+                            placeholder="Search users..."
                         />
                     </div>
-                    {canCreate && (<button
+                    <button
                         onClick={() => navigate('/users/add')}
-                        className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
+                        className="px-6 py-3 bg-gold hover:bg-gold-hover text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
                     >
-                        <UserPlus size={18} strokeWidth={3} /> Add New
-                    </button>)}
+                        <UserPlus size={18} strokeWidth={3} /> Register Entity
+                    </button>
                 </div>
             </div>
 
 
-            {/* Table Container */}
-            <div className="bg-card/40 backdrop-blur-md rounded-3xl border border-border shadow-2xl overflow-hidden text-[14px]">
+            {/* ── Data Grid ────────────────────────────────────────── */}
+            <div className="bg-card/40 backdrop-blur-md rounded-3xl border border-border shadow-2xl overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse min-w-[1000px]">
-                        <thead className="bg-muted/50 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground border-b border-border">
+                    <table className="w-full text-left border-collapse min-w-[1200px]">
+                        <thead className="bg-muted/50 border-b border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground">
                             <tr>
-                                <th className="px-6 py-5 w-20">#</th>
+                                <th className="px-6 py-5 w-16">ID</th>
                                 <th className="px-6 py-5">Full Name</th>
                                 <th className="px-6 py-5">Email</th>
                                 <th className="px-6 py-5">Phone</th>
-                                <th className="px-6 py-5">User Name</th>
+                                <th className="px-6 py-5">Username</th>
                                 <th className="px-6 py-5">Password</th>
                                 <th className="px-6 py-5">Department</th>
                                 <th className="px-6 py-5">Designation</th>
@@ -100,91 +99,117 @@ const UserList = () => {
                                 <th className="px-6 py-5 text-right">Actions</th>
                             </tr>
                         </thead>
+
                         <tbody className="divide-y divide-border">
                             {loading ? (
                                 <tr>
-                                    <td colSpan="7" className="py-20 text-center">
-                                        <RefreshCw className="animate-spin text-gold mx-auto" size={32} />
+                                    <td colSpan="10" className="py-24 text-center">
+                                        <RefreshCw className="animate-spin text-gold mx-auto" size={28} />
                                     </td>
                                 </tr>
-                            ) : users.length === 0 ? (
+                            ) : currentItems.length === 0 ? (
                                 <tr>
-                                    <td colSpan="7" className="py-20 text-center text-muted-foreground font-black text-xs uppercase tracking-widest">
-                                        No Users Found
+                                    <td colSpan="10" className="py-24 text-center">
+                                        <Users size={36} className="mx-auto text-gold/70 mb-3" />
+                                        <p className="text-xs uppercase tracking-widest font-black text-muted-foreground">
+                                            No Users Found
+                                        </p>
                                     </td>
                                 </tr>
-                            ) : currentItems.map((item, index) => (
-                                <tr key={item.idUser} className="group hover:bg-gold/[0.03] transition-colors">
-                                    <td className="px-6 py-4 font-black text-muted-foreground">{index + 1}</td>
-                                    <td className="px-6 py-4 font-black text-foreground uppercase tracking-tight">
-                                        {item.userFullName}
-                                    </td>
-                                    <td className="px-6 py-4 font-black text-gold tracking-widest text-xs">
-                                        {item.email}
-                                    </td>
-                                    <td className="px-6 py-4 font-black text-gold tracking-widest text-xs">
-                                        {item.phone}
-                                    </td>
-                                    <td className="px-6 py-4 font-black text-gold tracking-widest text-xs">
-                                        {item.userName}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2 group">
-                                            <span className="font-mono text-[11px] text-muted-foreground min-w-[80px]">
-                                                {visiblePasswords[item.idUser] ? (item.password || 'N/A') : '••••••••'}
+                            ) : (
+                                currentItems.map((item) => (
+                                    <tr key={item.idUser} className="group hover:bg-gold/[0.03] transition-colors duration-100">
+
+                                        {/* 1. ID */}
+                                        <td className="px-6 py-4 text-[13px] font-black text-muted-foreground">
+                                            #{item.idUser}
+                                        </td>
+
+                                        {/* 2. UserFullName */}
+                                        <td className="px-6 py-4">
+                                            <p className="font-black text-[14px] text-foreground">
+                                                {item.userFullName || '–'}
+                                            </p>
+                                        </td>
+
+                                        {/* 3. Email */}
+                                        <td className="px-6 py-4 text-[13px] font-bold text-foreground/80">
+                                            {item.email || '–'}
+                                        </td>
+
+                                        {/* 4. Phone */}
+                                        <td className="px-6 py-4 text-[12px] font-black tracking-widest text-muted-foreground">
+                                            {item.phone || '–'}
+                                        </td>
+
+                                        {/* 5. userName */}
+                                        <td className="px-6 py-4">
+                                            <span className="px-3 py-1.5 rounded-lg bg-muted/50 text-[12px] font-black tracking-widest text-foreground/80">
+                                                {item.userName || '–'}
                                             </span>
-                                            <button
-                                                onClick={() => togglePassword(item.idUser)}
-                                                className="p-1.5 rounded-md hover:bg-gold/10 text-muted-foreground/40 hover:text-gold transition-all"
-                                                title={visiblePasswords[item.idUser] ? "Hide Password" : "Show Password"}
-                                            >
-                                                {visiblePasswords[item.idUser] ? <EyeOff size={12} /> : <Eye size={12} />}
-                                            </button>
-                                        </div>
-                                    </td>
+                                        </td>
 
+                                        {/* 6. Password */}
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-[13px] font-black tracking-[0.2em] text-muted-foreground w-20">
+                                                    {visiblePasswords[item.idUser] ? item.password : '••••••••'}
+                                                </p>
+                                                <button
+                                                    onClick={() => togglePassword(item.idUser)}
+                                                    className="p-1.5 rounded-md hover:bg-muted/80 text-muted-foreground transition-colors focus:outline-none"
+                                                    title={visiblePasswords[item.idUser] ? "Hide Password" : "Show Password"}
+                                                >
+                                                    {visiblePasswords[item.idUser] ? <EyeOff size={14} /> : <Eye size={14} />}
+                                                </button>
+                                            </div>
+                                        </td>
 
+                                        {/* 7. Department */}
+                                        <td className="px-6 py-4 text-[12px] font-black text-foreground/80 uppercase tracking-wider">
+                                            {item.departmentName || '–'}
+                                        </td>
 
-                                    <td className="px-6 py-4">
-                                        <span className="px-3 py-1 bg-muted rounded-lg text-[11px] font-black uppercase text-muted-foreground">
-                                            {item.departmentName || 'General'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 font-bold text-muted-foreground italic">
-                                        {item.designationName || 'Staff'}
-                                    </td>
-                                    <td className="px-6 py-4 text-center">
-                                        <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${item.isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
-                                            {item.isActive ? 'Active' : 'Inactive'}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <div className="flex justify-end gap-2">
+                                        {/* 8. Designation */}
+                                        <td className="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-gold">
+                                            {item.designationName || '–'}
+                                        </td>
 
-                                            {canEdit && (
+                                        {/* 9. IsActive */}
+                                        <td className="px-6 py-4 text-center">
+                                            <span className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${item.isActive ? 'bg-emerald-500/10 text-emerald-500' : 'bg-red-500/10 text-red-500'}`}>
+                                                {item.isActive ? 'Active' : 'Inactive'}
+                                            </span>
+                                        </td>
+
+                                        {/* 10. Actions */}
+                                        <td className="px-6 py-4">
+                                            <div className="flex justify-end gap-2">
                                                 <button
                                                     onClick={() => navigate(`/users/edit/${item.idUser}`)}
-                                                    className="p-2 bg-gold/10 text-gold rounded-lg hover:bg-gold hover:text-white transition-all"
+                                                    className="w-8 h-8 flex items-center justify-center bg-gold/10 text-gold hover:bg-gold hover:text-white rounded-lg transition-all"
+                                                    title="Edit User"
                                                 >
-                                                    <Edit2 size={14} />
+                                                    <Edit2 size={14} strokeWidth={2.5} />
                                                 </button>
-                                            )}
-                                            {
-                                                canDelete && (
-                                                    <button
-                                                        onClick={() => handleDelete(item.idUser)}
-                                                        className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                )}
-                                        </div>
-                                    </td>
-                                </tr>
-                            ))}
+                                                <button
+                                                    onClick={() => handleDelete(item.idUser)}
+                                                    className="w-8 h-8 flex items-center justify-center bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all"
+                                                    title="Delete User"
+                                                >
+                                                    <Trash2 size={14} strokeWidth={2.5} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
+
                 </div>
+
+                {/* ── Pagination ───────────────────────────────────────── */}
                 <Pagination {...paginationProps} />
             </div>
         </div>
@@ -192,3 +217,4 @@ const UserList = () => {
 };
 
 export default UserList;
+
