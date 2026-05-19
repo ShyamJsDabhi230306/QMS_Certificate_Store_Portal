@@ -8,8 +8,9 @@ import pageRoutes from '@/pages/PageMaster/pageRoutes.jsx';
 import userRightRoutes from '@/pages/UserRight/userRightRoutes.jsx';
 import certificateTypeRoutes from '@/pages/CertificateType/certificateTypeRoutes.jsx';
 import CertificateRoutes from '@/pages/Certificate/CertificateRoutes.jsx';
-
+import { Settings } from 'lucide-react';
 import Dashboard from '../pages/Dashboard/Dashboard';
+import ThemeSettings from '@/pages/ThemeSettings/ThemeSettings.jsx';
 
 // 1. Get the rights from localStorage
 const getRights = () => {
@@ -30,6 +31,7 @@ export const allRoutes = [
         showInSidebar: true,
         icon: <LayoutDashboard size={18} strokeWidth={2.5} />
     },
+
     ...companyRoutes,
     ...locationRoutes,
     ...departmentRoutes,
@@ -49,6 +51,7 @@ export const navConfig = allRoutes.filter(route => {
     if (route.title === "Add Certificate") return true;
     if (route.title === "Edit Certificate") return true;
     if (route.title === "CertificateType") return true;
+    if (route.title === "Theme Settings") return true; // 🎨 Add this line!
 
     const userRights = getRights();
 

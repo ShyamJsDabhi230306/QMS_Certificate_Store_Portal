@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { RefreshCw, ArrowRight } from 'lucide-react';
 import { certificateService } from '../../api/certificateService';
+import toast from 'react-hot-toast';
 
 const Dashboard = () => {
     const [stats, setStats] = useState(null);
@@ -21,7 +22,7 @@ const Dashboard = () => {
                 setStats(res.data);
             }
         } catch (error) {
-            console.error("Failed to load dashboard stats", error);
+            toast.error("Failed to load dashboard stats", error);
         } finally {
             setLoading(false);
         }

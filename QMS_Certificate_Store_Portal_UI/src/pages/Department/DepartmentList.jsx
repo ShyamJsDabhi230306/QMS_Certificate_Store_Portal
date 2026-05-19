@@ -70,8 +70,8 @@ const DepartmentList = () => {
                     <thead className="bg-muted/50 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground border-b border-border">
                         <tr>
                             <th className="px-6 py-5 w-20">#</th>
-                            <th className="px-6 py-5">Location</th>
                             <th className="px-6 py-5">Department Name</th>
+                            <th className="px-6 py-5">Location</th>
                             {/* <th className="px-6 py-5">Remarks</th> */}
                             <th className="px-6 py-5 text-center">Status</th>
                             <th className="px-6 py-5 text-right">Actions</th>
@@ -85,8 +85,8 @@ const DepartmentList = () => {
                         ) : currentItems.map((item, index) => (
                             <tr key={item.idDepartment} className="group hover:bg-gold/[0.03] transition-colors">
                                 <td className="px-6 py-4 font-black text-muted-foreground">{index + 1}</td>
-                                <td className="px-6 py-4"><span className="px-3 py-1 bg-muted rounded-lg text-[11px] font-black uppercase text-muted-foreground">{item.locationName}</span></td>
                                 <td className="px-6 py-4 font-black text-foreground">{item.departmentName}</td>
+                                <td className="px-6 py-4 font-black text-foreground">{item.locationName}</td>
                                 {/* <td className="px-6 py-4 text-xs italic text-muted-foreground">{item.remarks || '-'}</td> */}
                                 <td className="px-6 py-4 text-center">
                                     <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${item.isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>

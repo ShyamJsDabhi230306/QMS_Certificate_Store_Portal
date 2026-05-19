@@ -69,8 +69,8 @@ const LocationList = () => {
                     <thead className="bg-muted/50 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground border-b border-border">
                         <tr>
                             <th className="px-6 py-5 w-20">#</th>
-                            <th className="px-6 py-5">Company Name</th>
                             <th className="px-6 py-5">Location Name</th>
+                            <th className="px-6 py-5">Company Name</th>
                             <th className="px-6 py-5 text-center">Status</th>
                             <th className="px-6 py-5 text-right">Actions</th>
                         </tr>
@@ -83,8 +83,8 @@ const LocationList = () => {
                         ) : currentItems.map((item, index) => (
                             <tr key={item.idLocation} className="group hover:bg-gold/[0.03] transition-colors">
                                 <td className="px-6 py-4 font-black text-muted-foreground">{index + 1}</td>
-                                <td className="px-6 py-4 font-black text-gold uppercase tracking-wider">{item.companyName}</td>
                                 <td className="px-6 py-4 font-black text-foreground">{item.locationName}</td>
+                                <td className="px-6 py-4 font-black text-gold uppercase tracking-wider">{item.companyName}</td>
                                 <td className="px-6 py-4 text-center">
                                     <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${item.isActive ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
                                         {item.isActive ? 'Active' : 'Inactive'}
