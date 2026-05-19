@@ -20,7 +20,7 @@ const CompanyForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
-        const res = await companyService.save();
+        const res = await companyService.save(formData);
         if (res.result === 1) { toast.success(res.message); navigate('/company'); }
         else toast.error(res.message);
         setSaving(false);

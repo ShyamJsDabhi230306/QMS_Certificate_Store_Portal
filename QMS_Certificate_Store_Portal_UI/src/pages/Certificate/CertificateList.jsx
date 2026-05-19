@@ -452,7 +452,7 @@ const CertificateList = () => {
                                                 <button
                                                     onClick={() => setHistoryCert(item)}
                                                     title="History"
-                                                    className="w-7 h-7 rounded-lg bg-[#D4A95A]/10 hover:bg-[#D4A95A]/30 text-[#D4A95A] flex items-center justify-center transition-all"
+                                                    className="w-7 h-7 rounded-lg bg-[#D4A95A]/10 hover:bg-blue-500/20 hover:text-blue-400 text-gray-400 flex items-center justify-center transition-all"
                                                 >
                                                     <Clock size={13} strokeWidth={2.5} />
                                                 </button>
@@ -462,7 +462,7 @@ const CertificateList = () => {
                                                     <button
                                                         onClick={() => navigate(`/certificate/edit/${item.idCertificate}`)}
                                                         title="Edit"
-                                                        className="w-7 h-7 rounded-lg bg-[#1a2332] hover:bg-blue-500/20 hover:text-blue-400 text-gray-400 flex items-center justify-center transition-all"
+                                                        className="w-7 h-7 rounded-lg bg-[#1a2332] hover:bg-[#D4A95A]/30 text-[#D4A95A] flex items-center justify-center transition-all"
                                                     >
                                                         <Edit2 size={13} strokeWidth={2.5} />
                                                     </button>
