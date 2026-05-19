@@ -1,7 +1,7 @@
 import React from 'react';
 import DesignationList from './DesignationList';
 import DesignationForm from './DesignationForm';
-import { Award } from "lucide-react";
+import { Award, IdCard } from "lucide-react";
 
 export const designationRoutes = [
     {
@@ -9,7 +9,7 @@ export const designationRoutes = [
         path: "/designation",
         element: <DesignationList />,
         showInSidebar: true,
-        icon: <Award size={18} strokeWidth={2.5} />
+        icon: <IdCard size={18} strokeWidth={2.5} />
     },
     {
         title: "Add Designation",

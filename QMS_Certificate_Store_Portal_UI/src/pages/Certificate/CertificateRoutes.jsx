@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award } from 'lucide-react';
+import { Award, UserStar } from 'lucide-react';
 import CertificateList from './CertificateList';
 import CertificateForm from './CertificateForm';
 
@@ -9,7 +9,7 @@ const certificateRoutes = [
         path: "/certificate",
         element: <CertificateList />,
         showInSidebar: true,
-        icon: <Award size={18} strokeWidth={2.5} />
+        icon: <UserStar size={18} strokeWidth={2.5} />
     },
     {
         title: "Add Certificate",

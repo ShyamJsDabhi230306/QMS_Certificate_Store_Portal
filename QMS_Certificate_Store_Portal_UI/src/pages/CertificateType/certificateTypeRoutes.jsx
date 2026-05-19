@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award } from 'lucide-react';
+import { Award, FileBadge } from 'lucide-react';
 import CertificateTypeList from './CertificateTypeList';
 import CertificateTypeForm from './CertificateTypeForm';
 
@@ -9,7 +9,7 @@ const certificateTypeRoutes = [
         path: "/certificate-type",
         element: <CertificateTypeList />,
         showInSidebar: true,
-        icon: <Award size={18} strokeWidth={2.5} />
+        icon: <FileBadge size={18} strokeWidth={2.5} />
     },
     {
         title: "Add Certificate Type",

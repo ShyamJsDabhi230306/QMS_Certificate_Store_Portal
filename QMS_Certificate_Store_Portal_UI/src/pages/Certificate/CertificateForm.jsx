@@ -186,8 +186,9 @@ const CertificateForm = () => {
         }
     };
 
-    const inputClass = "w-full bg-[#111827]/60 border-2 border-border/40 rounded-xl px-4 py-3.5 text-sm font-bold text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all shadow-sm";
-    const labelClass = "text-[12px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1";
+    // Changed to match CompanyForm.jsx
+    const inputClass = "w-full bg-background border-2 border-border/60 rounded-xl px-4 py-3.5 text-sm font-bold text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all shadow-sm placeholder:text-muted-foreground/50";
+    const labelClass = "text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1";
 
     if (loading) return <div className="h-[60vh] flex items-center justify-center"><Loader2 className="animate-spin text-gold" size={48} /></div>;
 
@@ -419,7 +420,7 @@ const CertificateForm = () => {
                         <label className={labelClass}>Upload File</label>
                         <div
                             onClick={() => fileInputRef.current.click()}
-                            className="border-2 border-dashed border-border/60 hover:border-gold/60 bg-[#111827]/20 hover:bg-[#111827]/40 rounded-3xl p-8 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 group"
+                            className="border-2 border-dashed border-border/60 hover:border-gold/60 bg-muted/20 hover:bg-muted/40 rounded-3xl p-8 text-center cursor-pointer transition-all flex flex-col items-center justify-center gap-3 group"
                         >
                             {uploading ? (
                                 <Loader2 className="animate-spin text-gold" size={32} />
@@ -512,3 +513,4 @@ const CertificateForm = () => {
 };
 
 export default CertificateForm;
+
