@@ -31,6 +31,13 @@ export const allRoutes = [
         showInSidebar: true,
         icon: <LayoutDashboard size={18} strokeWidth={2.5} />
     },
+    // {
+    //     title: "Theme Settings",
+    //     path: "/theme-settings",
+    //     element: <ThemeSettings />,
+    //     showInSidebar: true,
+    //     icon: <Settings size={18} strokeWidth={2.5} />
+    // },
 
     ...companyRoutes,
     ...locationRoutes,

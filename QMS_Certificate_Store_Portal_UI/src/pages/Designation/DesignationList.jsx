@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Award, RefreshCw } from 'lucide-react';
+import { Plus, Edit2, Trash2, IdCard, RefreshCw } from 'lucide-react';
 import { designationService } from '../../api/designationService';
 import { toast } from 'react-hot-toast';
 import { usePagination } from '../../components/usePagination';
@@ -42,7 +42,7 @@ const DesignationList = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
-                    <Award className="text-gold" size={32} /> Designation Master
+                    <IdCard className="text-gold" size={32} /> Designation Master
                 </h1>
 
                 {/* 🟢 Group Search and Button together */}

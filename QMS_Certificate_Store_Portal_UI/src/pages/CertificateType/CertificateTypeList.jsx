@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, Award, RefreshCw } from 'lucide-react';
+import { Plus, Edit2, Trash2, FileBadge, RefreshCw } from 'lucide-react';
 import { certificateTypeService } from '../../api/certificateTypeService';
 import { toast } from 'react-hot-toast';
 import { usePagination } from '../../components/usePagination';
@@ -52,7 +52,7 @@ const CertificateTypeList = () => {
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
-                    <Award className="text-gold" size={32} /> Certificate Type Master
+                    <FileBadge className="text-gold" size={32} /> Certificate Type Master
                 </h1>
 
                 {/* Search and Action Button */}
