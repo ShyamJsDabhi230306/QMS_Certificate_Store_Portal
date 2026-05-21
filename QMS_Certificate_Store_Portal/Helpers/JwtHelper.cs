@@ -37,8 +37,8 @@ namespace QMS_Certificate_Store_Portal.Helpers
             {
                 new(ClaimTypes.NameIdentifier, userId.ToString()),
                 new(ClaimTypes.Name, userName),
-                new("FullName", fullName),
                 new(ClaimTypes.Role, role),
+                new("UserFullName", fullName),
                 new("IDCompany", idCompany.ToString()),
                 new("IDLocation", idLocation.ToString()),
                 new("IDDepartment", idDepartment.ToString()),
