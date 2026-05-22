@@ -124,7 +124,7 @@ const ViewModal = ({ cert, onClose }) => {
 const HistoryModal = ({ cert, onClose }) => {
     if (!cert) return null;
     const events = [
-        { label: 'Created', user: cert.e_By || 'System', date: cert.createdOn, color: 'bg-emerald-500/20 text-emerald-500' },
+        { label: 'Created By', user: cert.e_By || 'System', date: cert.e_Date, color: 'bg-emerald-500/20 text-emerald-500' },
         cert.u_Date && { label: 'Last Updated', user: cert.u_By || '–', date: cert.u_Date, color: 'bg-blue-500/20 text-blue-500' },
         cert.d_Date && { label: 'Deleted', user: cert.d_By || '–', date: cert.d_Date, color: 'bg-red-500/20 text-red-500' },
     ].filter(Boolean);
@@ -308,7 +308,7 @@ const CertificateList = () => {
                                 <TH ch="Issue" />
                                 <TH ch="Expiry" />
                                 <TH ch="Days Left" />
-                                <TH ch="Status" />
+                                {/* <TH ch="Status" /> */}
                                 <TH ch="Actions" cls="text-center pr-5" />
                             </tr>
                         </thead>
@@ -383,9 +383,9 @@ const CertificateList = () => {
                                         </td>
 
                                         {/* ── Status ───────────────────── */}
-                                        <td className="px-3 py-4 whitespace-nowrap">
+                                        {/* <td className="px-3 py-4 whitespace-nowrap">
                                             <StatusCell status={item.status} expiry={item.expiryDate} />
-                                        </td>
+                                        </td> */}
 
                                         {/* ── Action buttons ───────────────── */}
                                         <td className="px-3 py-4 pr-5">
