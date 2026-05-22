@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
-import air from "../assets/air.jpeg"
+// import air from "../assets/air.jpeg"
 const DashboardLayout = ({ children }) => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
@@ -28,7 +28,7 @@ const DashboardLayout = ({ children }) => {
                         {/* Company Section */}
                         <div className="flex items-center gap-4">
                             {/* Company Logo */}
-                            <div
+                            {/* <div
                                 className="
            h-20 w-35
             rounded-2xl
@@ -45,7 +45,7 @@ const DashboardLayout = ({ children }) => {
                                     className=" w-full
         h-full object-contain"
                                 />
-                            </div>
+                            </div> */}
 
                             {/* Company Name */}
                             <div className="text-left hidden sm:block">

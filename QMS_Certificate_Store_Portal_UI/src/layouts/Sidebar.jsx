@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { navConfig } from '../routes/navConfig';
 import { ChevronDown, ChevronRight, Folder, Settings, ArrowLeftRight } from 'lucide-react';
 import { cn } from "@/lib/utils";
+import air from "../assets/air.jpeg"
 
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const location = useLocation();
@@ -76,12 +77,35 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
                 "fixed top-0 left-0 z-50 h-screen w-72 border-r border-border bg-sidebar transition-all duration-500 ease-in-out flex flex-col shadow-2xl lg:shadow-none",
                 isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
             )}>
-                <div className="h-24 flex items-center px-10 border-b border-border bg-muted/20">
+                {/* <div className="h-24 flex items-center px-10 border-b border-border bg-muted/20">
                     <span className="text-2xl font-black tracking-[-0.05em] uppercase text-foreground">
                         QMS <span className="text-gold italic font-extrabold">PORTAL</span>
                     </span>
+                </div> */}
+                <div
+                    className="
+        h-24 w-72
+        overflow-hidden
+        
+        bg-card
+        border border-border
+        shadow-sm
+        flex items-center justify-center
+        p-3
+        transition-all duration-300
+    "
+                >
+                    <img
+                        src={air}
+                        alt="Aira Euro Automation"
+                        className="
+            max-w-full
+            max-h-full
+            object-contain
+            rounded-lg
+        "
+                    />
                 </div>
-
                 <nav className="flex-1 p-6 space-y-2 overflow-y-auto custom-scrollbar">
                     <div className="mb-4 text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground px-4">
                         Main Navigation
