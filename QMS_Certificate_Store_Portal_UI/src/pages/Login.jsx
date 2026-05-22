@@ -58,7 +58,7 @@ const Login = () => {
             <div className="login-card">
                 <div className="login-logo">Q</div>
                 <div className="login-header">
-                    <h2>QMS Suite</h2>
+                    <h2>QMS Certificate Store</h2>
                     <p>Sign in to your account to continue</p>
                 </div>
 
