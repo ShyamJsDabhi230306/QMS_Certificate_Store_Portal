@@ -11,6 +11,8 @@ import CertificateRoutes from '@/pages/Certificate/CertificateRoutes.jsx';
 import { Settings } from 'lucide-react';
 import Dashboard from '../pages/Dashboard/Dashboard';
 import ThemeSettings from '@/pages/ThemeSettings/ThemeSettings.jsx';
+import certificateApprovalRoutes from '@/pages/Certificate/CertificateApprovalRoutes.jsx';
+import { reminderRoutes } from '@/pages/Reminder/reminderRoutes.jsx';
 
 // 1. Get the rights from localStorage
 const getRights = () => {
@@ -48,17 +50,19 @@ export const allRoutes = [
     ...userRightRoutes,
     ...certificateTypeRoutes,
     ...CertificateRoutes,
+    ...certificateApprovalRoutes,
+    ...reminderRoutes
 ];
 
 // 3. FILTERED routes — used by Sidebar.jsx to show only permitted pages
 export const navConfig = allRoutes.filter(route => {
     // Always show Dashboard and Certificate pages
     if (route.title === "Dashboard") return true;
-    if (route.title === "Certificate") return true;
-    if (route.title === "Add Certificate") return true;
-    if (route.title === "Edit Certificate") return true;
-    if (route.title === "CertificateType") return true;
-    if (route.title === "Theme Settings") return true; // 🎨 Add this line!
+    // if (route.title === "Certificate") return true;
+    // if (route.title === "Add Certificate") return true;
+    // if (route.title === "Edit Certificate") return true;
+    // if (route.title === "CertificateType") return true;
+    // if (route.title === "Theme Settings") return true; // 🎨 Add this line!
 
     const userRights = getRights();
 

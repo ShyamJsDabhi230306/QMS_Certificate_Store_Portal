@@ -1,4 +1,5 @@
 using QMS_Certificate_Store_Portal.Helpers;
+using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Repositories;
 using QMS_Certificate_Store_Portal.Services;
 
@@ -23,10 +24,11 @@ namespace QMS_Certificate_Store_Portal.Helpers
             services.AddScoped<PageRepo>();
             services.AddScoped<UserRightRepo>();
             services.AddScoped<CertificateTypeRepo>();
-
+            
             // transactional repository Layer for registration
             services.AddScoped<CertificateRepo>();
-            
+            services.AddScoped<TransactionCertificateApprovalRepo>();
+            services.AddScoped<CertificateReminderRepo>();
             // Master Services Layer for registration 
             services.AddScoped<UserService>();
             services.AddScoped<CompanyService>();
@@ -39,6 +41,8 @@ namespace QMS_Certificate_Store_Portal.Helpers
 
             // transactional Services Layer for registration
             services.AddScoped<CertificateService>();
+            services.AddScoped<TransactionCertificateApprovalService>();
+            services.AddScoped<CertificateReminderService>();
 
             return services;
         }

@@ -27,7 +27,9 @@ namespace QMS_Certificate_Store_Portal.Models
         public string? OwnerName { get; set; }
 
         public int? IDDepartment { get; set; }
+        public int? IDCompany { get; set; }
 
+        public int? IDLocation { get; set; }
         // Lookup name joined from Stored Procedure
         public string? DepartmentName { get; set; }
 

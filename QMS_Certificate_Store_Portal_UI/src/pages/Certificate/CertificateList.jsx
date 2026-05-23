@@ -218,7 +218,7 @@ const CertificateList = () => {
     const { searchTerm, setSearchTerm, filteredItems } = useSearch(certificates);
     const { currentItems, paginationProps } = usePagination(filteredItems, 10);
     const navigate = useNavigate();
-    const { canCreate, canEdit, canDelete } = usePermissions('Transaction Page');
+    const { canCreate, canEdit, canDelete } = usePermissions('Certificate ');
 
     useEffect(() => { load(); }, []);
 

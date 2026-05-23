@@ -15,9 +15,18 @@ namespace QMS_Certificate_Store_Portal.Repositories
         public CertificateRepo(IDapperHelper dapper) => _dapper = dapper;
 
         // 1. Fetch all active certificates for the grid list
-        public async Task<IEnumerable<Certificate>> GetAllAsync()
+        public async Task<IEnumerable<Certificate>> GetAllAsync(int companyId,int locationId)
         {
-            return await _dapper.QueryAsync<Certificate>("usp_Transaction_Certificate_SelectAll", null);
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@IDCompany", companyId);
+
+            parameters.Add("@IDLocation", locationId);
+
+            return await _dapper.QueryAsync<Certificate>(
+                "usp_Transaction_Certificate_SelectAll",
+                parameters
+            );
         }
 
         // 2. Fetch single certificate with its reminders using high-performance Multi-Result reading
@@ -50,6 +59,8 @@ namespace QMS_Certificate_Store_Portal.Repositories
             parameters.Add("@IDCertificateType", model.IDCertificateType);
             parameters.Add("@IDOwner", model.IDOwner);
             parameters.Add("@IDDepartment", model.IDDepartment);
+            parameters.Add("@IDCompany", model.IDCompany);
+            parameters.Add("@IDLocation", model.IDLocation);
             parameters.Add("@IssueDate", model.IssueDate);
             parameters.Add("@ValidForYears", model.ValidForYears);
             parameters.Add("@ExpiryDate", model.ExpiryDate);
@@ -89,18 +100,60 @@ namespace QMS_Certificate_Store_Portal.Repositories
 
 
         // Dashboard Stats
-        public async Task<DashboardStats> GetDashboardStatsAsync()
+        public async Task<DashboardStats> GetDashboardStatsAsync(
+     int companyId,
+     int locationId
+ )
         {
             var stats = new DashboardStats();
 
-            var (reader, conn) = await _dapper.QueryMultipleAsync("usp_Dashboard_GetStats", null);
+            // =====================================
+            // PARAMETERS
+            // =====================================
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@IDCompany", companyId);
+
+            parameters.Add("@IDLocation", locationId);
+
+            // =====================================
+            // EXECUTE SP
+            // =====================================
+            var (reader, conn) = await _dapper.QueryMultipleAsync(
+                "usp_Dashboard_GetStats",
+                parameters
+            );
+
             using (conn)
             using (reader)
             {
-                stats.Summary = await reader.ReadFirstOrDefaultAsync<DashboardSummary>() ?? new DashboardSummary();
-                stats.ExpiriesNext12Months = (await reader.ReadAsync<MonthlyExpiry>()).ToList();
-                stats.CertificatesByType = (await reader.ReadAsync<CertificateByType>()).ToList();
-                stats.RecentlyAdded = (await reader.ReadAsync<RecentCertificate>()).ToList();
+                // =====================================
+                // SUMMARY
+                // =====================================
+                stats.Summary =
+                    await reader.ReadFirstOrDefaultAsync<DashboardSummary>()
+                    ?? new DashboardSummary();
+
+                // =====================================
+                // MONTHLY EXPIRIES
+                // =====================================
+                stats.ExpiriesNext12Months =
+                    (await reader.ReadAsync<MonthlyExpiry>())
+                    .ToList();
+
+                // =====================================
+                // CERTIFICATES BY TYPE
+                // =====================================
+                stats.CertificatesByType =
+                    (await reader.ReadAsync<CertificateByType>())
+                    .ToList();
+
+                // =====================================
+                // RECENTLY ADDED
+                // =====================================
+                stats.RecentlyAdded =
+                    (await reader.ReadAsync<RecentCertificate>())
+                    .ToList();
             }
 
             return stats;

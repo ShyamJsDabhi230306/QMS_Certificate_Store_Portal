@@ -45,6 +45,8 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             case "Transaction Page":
             case "Transactions":
             case "Certificate":
+            case "Approval":
+            case "Reminder Center":   
                 return "Transactions";
             default:
                 return null; // Renders flat (e.g. Dashboard)

@@ -4,10 +4,14 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell
 import { RefreshCw, ArrowRight } from 'lucide-react';
 import { certificateService } from '../../api/certificateService';
 import toast from 'react-hot-toast';
-
+import { transactionCertificateApprovalService } 
+from '../../api/transactionCertificateApprovalService';
 const Dashboard = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [approvalHistory, setApprovalHistory] = useState([]);
+
+const [historyOpen, setHistoryOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,7 +31,26 @@ const Dashboard = () => {
             setLoading(false);
         }
     };
+const loadApprovalHistory = async () => {
 
+    try {
+
+        const res =
+            await transactionCertificateApprovalService
+                .getHistory();
+
+        if (res.success) {
+
+            setApprovalHistory(res.data);
+        }
+
+    } catch {
+
+        toast.error(
+            "Failed to load approval history"
+        );
+    }
+};
     if (loading || !stats) {
         return (
             <div className="h-[80vh] flex items-center justify-center bg-background">
@@ -47,6 +70,32 @@ const Dashboard = () => {
             <div>
                 <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Dashboard</h1>
                 <p className="text-sm text-muted-foreground mt-1">An overview of all certificates in your organization.</p>
+                <button
+        onClick={() => {
+            setHistoryOpen(true);
+            loadApprovalHistory();
+        }}
+        className="
+            px-4
+            py-2.5
+            rounded-xl
+            bg-card
+            border-2
+            border-border
+            hover:border-gold/50
+            text-xs
+            font-black
+            uppercase
+            tracking-[0.15em]
+            text-foreground
+            transition-all
+            hover:scale-[1.02]
+            shadow-lg
+        "
+    >
+        Approval History
+    </button>
+
             </div>
 
             {/* ── 4 Summary Cards ──────────────────────────────────── */}
@@ -180,7 +229,232 @@ const Dashboard = () => {
                     </table>
                 </div>
             </div>
+            {
+    historyOpen && (
+
+        <div
+            className="
+                fixed
+                inset-0
+                bg-black/50
+                backdrop-blur-sm
+                z-50
+                flex
+                items-center
+                justify-center
+                p-6
+            "
+        >
+
+            <div
+                className="
+                    w-full
+                    max-w-6xl
+                    max-h-[90vh]
+                    overflow-hidden
+                    rounded-3xl
+                    bg-card
+                    border-2
+                    border-border
+                    shadow-2xl
+                "
+            >
+
+                {/* HEADER */}
+                <div
+                    className="
+                        flex
+                        items-center
+                        justify-between
+                        px-6
+                        py-5
+                        border-b
+                        border-border
+                    "
+                >
+
+                    <h2
+                        className="
+                            text-xl
+                            font-black
+                            tracking-tight
+                            text-foreground
+                        "
+                    >
+                        Approval History
+                    </h2>
+
+                    <button
+                        onClick={() => setHistoryOpen(false)}
+                        className="
+                            px-4
+                            py-2
+                            rounded-xl
+                            border
+                            border-border
+                            hover:border-red-500/40
+                            text-xs
+                            font-black
+                            uppercase
+                            tracking-widest
+                            transition-colors
+                        "
+                    >
+                        Close
+                    </button>
+
+                </div>
+
+                {/* TABLE */}
+                <div className="overflow-auto max-h-[75vh]">
+
+                    <table className="w-full text-left">
+
+                        <thead
+                            className="
+                                bg-muted/50
+                                border-b
+                                border-border
+                                text-[10px]
+                                uppercase
+                                tracking-[0.2em]
+                                text-muted-foreground
+                            "
+                        >
+
+                            <tr>
+
+                                <th className="px-6 py-4">
+                                    Certificate
+                                </th>
+
+                                <th className="px-6 py-4">
+                                    Type
+                                </th>
+
+                                <th className="px-6 py-4">
+                                    Status
+                                </th>
+
+                                <th className="px-6 py-4">
+                                    Approved By
+                                </th>
+
+                                <th className="px-6 py-4">
+                                    Date
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody className="divide-y divide-border">
+
+                            {
+                                approvalHistory.map((item) => (
+
+                                    <tr
+                                        key={
+                                            item.idCertificate
+                                        }
+                                        className="
+                                            hover:bg-gold/[0.03]
+                                            transition-colors
+                                        "
+                                    >
+
+                                        <td className="px-6 py-4">
+
+                                            <p
+                                                className="
+                                                    text-[13px]
+                                                    font-black
+                                                    text-foreground
+                                                "
+                                            >
+                                                {
+                                                    item.certificateName
+                                                }
+                                            </p>
+
+                                            <p
+                                                className="
+                                                    text-[10px]
+                                                    uppercase
+                                                    tracking-widest
+                                                    text-muted-foreground
+                                                    mt-1
+                                                "
+                                            >
+                                                {
+                                                    item.certificateNumber
+                                                }
+                                            </p>
+
+                                        </td>
+
+                                        <td className="px-6 py-4 text-sm font-bold">
+                                            {
+                                                item.certificateTypeName
+                                            }
+                                        </td>
+
+                                        <td className="px-6 py-4">
+
+                                            <span
+                                                className={`
+                                                    px-3
+                                                    py-1
+                                                    rounded-full
+                                                    text-[10px]
+                                                    font-black
+                                                    uppercase
+                                                    tracking-widest
+
+                                                    ${
+                                                        item.approvalStatus === 'Approved'
+                                                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                                            : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                                                    }
+                                                `}
+                                            >
+                                                {
+                                                    item.approvalStatus
+                                                }
+                                            </span>
+
+                                        </td>
+
+                                        <td className="px-6 py-4 text-sm font-bold text-foreground/80">
+                                            {
+                                                item.approvedByName
+                                            }
+                                        </td>
+
+                                        <td className="px-6 py-4 text-sm text-muted-foreground">
+                                            {
+                                                item.approvalDate
+                                                    ?.split('T')[0]
+                                            }
+                                        </td>
+
+                                    </tr>
+                                ))
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
         </div>
+    )
+}
+        </div>
+        
     );
 };
 

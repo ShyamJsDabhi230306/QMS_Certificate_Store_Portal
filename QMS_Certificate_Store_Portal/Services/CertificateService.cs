@@ -12,9 +12,9 @@ namespace QMS_Certificate_Store_Portal.Services
         public CertificateService(CertificateRepo repo) => _repo = repo;
 
         // 1. Fetch all active certificates
-        public async Task<IEnumerable<Certificate>> GetAllAsync()
+        public async Task<IEnumerable<Certificate>> GetAllAsync(int companyId,int locationId)
         {
-            return await _repo.GetAllAsync();
+            return await _repo.GetAllAsync(companyId,locationId);
         }
 
         // 2. Fetch single certificate by ID
@@ -38,9 +38,11 @@ namespace QMS_Certificate_Store_Portal.Services
 
 
         // Dashboard Stats
-        public async Task<DashboardStats> GetDashboardStatsAsync()
+        public async Task<DashboardStats> GetDashboardStatsAsync(int companyId,
+    int locationId)
         {
-            return await _repo.GetDashboardStatsAsync();
+            return await _repo.GetDashboardStatsAsync( companyId,
+     locationId);
         }
 
     }

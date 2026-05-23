@@ -28,8 +28,27 @@ namespace QMS_Certificate_Store_Portal.Controllers
         [HttpGet("get-all")]
         public async Task<IActionResult> GetAll()
         {
-            var data = await _service.GetAllAsync();
-            return Ok(new { success = true, data });
+            // =====================================
+            // GET USER COMPANY & LOCATION
+            // =====================================
+            var companyId = Convert.ToInt32(
+                User.FindFirst("IDCompany")?.Value ?? "0"
+            );
+
+            var locationId = Convert.ToInt32(
+                User.FindFirst("IDLocation")?.Value ?? "0"
+            );
+
+            // =====================================
+            // GET DATA
+            // =====================================
+            var data = await _service.GetAllAsync(companyId,locationId);
+
+            return Ok(new
+            {
+                success = true,
+                data
+            });
         }
 
         // 2. Get details of a single Certificate
@@ -151,8 +170,30 @@ namespace QMS_Certificate_Store_Portal.Controllers
         {
             try
             {
-                var data = await _service.GetDashboardStatsAsync();
-                return Ok(new { success = true, data });
+                var companyId = Convert.ToInt32(
+          User.FindFirst("IDCompany")?.Value ?? "0"
+      );
+
+                var locationId = Convert.ToInt32(
+                    User.FindFirst("IDLocation")?.Value ?? "0"
+                );
+
+                // =====================================
+                // GET DASHBOARD DATA
+                // =====================================
+                var data = await _service.GetDashboardStatsAsync(
+                    companyId,
+                    locationId
+                );
+
+                // =====================================
+                // SUCCESS RESPONSE
+                // =====================================
+                return Ok(new
+                {
+                    success = true,
+                    data
+                });
             }
             catch (Exception ex)
             {
