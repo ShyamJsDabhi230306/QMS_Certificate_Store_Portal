@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using static Dapper.SqlMapper;
 
 namespace QMS_Certificate_Store_Portal.Repositories
 {
@@ -15,18 +16,67 @@ namespace QMS_Certificate_Store_Portal.Repositories
         public CertificateRepo(IDapperHelper dapper) => _dapper = dapper;
 
         // 1. Fetch all active certificates for the grid list
-        public async Task<IEnumerable<Certificate>> GetAllAsync(int companyId,int locationId)
+        //public async Task<IEnumerable<Certificate>> GetAllAsync(int companyId,int locationId)
+        //{
+        //    var parameters = new DynamicParameters();
+
+        //    parameters.Add("@IDCompany", companyId);
+
+        //    parameters.Add("@IDLocation", locationId);
+
+        //    return await _dapper.QueryAsync<Certificate>(
+        //        "usp_Transaction_Certificate_SelectAll",
+        //        parameters
+        //    );
+        //}
+        public async Task<IEnumerable<Certificate>>
+    GetAllAsync(
+        int companyId,
+        int locationId
+    )
         {
             var parameters = new DynamicParameters();
 
-            parameters.Add("@IDCompany", companyId);
-
-            parameters.Add("@IDLocation", locationId);
-
-            return await _dapper.QueryAsync<Certificate>(
-                "usp_Transaction_Certificate_SelectAll",
-                parameters
+            parameters.Add(
+                "@IDCompany",
+                companyId
             );
+
+            parameters.Add(
+                "@IDLocation",
+                locationId
+            );
+
+            var data =
+                (
+                    await _dapper.QueryAsync<Certificate>(
+                        "usp_Transaction_Certificate_SelectAll",
+                        parameters
+                    )
+                ).ToList();
+
+            // Deserialize Reminder JSON
+            foreach (var item in data)
+            {
+                if (
+                    !string.IsNullOrWhiteSpace(
+                        item.RemindersJson
+                    )
+                )
+                {
+                    item.Reminders =
+                        System.Text.Json.JsonSerializer.Deserialize
+                        <
+                            List<CertificateReminder>
+                        >
+                        (
+                            item.RemindersJson
+                        )
+                        ?? new List<CertificateReminder>();
+                }
+            }
+
+            return data;
         }
 
         // 2. Fetch single certificate with its reminders using high-performance Multi-Result reading
@@ -66,6 +116,8 @@ namespace QMS_Certificate_Store_Portal.Repositories
             parameters.Add("@ExpiryDate", model.ExpiryDate);
             parameters.Add("@RenewalCategory", model.RenewalCategory);
             parameters.Add("@Tags", model.Tags);
+            parameters.Add("@SurveillanceAuditYears", model.SurveillanceAuditYears);
+            parameters.Add("@SurveillanceDate", model.SurveillanceDate);
             parameters.Add("@FileName", model.FileName);
             parameters.Add("@FilePath", model.FilePath);
             parameters.Add("@Status", model.Status);

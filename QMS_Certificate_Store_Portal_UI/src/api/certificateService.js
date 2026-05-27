@@ -22,4 +22,7 @@ export const certificateService = {
 
     // 📊 Get Dashboard Statistics
     getDashboardStats: () => apiClient.get('/transaction/Certificate/dashboard-stats').then(res => res.data),
+   
+    
+    
 };

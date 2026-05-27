@@ -1,5 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+
 using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Services;
 
@@ -11,34 +12,103 @@ namespace QMS_Certificate_Store_Portal.Controllers
     public class UserRightController : ControllerBase
     {
         private readonly UserRightService _service;
-        public UserRightController(UserRightService service) => _service = service;
 
-        [HttpGet("get-by-user/{idUser}")]
-        public async Task<IActionResult> GetByUserId(int idUser)
+        public UserRightController(UserRightService service)
         {
-            var data = await _service.GetByUserIdAsync(idUser);
-            return Ok(new { success = true, data });
+            _service = service;
         }
 
-       [HttpPost("update-bulk")]
-        public async Task<IActionResult> UpdateBulk(List<MasterUserRight> rights)
+        #region GET RIGHTS BY DESIGNATION
+
+        [HttpGet("get-by-designation/{idDesignation}")]
+
+        public async Task<IActionResult>
+            GetByDesignationId(int idDesignation)
         {
-        var currentUserName = User.FindFirst("UserFullName")?.Value ?? "System";
-        foreach (var right in rights)
-        {
-            right.UserAction = currentUserName;
-            await _service.UpdateRightsAsync(right); // This calls your existing SP for each row
-        }
-        return Ok(new { success = true, message = "All rights updated successfully" });
+            var data =
+                await _service.GetByDesignationIdAsync(
+                    idDesignation
+                );
+
+            return Ok(new
+            {
+                success = true,
+                data
+            });
         }
 
+        #endregion
 
-        [HttpPost("initialize/{idUser}")]
-        public async Task<IActionResult> Initialize(int idUser)
+        #region UPDATE SINGLE RIGHT
+
+        [HttpPost("update")]
+
+        public async Task<IActionResult>
+            Update(MasterUserRight model)
         {
-            var actionUser = User.FindFirst("UserFullName")?.Value ?? "System";
-            var result = await _service.InitializeForUserAsync(idUser, actionUser);
+            var currentUserName =
+                User.FindFirst("UserFullName")?.Value
+                ?? "System";
+
+            model.UserAction = currentUserName;
+
+            var result =
+                await _service.UpdateRightsAsync(model);
+
             return Ok(result);
         }
+
+        #endregion
+
+        #region BULK UPDATE
+
+        [HttpPost("update-bulk")]
+
+        public async Task<IActionResult>
+            UpdateBulk(
+                [FromBody]
+                List<MasterUserRight> rights
+            )
+        {
+            var currentUserName =
+                User.FindFirst("UserFullName")?.Value
+                ?? "System";
+
+            var result =
+                await _service.UpdateRightsBulkAsync(
+                    rights,
+                    currentUserName
+                );
+
+            return Ok(new
+            {
+                success = result.Result == 1,
+                message = result.Message
+            });
+        }
+
+        #endregion
+
+        #region INITIALIZE DESIGNATION RIGHTS
+
+        [HttpPost("initialize/{idDesignation}")]
+
+        public async Task<IActionResult>
+            Initialize(int idDesignation)
+        {
+            var actionUser =
+                User.FindFirst("UserFullName")?.Value
+                ?? "System";
+
+            var result =
+                await _service.InitializeForDesignationAsync(
+                    idDesignation,
+                    actionUser
+                );
+
+            return Ok(result);
+        }
+
+        #endregion
     }
 }

@@ -28,5 +28,7 @@ namespace QMS_Certificate_Store_Portal.Models
         public string? FileName { get; set; }
         public string? FilePath { get; set; }
         public string? Notes { get; set; }
+
+        public DateTime SurveillanceDate { get; set; }
     }
 }

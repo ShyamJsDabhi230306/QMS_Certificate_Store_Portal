@@ -21,7 +21,8 @@ namespace QMS_Certificate_Store_Portal.Helpers
             string role,
             int idCompany,
             int idLocation,
-            int idDepartment)
+            //int idDepartment,
+            bool isSuperAdmin)
         {
             var key = Encoding.UTF8.GetBytes(
                 _config["Jwt:Key"] ?? throw new Exception("JWT key missing"));
@@ -41,7 +42,8 @@ namespace QMS_Certificate_Store_Portal.Helpers
                 new("UserFullName", fullName),
                 new("IDCompany", idCompany.ToString()),
                 new("IDLocation", idLocation.ToString()),
-                new("IDDepartment", idDepartment.ToString()),
+                //new("IDDepartment", idDepartment.ToString()),
+                new("IsSuperAdmin", isSuperAdmin.ToString()),
                 new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 

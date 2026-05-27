@@ -44,6 +44,8 @@ namespace QMS_Certificate_Store_Portal.Models
         public string? RenewalCategory { get; set; } = string.Empty;
 
         public string? Tags { get; set; }
+        public int? SurveillanceAuditYears { get; set; }
+        public DateTime? SurveillanceDate { get; set; }
 
         public string? FileName { get; set; }
         public string? FilePath { get; set; }
@@ -63,7 +65,9 @@ namespace QMS_Certificate_Store_Portal.Models
     {
         public int IDReminder { get; set; }
         public int IDCertificate { get; set; }
-        public int DaysBeforeExpiry { get; set; }
+        //public int DaysBeforeExpiry { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public int DaysBeforeSurveillance { get; set; }
         public string Channel { get; set; } = string.Empty;
     }
 }
@@ -99,7 +103,7 @@ public class DashboardSummary
 {
     public int TotalCertificates { get; set; }
     public int ValidCertificates { get; set; }
-    public int ExpiringIn30Days { get; set; }
+    public int ExpiringIn60Days { get; set; }
     public int ExpiredCertificates { get; set; }
 }
 
@@ -126,4 +130,5 @@ public class RecentCertificate
     public string OwnerName { get; set; } = string.Empty;
     public DateTime ExpiryDate { get; set; }
     public string Status { get; set; } = string.Empty;
+    public DateTime SurveillanceDate { get; set; }
 }

@@ -18,6 +18,7 @@ namespace QMS_Certificate_Store_Portal.Repositories
 
             parameters.Add("@IDCertificate", model.IDCertificate);
             parameters.Add("@ApprovedBy", model.ApprovedBy);
+            parameters.Add("@U_By", model.U_By);
             parameters.Add("@ApprovalStatus", model.ApprovalStatus);
             parameters.Add("@ApprovalComment", model.ApprovalComment);
             parameters.Add("@ApprovalDate", model.ApprovalDate);

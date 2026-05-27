@@ -1,17 +1,101 @@
 import apiClient from './apiClient';
 
 export const userRightService = {
-    getByUserId: async (idUser) => {
-        const res = await apiClient.get(`/master/UserRight/get-by-user/${idUser}`);
-        return res.data;
+
+    // =====================================
+    // GET RIGHTS BY DESIGNATION
+    // =====================================
+
+    getByDesignationId: async (idDesignation) => {
+
+        try {
+
+            const response = await apiClient.get(
+                `/master/UserRight/get-by-designation/${idDesignation}`
+            );
+
+            return response.data;
+
+        } catch (error) {
+
+            console.error(
+                'GET RIGHTS ERROR',
+                error
+            );
+
+            return {
+                success: false,
+                message: 'Failed to load rights'
+            };
+
+        }
+
     },
+
+    // =====================================
+    // UPDATE BULK RIGHTS
+    // =====================================
+
     updateBulk: async (rightsList) => {
-        // The path must match the [Route] and [HttpPost] in C#
-        const res = await apiClient.post('/master/UserRight/update-bulk', rightsList);
-        return res.data;
+
+        try {
+
+            console.log(
+                'UPDATE BULK PAYLOAD',
+                rightsList
+            );
+
+            const response = await apiClient.post(
+                '/master/UserRight/update-bulk',
+                rightsList
+            );
+
+            return response.data;
+
+        } catch (error) {
+
+            console.error(
+                'UPDATE BULK ERROR',
+                error
+            );
+
+            return {
+                success: false,
+                message: 'Failed to update rights'
+            };
+
+        }
+
     },
-    initialize: async (idUser) => {
-        const res = await apiClient.post(`/master/UserRight/initialize/${idUser}`);
-        return res.data;
+
+    // =====================================
+    // INITIALIZE RIGHTS
+    // =====================================
+
+    initialize: async (idDesignation) => {
+
+        try {
+
+            const response = await apiClient.post(
+                `/master/UserRight/initialize/${idDesignation}`
+            );
+
+            return response.data;
+
+        } catch (error) {
+
+            console.error(
+                'INITIALIZE RIGHTS ERROR',
+                error
+            );
+
+            return {
+                success: false,
+                message: 'Failed to initialize rights'
+            };
+
+        }
+
     }
+
 };

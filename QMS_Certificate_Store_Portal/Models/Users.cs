@@ -8,7 +8,7 @@ namespace QMS_Certificate_Store_Portal.Models
         public string? UserFullName { get; set; } // Match React 'userFullName'
         public string? UserName { get; set; } // Match React 'userName'
         public string? Password { get; set; } // Match React 'userPassword'
-        public int? IDDepartment { get; set; } // Match React 'idDepartment'
+        //public int? IDDepartment { get; set; } // Match React 'idDepartment'
         public int? IDCompany { get; set; }     // matcht he idCompany
         public int? IDLocation { get; set; }    // match react idlocation
         public int? IDDesignation { get; set; } // Match React 'idDesignation'
@@ -16,9 +16,11 @@ namespace QMS_Certificate_Store_Portal.Models
         public string? Phone { get; set; }
         
         // Joined fields for the list view
-        public string? DepartmentName { get; set; }
+        //public string? DepartmentName { get; set; }
         public string? LocationName { get;set; }
         public string? CompanyName { get; set; }
         public string? DesignationName { get; set; }
+
+        public bool IsSuperAdmin { get; set; }
     }
 }

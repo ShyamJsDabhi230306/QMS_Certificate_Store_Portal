@@ -2,6 +2,7 @@ using Dapper;
 using QMS_Certificate_Store_Portal.Helpers;
 using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Models.Common;
+using System.Data;
 
 namespace QMS_Certificate_Store_Portal.Repositories
 {
@@ -10,11 +11,33 @@ namespace QMS_Certificate_Store_Portal.Repositories
         private readonly IDapperHelper _dapper;
         public DepartmentRepo(IDapperHelper dapper) => _dapper = dapper;
 
+        //public async Task<IEnumerable<Department>> GetAllAsync()
+        //{
+        //    try { return await _dapper.QueryAsync<Department>("usp_Master_Department_SelectAll"); }
+        //    catch { return Enumerable.Empty<Department>(); }
+        //}
+        // Repository
         public async Task<IEnumerable<Department>> GetAllAsync()
         {
-            try { return await _dapper.QueryAsync<Department>("usp_Master_Department_SelectAll"); }
-            catch { return Enumerable.Empty<Department>(); }
+            return await _dapper.QueryAsync<Department>(
+                "usp_Master_Department_SelectAll_Admin"
+            );
         }
+        public async Task<IEnumerable<Department>> GetAllAsync(int companyId, int locationId)
+        {
+            var parameters = new DynamicParameters();
+
+            parameters.Add("@IDCompany", companyId);
+
+            parameters.Add("@IDLocation", locationId);
+
+            return await _dapper.QueryAsync<Department>(
+                "usp_Master_Department_SelectAll",
+                parameters
+            );
+        }
+
+      
 
         public async Task<Department?> GetByIdAsync(int id)
         {

@@ -64,17 +64,10 @@ namespace QMS_Certificate_Store_Portal.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
-            // =========================================
-            // LOGIN USER
-            // =========================================
             var user = await _service.LoginAsync(
                 request.userName,
                 request.Password
             );
-
-            // =========================================
-            // INVALID LOGIN
-            // =========================================
             if (user == null || user.IDUser <= 0)
             {
                 return Unauthorized(new
@@ -83,72 +76,37 @@ namespace QMS_Certificate_Store_Portal.Controllers
                     message = "Invalid username or password"
                 });
             }
-
-            // =========================================
-            // GENERATE JWT TOKEN
-            // =========================================
             var token = _jwtHelper.GenerateToken(
-
-                // USER ID
                 user.IDUser,
-
-                // USERNAME
                 user.UserName ?? "",
-
-                // FULL NAME
                 user.UserFullName ?? "",
-
-                // ROLE
                 "User",
-
-                // COMPANY
                 user.IDCompany ?? 0,
-
-                // LOCATION
                 user.IDLocation ?? 0,
-
-                // DEPARTMENT
-                user.IDDepartment ?? 0
+                user.IsSuperAdmin
             );
-
-            // =========================================
-            // SUCCESS RESPONSE
-            // =========================================
             return Ok(new
             {
                 success = true,
-
                 message = "Login successful",
-
                 token,
-
                 user = new
                 {
                     user.IDUser,
-
                     user.UserFullName,
-
                     user.UserName,
-
                     user.Email,
-
-                    // COMPANY
                     user.IDCompany,
                     user.CompanyName,
-
-                    // LOCATION
                     user.IDLocation,
                     user.LocationName,
-
-                    // DEPARTMENT
-                    user.IDDepartment,
-                    user.DepartmentName,
-
-                    // DESIGNATION
                     user.IDDesignation,
-                    user.DesignationName
+                    user.DesignationName,
+                    // 👇 THIS IS THE CRUCIAL LINE WE ADDED 👇
+                    user.IsSuperAdmin
                 }
             });
         }
     }
 }
+

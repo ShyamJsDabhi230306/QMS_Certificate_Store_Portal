@@ -1,4 +1,4 @@
-using QMS_Certificate_Store_Portal.Models.Common;
+﻿using QMS_Certificate_Store_Portal.Models.Common;
 using System.Text.Json.Serialization;
 
 namespace QMS_Certificate_Store_Portal.Models
@@ -6,18 +6,36 @@ namespace QMS_Certificate_Store_Portal.Models
     public class MasterUserRight : AuditFields
     {
         public int IDRight { get; set; }
-       [JsonPropertyName("idUser")] // <--- Add this
+
+        // USER / DESIGNATION
+
+        [JsonPropertyName("idUser")]
         public int IDUser { get; set; }
-        [JsonPropertyName("idPage")] // <--- Add this
+
+        [JsonPropertyName("idDesignation")]
+        public int IDDesignation { get; set; }
+
+        // PAGE
+
+        [JsonPropertyName("idPage")]
         public int IDPage { get; set; }
+
+        // REMOVE JsonIgnore
+        [JsonPropertyName("pageName")]
         public string PageName { get; set; } = string.Empty;
-        [JsonPropertyName("canView")] // <--- Add this
+
+        // RIGHTS
+
+        [JsonPropertyName("canView")]
         public bool CanView { get; set; }
-        [JsonPropertyName("canCreate")] // <--- Add this
+
+        [JsonPropertyName("canCreate")]
         public bool CanCreate { get; set; }
-        [JsonPropertyName("canEdit")] // <--- Add this
+
+        [JsonPropertyName("canEdit")]
         public bool CanEdit { get; set; }
-        [JsonPropertyName("canDelete")] // <--- Add this
+
+        [JsonPropertyName("canDelete")]
         public bool CanDelete { get; set; }
     }
 }

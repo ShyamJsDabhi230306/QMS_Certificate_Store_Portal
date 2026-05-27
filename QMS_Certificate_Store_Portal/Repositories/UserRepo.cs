@@ -1,4 +1,4 @@
-using QMS_Certificate_Store_Portal.Helpers;
+﻿using QMS_Certificate_Store_Portal.Helpers;
 using Dapper;
 using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Models.Common;
@@ -45,45 +45,92 @@ namespace QMS_Certificate_Store_Portal.Repositories
             }
         }
 
+        //public async Task<SaveResult> SaveAsync(Users model)
+        //{
+        //    try
+        //    {
+        //        var param = new DynamicParameters();
+        //        param.Add("@IDUser", model.IDUser);
+        //        param.Add("@UserFullName", model.UserFullName);
+        //        param.Add("@Email", model.Email);
+        //        param.Add("@IDDesignation", model.IDDesignation);
+        //        // 👈 Replaced @IDDepartment with Company and Location
+        //        param.Add("@IDCompany", model.IDCompany);
+        //        param.Add("@IDLocation", model.IDLocation);
+        //        param.Add("@userName", model.UserName);
+        //        param.Add("@Password", model.Password);
+        //        param.Add("@IsActive", model.IsActive);
+        //        param.Add("@Phone", model.Phone);
+        //        param.Add("@ActionUser", model.UserAction);
+
+        //        var result = await _dapper.QueryFirstOrDefaultAsync<SaveResult>("usp_Master_User_Save", param)
+        //    ?? SaveResult.Fail("Database error");
+
+        //        if (result.Result > 0 && model.IDUser == 0)
+        //        {
+        //            var rightParam = new DynamicParameters();
+        //            rightParam.Add("@IDUser", result.Result);
+        //            rightParam.Add("@ActionUser", model.UserAction);
+
+        //            await _dapper.ExecuteAsync("usp_Master_UserRight_InitializeForUser", rightParam);
+        //        }
+
+        //        return result;
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return SaveResult.Fail(ex.Message);
+        //    }
+        //}
+
         public async Task<SaveResult> SaveAsync(Users model)
         {
             try
             {
                 var param = new DynamicParameters();
+
                 param.Add("@IDUser", model.IDUser);
+
                 param.Add("@UserFullName", model.UserFullName);
+
                 param.Add("@Email", model.Email);
+
                 param.Add("@IDDesignation", model.IDDesignation);
-                param.Add("@IDDepartment", model.IDDepartment);
+
+                // Company & Location
+                param.Add("@IDCompany", model.IDCompany);
+
+                param.Add("@IDLocation", model.IDLocation);
+
                 param.Add("@userName", model.UserName);
+
                 param.Add("@Password", model.Password);
+
                 param.Add("@IsActive", model.IsActive);
+
                 param.Add("@Phone", model.Phone);
-                param.Add("@ActionUser", model.UserAction); // Maps to @ActionUser in SP
 
-                var result = await _dapper.QueryFirstOrDefaultAsync<SaveResult>("usp_Master_User_Save", param)
-            ?? SaveResult.Fail("Database error");
+                param.Add("@ActionUser", model.UserAction);
 
-                // Step 3: If user was created (Result == 1), initialize their rights
-                if (result.Result > 0 && model.IDUser == 0)
-                {
-                    var rightParam = new DynamicParameters();
-                    rightParam.Add("@IDUser", result.Result);
-                    rightParam.Add("@ActionUser", model.UserAction);
+                var result =
+                    await _dapper.QueryFirstOrDefaultAsync<SaveResult>(
+                        "usp_Master_User_Save",
+                        param
+                    )
+                    ?? SaveResult.Fail("Database error");
 
-                    // This calls the SP we created earlier to insert the 0-rows
-                    await _dapper.ExecuteAsync("usp_Master_UserRight_InitializeForUser", rightParam);
-                }
+                // ❌ REMOVE RIGHTS INITIALIZATION
+                // Because now rights are DESIGNATION based
+                // NOT USER based
 
                 return result;
-
             }
             catch (Exception ex)
             {
                 return SaveResult.Fail(ex.Message);
             }
         }
-
         public async Task<SaveResult> DeleteAsync(int idUser, string deletedBy)
         {
             try

@@ -26,7 +26,7 @@ namespace QMS_Certificate_Store_Portal.Controllers
             // =====================================
             // USER NAME
             // =====================================
-            model.UserAction =
+            model.U_By =
                 User.FindFirst("UserFullName")?.Value
                 ?? "System";
 

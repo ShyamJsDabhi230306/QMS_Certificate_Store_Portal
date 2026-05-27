@@ -8,5 +8,6 @@ namespace QMS_Certificate_Store_Portal.Models
         public int IDLocation { get; set; }
         public string DepartmentName { get; set; } = string.Empty;
         public string? LocationName { get; set; } // Joined field
+        public string? CompanyName { get; set; }
     }
 }
