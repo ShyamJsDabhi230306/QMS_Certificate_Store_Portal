@@ -43,7 +43,7 @@ export const allRoutes = [
 
     ...companyRoutes,
     ...locationRoutes,
-    ...departmentRoutes,
+    // ...departmentRoutes,
     ...designationRoutes,
     ...userRoutes,
     ...pageRoutes,
@@ -51,30 +51,62 @@ export const allRoutes = [
     ...certificateTypeRoutes,
     ...CertificateRoutes,
     ...certificateApprovalRoutes,
-    ...reminderRoutes
+    // ...reminderRoutes
 ];
 
 // 3. FILTERED routes — used by Sidebar.jsx to show only permitted pages
+// export const navConfig = allRoutes.filter(route => {
+//     // Always show Dashboard and Certificate pages
+//     if (route.title === "Dashboard") return true;
+//     // if (route.title === "Certificate") return true;
+//     // if (route.title === "Add Certificate") return true;
+//     // if (route.title === "Edit Certificate") return true;
+//     // if (route.title === "CertificateType") return true;
+//     // if (route.title === "Theme Settings") return true; // 🎨 Add this line!
+
+//     const userRights = getRights();
+
+//     // Find the permission (case-insensitive)
+//     const permission = userRights.find(r => {
+//         const dbName = (r.pageName || r.PageName || "").toLowerCase().trim();
+//         const uiName = (route.title || "").toLowerCase().trim();
+//         if (dbName === uiName) return true;
+//         // 2. Prevent the word "Certificate" from accidentally granting access to "Certificate Type"
+//         if (dbName === "certificate" && uiName === "certificate type") return false;
+//         if (uiName === "certificate" && dbName === "certificate type") return false;
+//         return dbName === uiName || uiName.includes(dbName) || dbName.includes(uiName);
+//     });
+
+//     if (!permission) return false;
+
+//     // Check for View permission
+//     return (
+//         permission.canView === true ||
+//         permission.CanView === true ||
+//         permission.canView === 1 ||
+//         permission.CanView === 1
+//     );
+// });
 export const navConfig = allRoutes.filter(route => {
-    // Always show Dashboard and Certificate pages
+    // Always show Dashboard
     if (route.title === "Dashboard") return true;
-    // if (route.title === "Certificate") return true;
-    // if (route.title === "Add Certificate") return true;
-    // if (route.title === "Edit Certificate") return true;
-    // if (route.title === "CertificateType") return true;
-    // if (route.title === "Theme Settings") return true; // 🎨 Add this line!
-
+    // 👇 ADD THIS ADMIN BYPASS BLOCK
+    try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user && user.isSuperAdmin === true) return true; // Admin sees ALL sidebar links
+    } catch (e) { }
     const userRights = getRights();
-
     // Find the permission (case-insensitive)
     const permission = userRights.find(r => {
         const dbName = (r.pageName || r.PageName || "").toLowerCase().trim();
         const uiName = (route.title || "").toLowerCase().trim();
+        if (dbName === uiName) return true;
+        // Prevent the word "Certificate" from accidentally granting access to "Certificate Type"
+        if (dbName === "certificate" && uiName === "certificate type") return false;
+        if (uiName === "certificate" && dbName === "certificate type") return false;
         return dbName === uiName || uiName.includes(dbName) || dbName.includes(uiName);
     });
-
     if (!permission) return false;
-
     // Check for View permission
     return (
         permission.canView === true ||

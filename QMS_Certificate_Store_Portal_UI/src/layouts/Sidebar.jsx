@@ -4,11 +4,11 @@ import { navConfig } from '../routes/navConfig';
 import { ChevronDown, ChevronRight, Folder, Settings, ArrowLeftRight } from 'lucide-react';
 import { cn } from "@/lib/utils";
 import air from "../assets/air.jpeg"
-
+import logo from "@/assets/Logo_Aira-removebg-preview.png"
 const Sidebar = ({ isOpen, toggleSidebar }) => {
     const location = useLocation();
     const navigate = useNavigate();
-    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'dark');
+    const [theme, setTheme] = useState(localStorage.getItem('theme') || 'light');
     const [openProfile, setOpenProfile] = useState(false);
     const profileRef = useRef(null);
 
@@ -46,7 +46,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
             case "Transactions":
             case "Certificate":
             case "Approval":
-            case "Reminder Center":   
+                // case "Reminder Center":
                 return "Transactions";
             default:
                 return null; // Renders flat (e.g. Dashboard)
@@ -98,7 +98,7 @@ const Sidebar = ({ isOpen, toggleSidebar }) => {
     "
                 >
                     <img
-                        src={air}
+                        src={theme === "light" ? air : logo}
                         alt="Aira Euro Automation"
                         className="
             max-w-full

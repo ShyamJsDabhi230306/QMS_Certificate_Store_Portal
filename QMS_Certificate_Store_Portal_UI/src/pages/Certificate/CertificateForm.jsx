@@ -34,9 +34,11 @@ const CertificateForm = () => {
     issueDate: "",
     validForYears: "",
     expiryDate: "",
+    surveillanceAuditYears: "",
+    surveillanceDate: "",
     renewalCategory: "Every Year",
-    renewalMonth: "January", // 👈 Add this line
-    renewalYear: new Date().getFullYear().toString(), // 👈 Add this line
+    // renewalMonth: "January",
+    // renewalYear: new Date().getFullYear().toString(), // 👈 Add this line
     tags: "",
     fileName: "",
     filePath: "",
@@ -44,8 +46,8 @@ const CertificateForm = () => {
     notes: "",
     isActive: true,
     reminders: [
-      { daysBeforeExpiry: 30, channel: "Email + In-App" },
-      { daysBeforeExpiry: 15, channel: "Email + In-App" },
+      { daysBeforeSurveillance: 30, channel: "Email + In-App" },
+      { daysBeforeSurveillance: 15, channel: "Email + In-App" },
     ],
   });
 
@@ -127,11 +129,16 @@ const CertificateForm = () => {
         // =========================================
         const reminders =
           (data.reminders || data.Reminders)?.map((r) => ({
-            daysBeforeExpiry: r.daysBeforeExpiry || r.DaysBeforeExpiry,
+            daysBeforeSurveillance:
+              r.daysBeforeSurveillance ||
+              r.DaysBeforeSurveillance ||
+              30,
 
-            channel: r.channel || r.Channel,
+            channel:
+              r.channel ||
+              r.Channel ||
+              "Email + In-App",
           })) || [];
-
         // =========================================
         // SET FORM DATA
         // =========================================
@@ -182,8 +189,16 @@ const CertificateForm = () => {
           idLocation: data.idLocation || data.IDLocation || "",
           reminders,
 
-          renewalMonth,
-          renewalYear,
+          // renewalMonth,
+          // renewalYear,
+
+          surveillanceAuditYears: data.surveillanceAuditYears || data.SurveillanceAuditYears || "",
+          surveillanceDate:
+            data.surveillanceDate
+              ? data.surveillanceDate.split("T")[0]
+              : data.SurveillanceDate
+                ? data.SurveillanceDate.split("T")[0]
+                : "",
         });
       }
     } catch (error) {
@@ -425,7 +440,7 @@ const CertificateForm = () => {
                   </select>
                 </div>
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className={labelClass}>Owner</label>
 
                   <select
@@ -446,9 +461,9 @@ const CertificateForm = () => {
                       </option>
                     ))}
                   </select>
-                </div>
+                </div> */}
 
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className={labelClass}>Department</label>
 
                   <select
@@ -469,7 +484,7 @@ const CertificateForm = () => {
                       </option>
                     ))}
                   </select>
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -516,7 +531,7 @@ const CertificateForm = () => {
 
                 {/* VALID FOR */}
                 <div className="space-y-2">
-                  <label className={labelClass}>Valid For</label>
+                  <label className={labelClass}>Recertification</label>
 
                   <select
                     value={formData.validForYears}
@@ -549,64 +564,48 @@ const CertificateForm = () => {
                   />
                 </div>
 
-                {/* RENEWAL MONTH */}
-                <div className="space-y-2">
-                  <label className={labelClass}>Renewal Month</label>
+                {/* SURVEILLANCE AUDIT */}
+                {formData.validForYears && parseInt(formData.validForYears) > 1 && (
+                  <div className="space-y-2">
+                    <label className={labelClass}>Surveillance Audit</label>
 
-                  <select
-                    value={formData.renewalMonth}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        renewalMonth: e.target.value,
-                      })
-                    }
-                    className={inputClass}
-                  >
-                    {[
-                      "January",
-                      "February",
-                      "March",
-                      "April",
-                      "May",
-                      "June",
-                      "July",
-                      "August",
-                      "September",
-                      "October",
-                      "November",
-                      "December",
-                    ].map((m) => (
-                      <option key={m}>{m}</option>
-                    ))}
-                  </select>
-                </div>
+                    <select
+                      value={formData.surveillanceAuditYears}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          surveillanceAuditYears: e.target.value,
+                        })
+                      }
+                      className={inputClass}
+                    >
+                      <option value="">Select Frequency</option>
+                      <option value="1">After 1 Year</option>
+                      <option value="2">After 2 Years</option>
+                      <option value="3">After 3 Years</option>
+                    </select>
+                  </div>
+                )}
+                {formData.surveillanceAuditYears && parseInt(formData.surveillanceAuditYears) >= 1 && (
+                  <div className=" col-span-2  space-y-2">
+                    <label className={labelClass}>Surveillance Date</label>
+                    <input
+                      type="date"
+                      value={formData.surveillanceDate}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          surveillanceDate: e.target.value,
+                        })
+                      }
+                      className={inputClass}
+                    />
+                  </div>
+                )}
 
-                {/* RENEWAL YEAR */}
-                <div className="space-y-2 col-span-2">
-                  <label className={labelClass}>Renewal Year</label>
-
-                  <select
-                    value={formData.renewalYear}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        renewalYear: e.target.value,
-                      })
-                    }
-                    className={inputClass}
-                  >
-                    {Array.from({ length: 50 }, (_, i) =>
-                      (new Date().getFullYear() + i).toString(),
-                    ).map((y) => (
-                      <option key={y} value={y}>
-                        {y}
-                      </option>
-                    ))}
-                  </select>
-                </div>
               </div>
             </div>
+
           </div>
 
           {/* RIGHT SIDE */}
@@ -644,12 +643,12 @@ const CertificateForm = () => {
                     {/* DAYS */}
                     <div className="space-y-2">
                       <label className="text-sm font-semibold text-foreground">
-                        Days Before Expiry
+                        Days Before Surveillance
                       </label>
 
                       <input
                         type="number"
-                        value={reminder.daysBeforeExpiry}
+                        value={reminder.daysBeforeSurveillance}
                         onChange={(e) =>
                           handleUpdateReminder(
                             index,

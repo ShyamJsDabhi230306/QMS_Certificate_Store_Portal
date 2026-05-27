@@ -32,7 +32,7 @@ const Login = () => {
                 // 2. NEW: Fetch User Rights immediately after login
                 try {
                     // Assuming data.user contains the idUser
-                    const rightsRes = await userRightService.getByUserId(data.user.idUser);
+                    const rightsRes = await userRightService.getByDesignationId(data.user.idDesignation);
                     if (rightsRes.success) {
                         localStorage.setItem('userRights', JSON.stringify(rightsRes.data));
                     }

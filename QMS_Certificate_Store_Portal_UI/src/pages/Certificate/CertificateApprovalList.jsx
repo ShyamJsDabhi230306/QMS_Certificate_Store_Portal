@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {
     ShieldCheck, Check, X, Info, Download,
-    RefreshCw, FileText, AlertTriangle, MessageSquare
+    RefreshCw, FileText, AlertTriangle, MessageSquare,
+    Eye
 } from 'lucide-react';
 import { transactionCertificateApprovalService } from '../../api/transactionCertificateApprovalService';
 import { toast } from 'react-hot-toast';
@@ -17,17 +18,65 @@ const API_BASE = 'https://localhost:7294';
 const fmtDate = (d) =>
     d ? new Date(d).toLocaleDateString('en-CA') : '–'; // YYYY-MM-DD
 
-const getDaysLeft = (expiry) => {
-    if (!expiry) return null;
-    return Math.ceil((new Date(expiry) - new Date()) / 86_400_000);
+const getDaysLeft = (surveillanceDate) => {
+
+    if (!surveillanceDate)
+        return null;
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+
+    const target = new Date(surveillanceDate);
+
+    target.setHours(0, 0, 0, 0);
+
+    return Math.ceil(
+        (target - today) / 86_400_000
+    );
 };
 
-const DaysLeftCell = ({ expiry }) => {
-    const d = getDaysLeft(expiry);
-    if (d === null) return <span className="text-muted-foreground text-xs">–</span>;
-    if (d < 0) return <span className="text-[12px] font-black text-red-500">Expired {Math.abs(d)}d ago</span>;
-    if (d <= 30) return <span className="text-[12px] font-black text-orange-500">{d}d left</span>;
-    return <span className="text-[12px] font-black text-emerald-500">{d}d left</span>;
+const DaysLeftCell = ({ surveillanceDate }) => {
+
+    const d = getDaysLeft(surveillanceDate);
+
+    if (d === null) {
+        return (
+            <span className="text-muted-foreground text-xs">
+                –
+            </span>
+        );
+    }
+
+    if (d < 0) {
+        return (
+            <span className="text-[12px] font-black text-red-500">
+                Expired {Math.abs(d)}d ago
+            </span>
+        );
+    }
+
+    if (d <= 30) {
+        return (
+            <span className="text-[12px] font-black text-orange-500">
+                {d}d left
+            </span>
+        );
+    }
+
+    if (d <= 90) {
+        return (
+            <span className="text-[12px] font-black text-yellow-500">
+                {d}d left
+            </span>
+        );
+    }
+
+    return (
+        <span className="text-[12px] font-black text-emerald-500">
+            {d}d left
+        </span>
+    );
 };
 
 /* ── Slide-out Info Drawer ───────────────────────────── */
@@ -42,7 +91,8 @@ const InfoPanel = ({ item, onClose, onDownload }) => {
     const owner = cert.ownerName || item.ownerName || '–';
     const dept = cert.departmentName || item.departmentName || '–';
     const issue = cert.issueDate || item.issueDate;
-    const expiry = cert.expiryDate || item.expiryDate;
+    // const expiry = cert.expiryDate || item.expiryDate;
+    const surveillanceDate = cert.surveillanceDate || item.surveillanceDate;
     const notes = cert.notes || item.notes;
     const filePath = cert.filePath || item.filePath;
 
@@ -65,7 +115,7 @@ const InfoPanel = ({ item, onClose, onDownload }) => {
                         ['Owner', owner],
                         ['Department', dept],
                         ['Issue Date', fmtDate(issue)],
-                        ['Expiry Date', fmtDate(expiry)],
+                        // ['Expiry Date', fmtDate(expiry)],
                         ['Approval Level Required', `Level ${item.approvalLevel || 1}`],
                     ].map(([label, val]) => (
                         <div key={label} className="border-b border-border pb-3">
@@ -101,46 +151,46 @@ const ActionModal = ({ isOpen, onClose, onSubmit, type, item }) => {
 
     if (!isOpen || !item) return null;
 
-    
-const handleFormSubmit = async (e) => {
-    e.preventDefault();
 
-    setSubmitting(true);
+    const handleFormSubmit = async (e) => {
+        e.preventDefault();
 
-    try {
+        setSubmitting(true);
 
-        console.log("ITEM", item);
+        try {
 
-        await onSubmit({
+            console.log("ITEM", item);
 
-            IDCertificate:
-                item.idCertificate ||
-                item.certificate?.idCertificate,
+            await onSubmit({
 
-            ApprovalStatus:
-                type === 'approve'
-                    ? 'Approved'
-                    : 'Rejected',
+                IDCertificate:
+                    item.idCertificate ||
+                    item.certificate?.idCertificate,
 
-            ApprovalComment: comment,
+                ApprovalStatus:
+                    type === 'approve'
+                        ? 'Approved'
+                        : 'Rejected',
 
-            ApprovalLevel:
-                item.approvalLevel || 1,
+                ApprovalComment: comment,
 
-            Remarks: remarks
-        });
+                ApprovalLevel:
+                    item.approvalLevel || 1,
 
-        setComment('');
-        setRemarks('');
+                Remarks: remarks
+            });
 
-        onClose();
+            setComment('');
+            setRemarks('');
 
-    } finally {
+            onClose();
 
-        setSubmitting(false);
+        } finally {
 
-    }
- };
+            setSubmitting(false);
+
+        }
+    };
 
     const isApprove = type === 'approve';
 
@@ -300,12 +350,34 @@ const CertificateApprovalList = () => {
 
     // Calculate quick stats
     const totalPendingCount = pendingItems.length;
-    const criticalApprovalsCount = pendingItems.filter(item => {
-        const exp = item.certificate?.expiryDate || item.expiryDate;
-        const days = getDaysLeft(exp);
-        return days !== null && days <= 30;
-    }).length;
+    const criticalApprovalsCount =
+        pendingItems.filter(item => {
 
+            const surveillance =
+                item.certificate?.surveillanceDate ||
+                item.surveillanceDate ||
+                item.certificate?.serveillanceDate ||
+                item.serveillanceDate;
+
+            console.log(
+                "SURVEILLANCE DATE",
+                surveillance
+            );
+
+            const days =
+                getDaysLeft(surveillance);
+
+            console.log(
+                "DAYS LEFT",
+                days
+            );
+
+            return (
+                days !== null &&
+                days <= 30
+            );
+
+        }).length;
     return (
         <div className="p-6 space-y-6 animate-in fade-in duration-500">
             {/* Slide-out details drawer */}
@@ -370,8 +442,8 @@ const CertificateApprovalList = () => {
                         <thead className="bg-muted/50 border-b border-border text-[9px] font-black uppercase tracking-widest text-muted-foreground">
                             <tr>
                                 <TH ch="Certificate Detail" cls="min-w-[250px]" />
-                                <TH ch="Owner" />
-                                <TH ch="Department" />
+                                {/* <TH ch="Owner" />
+                                <TH ch="Department" /> */}
                                 <TH ch="Type" />
                                 <TH ch="Days Left" />
                                 <TH ch="Required Level" cls="text-center" />
@@ -405,6 +477,10 @@ const CertificateApprovalList = () => {
                                     const owner = cert.ownerName || item.ownerName || '–';
                                     const dept = cert.departmentName || item.departmentName || '–';
                                     const expiry = cert.expiryDate || item.expiryDate;
+                                    const surveillanceDate =
+                                        cert.surveillanceDate ||
+                                        item.surveillanceDate ||
+                                        expiry;
 
                                     return (
                                         <tr key={item.idTrasaction_Certificate_Approval || item.idCertificate || index} className="group hover:bg-gold/[0.02] transition-colors">
@@ -419,14 +495,14 @@ const CertificateApprovalList = () => {
                                             </td>
 
                                             {/* Owner */}
-                                            <td className="px-4 py-4 text-[12px] font-bold text-foreground/85 whitespace-nowrap">
+                                            {/* <td className="px-4 py-4 text-[12px] font-bold text-foreground/85 whitespace-nowrap">
                                                 {owner}
-                                            </td>
+                                            </td> */}
 
                                             {/* Department */}
-                                            <td className="px-4 py-4 text-[12px] font-bold text-muted-foreground whitespace-nowrap">
+                                            {/* <td className="px-4 py-4 text-[12px] font-bold text-muted-foreground whitespace-nowrap">
                                                 {dept}
-                                            </td>
+                                            </td> */}
 
                                             {/* Type Badge */}
                                             <td className="px-4 py-4">
@@ -437,7 +513,7 @@ const CertificateApprovalList = () => {
 
                                             {/* Expiry / Days Left */}
                                             <td className="px-4 py-4 whitespace-nowrap">
-                                                <DaysLeftCell expiry={expiry} />
+                                                <DaysLeftCell surveillanceDate={surveillanceDate} />
                                             </td>
 
                                             {/* Required Level */}
@@ -450,15 +526,31 @@ const CertificateApprovalList = () => {
                                             {/* Approval Actions */}
                                             <td className="px-4 py-4 pr-6">
                                                 <div className="flex items-center justify-center gap-1.5">
-                                                    {/* View Details Sheet */}
+                                                    {/* View */}
+                                                    {/* View */}
                                                     <button
-                                                        onClick={() => setInfoItem(item)}
-                                                        title="Inspect Certificate Details"
-                                                        className="w-8 h-8 rounded-xl bg-muted/60 hover:bg-gold/20 hover:text-gold text-muted-foreground flex items-center justify-center transition-all"
+                                                        onClick={() =>
+                                                            window.open(
+                                                                `${API_BASE}${item.filePath}`,
+                                                                "_blank"
+                                                            )
+                                                        }
+                                                        title="View Certificate"
+                                                        className="
+                                                        w-8 h-8
+                                                        rounded-xl
+                                                        bg-muted/60
+                                                        hover:bg-gold/20
+                                                        hover:text-gold
+                                                        text-muted-foreground
+                                                        flex items-center justify-center
+                                                        transition-all"
                                                     >
-                                                        <FileText size={14} strokeWidth={2.5} />
+                                                        <Eye
+                                                            size={14}
+                                                            strokeWidth={2.5}
+                                                        />
                                                     </button>
-
                                                     {/* Custom Download */}
                                                     {(cert.filePath || item.filePath) ? (
                                                         <button

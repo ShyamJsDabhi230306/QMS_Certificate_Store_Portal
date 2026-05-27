@@ -4,14 +4,14 @@ import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell
 import { RefreshCw, ArrowRight } from 'lucide-react';
 import { certificateService } from '../../api/certificateService';
 import toast from 'react-hot-toast';
-import { transactionCertificateApprovalService } 
-from '../../api/transactionCertificateApprovalService';
+import { transactionCertificateApprovalService }
+    from '../../api/transactionCertificateApprovalService';
 const Dashboard = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [approvalHistory, setApprovalHistory] = useState([]);
 
-const [historyOpen, setHistoryOpen] = useState(false);
+    const [historyOpen, setHistoryOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -31,26 +31,26 @@ const [historyOpen, setHistoryOpen] = useState(false);
             setLoading(false);
         }
     };
-const loadApprovalHistory = async () => {
+    const loadApprovalHistory = async () => {
 
-    try {
+        try {
 
-        const res =
-            await transactionCertificateApprovalService
-                .getHistory();
+            const res =
+                await transactionCertificateApprovalService
+                    .getHistory();
 
-        if (res.success) {
+            if (res.success) {
 
-            setApprovalHistory(res.data);
+                setApprovalHistory(res.data);
+            }
+
+        } catch {
+
+            toast.error(
+                "Failed to load approval history"
+            );
         }
-
-    } catch {
-
-        toast.error(
-            "Failed to load approval history"
-        );
-    }
-};
+    };
     if (loading || !stats) {
         return (
             <div className="h-[80vh] flex items-center justify-center bg-background">
@@ -58,7 +58,8 @@ const loadApprovalHistory = async () => {
             </div>
         );
     }
-
+    const fmtDate = (d) =>
+        d ? new Date(d).toLocaleDateString('en-IN') : '–'; // YYYY-MM-DD
     const { summary, expiriesNext12Months, certificatesByType, recentlyAdded } = stats;
 
     // Golden gradient colors for the Donut chart
@@ -71,11 +72,11 @@ const loadApprovalHistory = async () => {
                 <h1 className="text-3xl md:text-4xl font-black text-foreground tracking-tight">Dashboard</h1>
                 <p className="text-sm text-muted-foreground mt-1">An overview of all certificates in your organization.</p>
                 <button
-        onClick={() => {
-            setHistoryOpen(true);
-            loadApprovalHistory();
-        }}
-        className="
+                    onClick={() => {
+                        setHistoryOpen(true);
+                        loadApprovalHistory();
+                    }}
+                    className="
             px-4
             py-2.5
             rounded-xl
@@ -92,9 +93,9 @@ const loadApprovalHistory = async () => {
             hover:scale-[1.02]
             shadow-lg
         "
-    >
-        Approval History
-    </button>
+                >
+                    Approval History
+                </button>
 
             </div>
 
@@ -118,11 +119,11 @@ const loadApprovalHistory = async () => {
                     </div>
                 </div>
 
-                {/* 3. Expiring < 30 days */}
+                {/* 3. Expiring < 60 days */}
                 <div className="bg-card border-2 border-yellow-500/30 p-6 rounded-2xl shadow-xl flex flex-col justify-between h-32 hover:border-yellow-500/60 transition-colors">
-                    <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Expiring &lt; 30 Days</p>
+                    <p className="text-[10px] uppercase font-black tracking-widest text-muted-foreground">Expiring &lt; 60 Days</p>
                     <div>
-                        <p className="text-4xl font-black text-foreground">{summary.expiringIn30Days}</p>
+                        <p className="text-4xl font-black text-foreground">{summary.expiringIn60Days}</p>
                         <p className="text-[10px] text-yellow-500 font-bold uppercase tracking-wider mt-1">Action Recommended</p>
                     </div>
                 </div>
@@ -186,9 +187,9 @@ const loadApprovalHistory = async () => {
             <div className="bg-card border-2 border-border rounded-3xl shadow-2xl overflow-hidden">
                 <div className="flex items-center justify-between px-6 py-5 border-b border-border">
                     <h3 className="text-[12px] font-black uppercase tracking-widest text-foreground">Recently Added</h3>
-                    <button onClick={() => navigate('/certificate')} className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-gold transition-colors flex items-center gap-1 border border-border px-3 py-1.5 rounded-lg">
+                    {/* <button onClick={() => navigate('/certificate')} className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-gold transition-colors flex items-center gap-1 border border-border px-3 py-1.5 rounded-lg">
                         View all <ArrowRight size={12} />
-                    </button>
+                    </button> */}
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
@@ -196,8 +197,9 @@ const loadApprovalHistory = async () => {
                             <tr>
                                 <th className="px-6 py-4">Certificate</th>
                                 <th className="px-6 py-4">Type</th>
-                                <th className="px-6 py-4">Owner</th>
+                                {/* <th className="px-6 py-4">Owner</th> */}
                                 <th className="px-6 py-4">Expiry</th>
+                                <th className="px-6 py-4">Serveillance Date</th>
                                 <th className="px-6 py-4">Status</th>
                             </tr>
                         </thead>
@@ -213,9 +215,12 @@ const loadApprovalHistory = async () => {
                                             {cert.certificateTypeName || '–'}
                                         </span>
                                     </td>
-                                    <td className="px-6 py-4 text-[12px] font-bold text-foreground/80">{cert.ownerName || '–'}</td>
+                                    {/* <td className="px-6 py-4 text-[12px] font-bold text-foreground/80">{cert.ownerName || '–'}</td> */}
                                     <td className="px-6 py-4 text-[12px] font-bold text-foreground/80">
-                                        {new Date(cert.expiryDate).toLocaleDateString('en-CA')}
+                                        {new Date(cert.expiryDate).toLocaleDateString('en-IN')}
+                                    </td>
+                                    <td className="px-6 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
+                                        {fmtDate(cert.surveillanceDate)}
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-1.5 text-[11px] font-black">
@@ -230,10 +235,10 @@ const loadApprovalHistory = async () => {
                 </div>
             </div>
             {
-    historyOpen && (
+                historyOpen && (
 
-        <div
-            className="
+                    <div
+                        className="
                 fixed
                 inset-0
                 bg-black/50
@@ -244,10 +249,10 @@ const loadApprovalHistory = async () => {
                 justify-center
                 p-6
             "
-        >
+                    >
 
-            <div
-                className="
+                        <div
+                            className="
                     w-full
                     max-w-6xl
                     max-h-[90vh]
@@ -258,11 +263,11 @@ const loadApprovalHistory = async () => {
                     border-border
                     shadow-2xl
                 "
-            >
+                        >
 
-                {/* HEADER */}
-                <div
-                    className="
+                            {/* HEADER */}
+                            <div
+                                className="
                         flex
                         items-center
                         justify-between
@@ -271,22 +276,22 @@ const loadApprovalHistory = async () => {
                         border-b
                         border-border
                     "
-                >
+                            >
 
-                    <h2
-                        className="
+                                <h2
+                                    className="
                             text-xl
                             font-black
                             tracking-tight
                             text-foreground
                         "
-                    >
-                        Approval History
-                    </h2>
+                                >
+                                    Approval History
+                                </h2>
 
-                    <button
-                        onClick={() => setHistoryOpen(false)}
-                        className="
+                                <button
+                                    onClick={() => setHistoryOpen(false)}
+                                    className="
                             px-4
                             py-2
                             rounded-xl
@@ -299,19 +304,19 @@ const loadApprovalHistory = async () => {
                             tracking-widest
                             transition-colors
                         "
-                    >
-                        Close
-                    </button>
+                                >
+                                    Close
+                                </button>
 
-                </div>
+                            </div>
 
-                {/* TABLE */}
-                <div className="overflow-auto max-h-[75vh]">
+                            {/* TABLE */}
+                            <div className="overflow-auto max-h-[75vh]">
 
-                    <table className="w-full text-left">
+                                <table className="w-full text-left">
 
-                        <thead
-                            className="
+                                    <thead
+                                        className="
                                 bg-muted/50
                                 border-b
                                 border-border
@@ -320,89 +325,89 @@ const loadApprovalHistory = async () => {
                                 tracking-[0.2em]
                                 text-muted-foreground
                             "
-                        >
+                                    >
 
-                            <tr>
+                                        <tr>
 
-                                <th className="px-6 py-4">
-                                    Certificate
-                                </th>
+                                            <th className="px-6 py-4">
+                                                Certificate
+                                            </th>
 
-                                <th className="px-6 py-4">
-                                    Type
-                                </th>
+                                            <th className="px-6 py-4">
+                                                Type
+                                            </th>
 
-                                <th className="px-6 py-4">
-                                    Status
-                                </th>
+                                            <th className="px-6 py-4">
+                                                Status
+                                            </th>
 
-                                <th className="px-6 py-4">
-                                    Approved By
-                                </th>
+                                            <th className="px-6 py-4">
+                                                Approved By
+                                            </th>
 
-                                <th className="px-6 py-4">
-                                    Date
-                                </th>
+                                            <th className="px-6 py-4">
+                                                Date
+                                            </th>
 
-                            </tr>
+                                        </tr>
 
-                        </thead>
+                                    </thead>
 
-                        <tbody className="divide-y divide-border">
+                                    <tbody className="divide-y divide-border">
 
-                            {
-                                approvalHistory.map((item) => (
+                                        {
+                                            approvalHistory.map((item) => (
 
-                                    <tr
-                                        key={
-                                            item.idCertificate
-                                        }
-                                        className="
+                                                <tr
+                                                    key={
+                                                        item.idCertificate
+                                                    }
+                                                    className="
                                             hover:bg-gold/[0.03]
                                             transition-colors
                                         "
-                                    >
+                                                >
 
-                                        <td className="px-6 py-4">
+                                                    <td className="px-6 py-4">
 
-                                            <p
-                                                className="
+                                                        <p
+                                                            className="
                                                     text-[13px]
                                                     font-black
                                                     text-foreground
                                                 "
-                                            >
-                                                {
-                                                    item.certificateName
-                                                }
-                                            </p>
+                                                        >
+                                                            {
+                                                                item.certificateName
+                                                            }
+                                                        </p>
 
-                                            <p
-                                                className="
+                                                        <p
+                                                            className="
                                                     text-[10px]
                                                     uppercase
                                                     tracking-widest
                                                     text-muted-foreground
                                                     mt-1
                                                 "
-                                            >
-                                                {
-                                                    item.certificateNumber
-                                                }
-                                            </p>
+                                                        >
+                                                            {
+                                                                item.certificateNumber
+                                                            }
+                                                        </p>
 
-                                        </td>
+                                                    </td>
 
-                                        <td className="px-6 py-4 text-sm font-bold">
-                                            {
-                                                item.certificateTypeName
-                                            }
-                                        </td>
+                                                    <td className="px-6 py-4 text-sm font-bold">
+                                                        {
+                                                            item.certificateTypeName
+                                                        }
+                                                    </td>
 
-                                        <td className="px-6 py-4">
+                                                    <td className="px-6 py-4">
 
-                                            <span
-                                                className={`
+                                                        <span
+                                                            className={`
                                                     px-3
                                                     py-1
                                                     rounded-full
@@ -411,50 +416,49 @@ const loadApprovalHistory = async () => {
                                                     uppercase
                                                     tracking-widest
 
-                                                    ${
-                                                        item.approvalStatus === 'Approved'
-                                                            ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
-                                                            : 'bg-red-500/10 text-red-500 border border-red-500/20'
-                                                    }
+                                                    ${item.approvalStatus === 'Approved'
+                                                                    ? 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20'
+                                                                    : 'bg-red-500/10 text-red-500 border border-red-500/20'
+                                                                }
                                                 `}
-                                            >
-                                                {
-                                                    item.approvalStatus
-                                                }
-                                            </span>
+                                                        >
+                                                            {
+                                                                item.approvalStatus
+                                                            }
+                                                        </span>
 
-                                        </td>
+                                                    </td>
 
-                                        <td className="px-6 py-4 text-sm font-bold text-foreground/80">
-                                            {
-                                                item.approvedByName
-                                            }
-                                        </td>
+                                                    <td className="px-6 py-4 text-sm font-bold text-foreground/80">
+                                                        {
+                                                            item.u_By
+                                                        }
+                                                    </td>
 
-                                        <td className="px-6 py-4 text-sm text-muted-foreground">
-                                            {
-                                                item.approvalDate
-                                                    ?.split('T')[0]
-                                            }
-                                        </td>
+                                                    <td className="px-6 py-4 text-sm text-muted-foreground">
+                                                        {
+                                                            item.approvalDate
+                                                                ?.split('T')[0]
+                                                        }
+                                                    </td>
 
-                                    </tr>
-                                ))
-                            }
+                                                </tr>
+                                            ))
+                                        }
 
-                        </tbody>
+                                    </tbody>
 
-                    </table>
+                                </table>
 
-                </div>
+                            </div>
 
-            </div>
+                        </div>
 
+                    </div>
+                )
+            }
         </div>
-    )
-}
-        </div>
-        
+
     );
 };
 

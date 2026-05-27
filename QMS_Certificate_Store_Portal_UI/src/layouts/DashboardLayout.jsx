@@ -3,13 +3,12 @@ import Sidebar from "./Sidebar";
 // import air from "../assets/air.jpeg"
 const DashboardLayout = ({ children }) => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+    const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");;
 
     useEffect(() => {
         document.documentElement.classList.toggle("dark", theme === "dark");
         localStorage.setItem("theme", theme);
     }, [theme]);
-
     return (
         <div className="flex min-h-screen bg-background selection:bg-gold/30">
             <Sidebar

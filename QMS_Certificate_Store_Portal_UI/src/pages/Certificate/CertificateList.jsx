@@ -16,41 +16,87 @@ const API_BASE = 'https://localhost:7294';
 
 /* ── helpers ─────────────────────────────────────────── */
 const fmtDate = (d) =>
-    d ? new Date(d).toLocaleDateString('en-CA') : '–'; // YYYY-MM-DD
+    d ? new Date(d).toLocaleDateString('en-IN') : '–'; // YYYY-MM-DD
 
-const getDaysLeft = (expiry) => {
-    if (!expiry) return null;
-    return Math.ceil((new Date(expiry) - new Date()) / 86_400_000);
+const getDaysLeft = (surveillanceDate) => {
+
+    if (!surveillanceDate)
+        return null;
+
+    const today = new Date();
+
+    today.setHours(0, 0, 0, 0);
+
+    const target = new Date(surveillanceDate);
+
+    target.setHours(0, 0, 0, 0);
+
+    return Math.ceil(
+        (target - today) / 86_400_000
+    );
 };
+const DaysLeftCell = ({ surveillanceDate }) => {
 
-const DaysLeftCell = ({ expiry }) => {
-    const d = getDaysLeft(expiry);
-    if (d === null) return <span className="text-muted-foreground text-xs">–</span>;
-    if (d < 0) return <span className="text-[12px] font-black text-red-500">Expired {Math.abs(d)}d ago</span>;
-    if (d <= 30) return <span className="text-[12px] font-black text-orange-500">{d}d left</span>;
-    if (d <= 90) return <span className="text-[12px] font-black text-yellow-500">{d}d left</span>;
-    return <span className="text-[12px] font-black text-emerald-500">{d}d left</span>;
-};
+    const d = getDaysLeft(surveillanceDate);
 
-const StatusCell = ({ status, expiry }) => {
-    const d = getDaysLeft(expiry);
-    let dot = 'bg-muted-foreground', label = status || 'Unknown', color = 'text-muted-foreground';
-    if (d !== null && d < 0) { dot = 'bg-red-500'; label = 'Expired'; color = 'text-red-500'; }
-    else if (d !== null && d <= 30) { dot = 'bg-orange-500'; label = 'Expiring'; color = 'text-orange-500'; }
-    else if (!status || status === 'Active' || status === 'Approved') {
-        dot = 'bg-emerald-500'; label = 'Valid'; color = 'text-emerald-500';
-    } else if (status === 'Draft') { dot = 'bg-yellow-500'; label = 'Draft'; color = 'text-yellow-500'; }
-    else if (status === 'Pending') { dot = 'bg-blue-500'; label = 'Pending'; color = 'text-blue-500'; }
-    else if (status === 'Expired') { dot = 'bg-red-500'; label = 'Expired'; color = 'text-red-500'; }
-    else { dot = 'bg-emerald-500'; label = status; color = 'text-emerald-500'; }
+    if (d === null) {
+        return (
+            <span className="text-muted-foreground text-xs">
+                –
+            </span>
+        );
+    }
+
+    if (d < 0) {
+        return (
+            <span className="text-[12px] font-black text-red-500">
+                Expired {Math.abs(d)}d ago
+            </span>
+        );
+    }
+
+    if (d <= 30) {
+        return (
+            <span className="text-[12px] font-black text-orange-500">
+                {d}d left
+            </span>
+        );
+    }
+
+    if (d <= 90) {
+        return (
+            <span className="text-[12px] font-black text-yellow-500">
+                {d}d left
+            </span>
+        );
+    }
 
     return (
-        <span className={`flex items-center gap-1.5 text-[12px] font-black ${color}`}>
-            <span className={`inline-block w-2 h-2 rounded-full ${dot}`} />
-            {label}
+        <span className="text-[12px] font-black text-emerald-500">
+            {d}d left
         </span>
     );
 };
+
+// const StatusCell = ({ status, expiry }) => {
+//     const d = getDaysLeft(expiry);
+//     let dot = 'bg-muted-foreground', label = status || 'Unknown', color = 'text-muted-foreground';
+//     if (d !== null && d < 0) { dot = 'bg-red-500'; label = 'Expired'; color = 'text-red-500'; }
+//     else if (d !== null && d <= 30) { dot = 'bg-orange-500'; label = 'Expiring'; color = 'text-orange-500'; }
+//     else if (!status || status === 'Active' || status === 'Approved') {
+//         dot = 'bg-emerald-500'; label = 'Valid'; color = 'text-emerald-500';
+//     } else if (status === 'Draft') { dot = 'bg-yellow-500'; label = 'Draft'; color = 'text-yellow-500'; }
+//     else if (status === 'Pending') { dot = 'bg-blue-500'; label = 'Pending'; color = 'text-blue-500'; }
+//     else if (status === 'Expired') { dot = 'bg-red-500'; label = 'Expired'; color = 'text-red-500'; }
+//     else { dot = 'bg-emerald-500'; label = status; color = 'text-emerald-500'; }
+
+//     return (
+//         <span className={`flex items-center gap-1.5 text-[12px] font-black ${color}`}>
+//             <span className={`inline-block w-2 h-2 rounded-full ${dot}`} />
+//             {label}
+//         </span>
+//     );
+// };
 
 const TYPE_COLORS = {
     legal: 'bg-purple-600  text-white',
@@ -88,8 +134,6 @@ const ViewModal = ({ cert, onClose }) => {
                     <div className="grid grid-cols-2 gap-3">
                         {[
                             ['Type', cert.certificateTypeName || '–'],
-                            ['Owner', cert.ownerName || '–'],
-                            ['Department', cert.departmentName || '–'],
                             ['Status', cert.status || '–'],
                             ['Issue Date', fmtDate(cert.issueDate)],
                             ['Expiry Date', fmtDate(cert.expiryDate)],
@@ -121,42 +165,298 @@ const ViewModal = ({ cert, onClose }) => {
 };
 
 /* ── History Modal ───────────────────────────────────── */
+// const HistoryModal = ({ cert, onClose }) => {
+//     if (!cert) return null;
+//     const events = [
+//         { label: 'Created By', user: cert.e_By || 'System', date: cert.e_Date, color: 'bg-emerald-500/20 text-emerald-500' },
+//         cert.u_Date && { label: 'Last Updated', user: cert.u_By || '–', date: cert.u_Date, color: 'bg-blue-500/20 text-blue-500' },
+//         cert.d_Date && { label: 'Deleted', user: cert.d_By || '–', date: cert.d_Date, color: 'bg-red-500/20 text-red-500' },
+//     ].filter(Boolean);
+
 const HistoryModal = ({ cert, onClose }) => {
+
     if (!cert) return null;
+
+    const reminderEvents =
+        (cert.reminders || []).map(reminder => ({
+            label:
+                `Reminder (${reminder.daysBeforeSurveillance} Days)`,
+
+            user:
+                reminder.channel,
+
+            date:
+                reminder.createdOn,
+
+            color:
+                'bg-amber-500/20 text-amber-500'
+        }));
+
     const events = [
-        { label: 'Created By', user: cert.e_By || 'System', date: cert.e_Date, color: 'bg-emerald-500/20 text-emerald-500' },
-        cert.u_Date && { label: 'Last Updated', user: cert.u_By || '–', date: cert.u_Date, color: 'bg-blue-500/20 text-blue-500' },
-        cert.d_Date && { label: 'Deleted', user: cert.d_By || '–', date: cert.d_Date, color: 'bg-red-500/20 text-red-500' },
+
+        {
+            label: 'Created By',
+
+            user:
+                cert.e_By || 'System',
+
+            date:
+                cert.e_Date,
+
+            color:
+                'bg-emerald-500/20 text-emerald-500'
+        },
+
+        cert.u_Date && {
+            label: 'Last Updated',
+
+            user:
+                cert.u_By || '–',
+
+            date:
+                cert.u_Date,
+
+            color:
+                'bg-blue-500/20 text-blue-500'
+        },
+
+        cert.d_Date && {
+            label: 'Deleted',
+
+            user:
+                cert.d_By || '–',
+
+            date:
+                cert.d_Date,
+
+            color:
+                'bg-red-500/20 text-red-500'
+        },
+
+        // ADD REMINDERS
+        ...reminderEvents
+
     ].filter(Boolean);
 
     return (
-        <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-            <div className="bg-card border border-border rounded-2xl w-full max-w-md shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-300">
-                <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                    <div className="flex items-center gap-2">
-                        <Clock size={17} className="text-[#D4A95A]" />
-                        <span className="font-black uppercase tracking-widest text-sm text-foreground">Certificate History</span>
+        <div className="
+        fixed inset-0 z-[999]
+        flex items-center justify-center
+        bg-black/70 backdrop-blur-md
+        p-6
+    ">
+
+            <div className="
+            relative
+            w-full max-w-4xl
+            rounded-3xl
+            border border-white/10
+            bg-card/95
+            shadow-[0_20px_80px_rgba(0,0,0,0.35)]
+            overflow-hidden
+            animate-in fade-in zoom-in-95 duration-300
+        ">
+
+                {/* HEADER */}
+                <div className="
+                flex items-center justify-between
+                px-8 py-6
+                border-b border-border/60
+                bg-gradient-to-r
+                from-[#D4A95A]/10
+                via-transparent
+                to-transparent
+            ">
+
+                    <div className="flex items-center gap-3">
+
+                        <div className="
+                        w-11 h-11
+                        rounded-2xl
+                        bg-[#D4A95A]/15
+                        flex items-center justify-center
+                    ">
+                            <Clock
+                                size={20}
+                                className="text-[#D4A95A]"
+                            />
+                        </div>
+
+                        <div>
+                            <h2 className="
+                            text-xl font-black
+                            tracking-wide
+                            text-foreground
+                        ">
+                                Certificate History
+                            </h2>
+
+                            <p className="
+                            text-xs uppercase
+                            tracking-[0.25em]
+                            text-muted-foreground
+                            mt-1
+                        ">
+                                Audit Timeline
+                            </p>
+                        </div>
                     </div>
-                    <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
-                        <X size={16} />
+
+                    <button
+                        onClick={onClose}
+                        className="
+                        w-10 h-10
+                        rounded-xl
+                        hover:bg-muted/60
+                        flex items-center justify-center
+                        transition-all
+                        text-muted-foreground
+                        hover:text-foreground
+                    "
+                    >
+                        <X size={18} />
                     </button>
                 </div>
-                <div className="p-6 space-y-5">
-                    <p className="text-[11px] text-muted-foreground font-black uppercase tracking-widest">{cert.certificateName}</p>
-                    <div className="space-y-4">
-                        {events.map((e, i) => (
-                            <div key={i} className="flex items-start gap-3">
-                                <div className={`mt-0.5 w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-black ${e.color}`}>
-                                    {i + 1}
+
+                {/* BODY */}
+                <div className="p-8">
+
+                    {/* CERTIFICATE */}
+                    <div className="
+                    mb-8
+                    p-5
+                    rounded-2xl
+                    bg-muted/20
+                    border border-border/50
+                ">
+
+                        <p className="
+                        text-[11px]
+                        uppercase
+                        tracking-[0.3em]
+                        font-black
+                        text-muted-foreground
+                        mb-2
+                    ">
+                            Certificate
+                        </p>
+
+                        <h3 className="
+                        text-2xl
+                        font-black
+                        text-foreground
+                    ">
+                            {cert.certificateName}
+                        </h3>
+
+                        <p className="
+                        mt-1
+                        text-sm
+                        font-bold
+                        text-muted-foreground
+                    ">
+                            {cert.certificateNumber}
+                        </p>
+                    </div>
+
+                    {/* TIMELINE */}
+                    <div className="relative">
+
+                        {/* LINE */}
+                        <div className="
+                        absolute
+                        left-[19px]
+                        top-0
+                        bottom-0
+                        w-[2px]
+                        bg-border
+                    " />
+
+                        <div className="space-y-8">
+
+                            {events.map((e, i) => (
+
+                                <div
+                                    key={i}
+                                    className="
+                                    relative
+                                    flex gap-5
+                                "
+                                >
+
+                                    {/* DOT */}
+                                    <div className="
+                                    relative z-10
+                                    w-10 h-10
+                                    rounded-2xl
+                                    flex items-center justify-center
+                                    font-black text-sm
+                                    shadow-lg
+                                    border border-white/10
+                                    shrink-0
+                                    backdrop-blur-sm
+                                    ${e.color}
+                                ">
+                                        {i + 1}
+                                    </div>
+
+                                    {/* CONTENT */}
+                                    <div className="
+                                    flex-1
+                                    rounded-2xl
+                                    border border-border/50
+                                    bg-muted/20
+                                    p-5
+                                    hover:bg-muted/30
+                                    transition-all
+                                ">
+
+                                        <div className="
+                                        flex items-center justify-between
+                                        gap-4
+                                    ">
+
+                                            <div>
+
+                                                <h4 className="
+                                                text-base
+                                                font-black
+                                                text-foreground
+                                            ">
+                                                    {e.label}
+                                                </h4>
+
+                                                <p className="
+                                                mt-1
+                                                text-sm
+                                                font-semibold
+                                                text-muted-foreground
+                                            ">
+                                                    {e.user}
+                                                </p>
+                                            </div>
+
+                                            <div className="
+                                            text-right
+                                            text-xs
+                                            font-bold
+                                            text-muted-foreground
+                                            whitespace-nowrap
+                                        ">
+                                                {
+                                                    e.date
+                                                        ? new Date(e.date)
+                                                            .toLocaleString("en-GB")
+                                                        : "–"
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p className="text-sm font-black text-foreground">{e.label}</p>
-                                    <p className="text-[11px] text-muted-foreground font-bold">
-                                        {e.user} &bull; {e.date ? new Date(e.date).toLocaleString('en-GB') : '–'}
-                                    </p>
-                                </div>
-                            </div>
-                        ))}
+
+                            ))}
+
+                        </div>
                     </div>
                 </div>
             </div>
@@ -303,10 +603,11 @@ const CertificateList = () => {
                             <tr>
                                 <TH ch="Certificate" cls="min-w-[200px]" />
                                 <TH ch="Type" />
-                                <TH ch="Owner" />
-                                <TH ch="Department" />
+                                {/* <TH ch="Owner" />
+                                <TH ch="Department" /> */}
                                 <TH ch="Issue" />
                                 <TH ch="Expiry" />
+                                <TH ch="Serveillance Date" />
                                 <TH ch="Days Left" />
                                 {/* <TH ch="Status" /> */}
                                 <TH ch="Actions" cls="text-center pr-5" />
@@ -358,14 +659,14 @@ const CertificateList = () => {
                                         </td>
 
                                         {/* ── Owner ────────────────────────── */}
-                                        <td className="px-3 py-4 text-[12px] font-bold text-foreground/80 whitespace-nowrap">
+                                        {/* <td className="px-3 py-4 text-[12px] font-bold text-foreground/80 whitespace-nowrap">
                                             {item.ownerName || '–'}
-                                        </td>
+                                        </td> */}
 
                                         {/* ── Department ──────────────────── */}
-                                        <td className="px-3 py-4 text-[12px] font-bold text-muted-foreground whitespace-nowrap">
+                                        {/* <td className="px-3 py-4 text-[12px] font-bold text-muted-foreground whitespace-nowrap">
                                             {item.departmentName || '–'}
-                                        </td>
+                                        </td> */}
 
                                         {/* ── Issue date ─────────────────── */}
                                         <td className="px-3 py-4 text-[12px] font-bold text-muted-foreground whitespace-nowrap">
@@ -376,10 +677,15 @@ const CertificateList = () => {
                                         <td className="px-3 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
                                             {fmtDate(item.expiryDate)}
                                         </td>
+                                        <td className="px-3 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
+                                            {fmtDate(item.surveillanceDate)}
+                                        </td>
 
                                         {/* ── Days left ─────────────────── */}
                                         <td className="px-3 py-4 whitespace-nowrap">
-                                            <DaysLeftCell expiry={item.expiryDate} />
+                                            <DaysLeftCell
+                                                surveillanceDate={item.surveillanceDate}
+                                            />
                                         </td>
 
                                         {/* ── Status ───────────────────── */}
@@ -391,12 +697,27 @@ const CertificateList = () => {
                                         <td className="px-3 py-4 pr-5">
                                             <div className="flex items-center justify-center gap-1">
                                                 {/* View */}
+                                                {/* View */}
                                                 <button
-                                                    onClick={() => setViewCert(item)}
-                                                    title="View"
-                                                    className="w-7 h-7 rounded-lg bg-muted/50 hover:bg-gold/20 hover:text-gold text-muted-foreground flex items-center justify-center transition-all"
+                                                    onClick={() =>
+                                                        window.open(
+                                                            `${API_BASE}${item.filePath}`,
+                                                            "_blank"
+                                                        )
+                                                    }
+                                                    title="View File"
+                                                    className="
+        w-7 h-7
+        rounded-lg
+        bg-muted/50
+        hover:bg-gold/20
+        hover:text-gold
+        text-muted-foreground
+        flex items-center justify-center
+        transition-all
+    "
                                                 >
-                                                    <FileText size={13} strokeWidth={2.5} />
+                                                    <Eye size={13} strokeWidth={2.5} />
                                                 </button>
 
                                                 {/* Download */}

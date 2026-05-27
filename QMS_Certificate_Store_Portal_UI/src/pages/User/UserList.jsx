@@ -75,7 +75,7 @@ const UserList = () => {
                         onClick={() => navigate('/users/add')}
                         className="px-6 py-3 bg-gold hover:bg-gold-hover text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
                     >
-                        <UserPlus size={18} strokeWidth={3} /> Register Entity
+                        <UserPlus size={18} strokeWidth={3} />Add New User
                     </button>
                 </div>
             </div>
@@ -93,8 +93,10 @@ const UserList = () => {
                                 <th className="px-6 py-5">Phone</th>
                                 <th className="px-6 py-5">Username</th>
                                 <th className="px-6 py-5">Password</th>
-                                <th className="px-6 py-5">Department</th>
+                                {/* <th className="px-6 py-5">Department</th> */}
                                 <th className="px-6 py-5">Designation</th>
+                                <th className="px-6 py-5">Company</th>
+                                <th className="px-6 py-5">Location</th>
                                 <th className="px-6 py-5 text-center">Status</th>
                                 <th className="px-6 py-5 text-right">Actions</th>
                             </tr>
@@ -166,13 +168,20 @@ const UserList = () => {
                                         </td>
 
                                         {/* 7. Department */}
-                                        <td className="px-6 py-4 text-[12px] font-black text-foreground/80 uppercase tracking-wider">
+                                        {/* <td className="px-6 py-4 text-[12px] font-black text-foreground/80 uppercase tracking-wider">
                                             {item.departmentName || '–'}
-                                        </td>
+                                        </td> */}
+
 
                                         {/* 8. Designation */}
                                         <td className="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-gold">
                                             {item.designationName || '–'}
+                                        </td>
+                                        <td className="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-gold">
+                                            {item.companyName || '–'}
+                                        </td>
+                                        <td className="px-6 py-4 text-[11px] font-black uppercase tracking-widest text-gold">
+                                            {item.locationName || '–'}
                                         </td>
 
                                         {/* 9. IsActive */}
