@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using ClosedXML.Excel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,15 @@ namespace QMS_Certificate_Store_Portal.Controllers
     {
         private readonly CertificateService _service;
         private readonly IWebHostEnvironment _env;
+        private readonly WhatsAppService _whatsAppService; // 👈 
 
-        public CertificateController(CertificateService service, IWebHostEnvironment env)
+
+        public CertificateController(CertificateService service, IWebHostEnvironment env, WhatsAppService whatsAppService)
         {
             _service = service;
             _env = env;
+            _whatsAppService = whatsAppService; // 👈
+            
         }
 
         // 1. Get the list of all Certificates
@@ -172,7 +177,7 @@ namespace QMS_Certificate_Store_Portal.Controllers
             {
                 var companyId = Convert.ToInt32(
           User.FindFirst("IDCompany")?.Value ?? "0"
-      );
+            );
 
                 var locationId = Convert.ToInt32(
                     User.FindFirst("IDLocation")?.Value ?? "0"
@@ -202,6 +207,251 @@ namespace QMS_Certificate_Store_Portal.Controllers
         }
 
 
+        // 7. Export all Certificates to Excel
+        [HttpGet("export")]
+        public async Task<IActionResult> ExportToExcel()
+        {
+
+            var isSuperAdmin = Convert.ToBoolean(User.FindFirst("IsSuperAdmin")?.Value ?? "false");
+            var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value ?? "";
+            bool isAllowed = isSuperAdmin ||
+                             role.Equals("Admin", StringComparison.OrdinalIgnoreCase) ||
+                             role.Equals("Approver", StringComparison.OrdinalIgnoreCase);
+            if (!isAllowed)
+            {
+                return Forbid("You do not have permission to export certificate data.");
+            }
+            try
+            {
+                // Retrieve current user company & location
+                var companyId = Convert.ToInt32(User.FindFirst("IDCompany")?.Value ?? "0");
+                var locationId = Convert.ToInt32(User.FindFirst("IDLocation")?.Value ?? "0");
+
+                // Get certificate data
+                var data = await _service.GetAllAsync(companyId, locationId);
+
+                using (var workbook = new XLWorkbook())
+                {
+                    var worksheet = workbook.Worksheets.Add("Certificates");
+
+                    // Set headers
+                    worksheet.Cell(1, 1).Value = "Certificate";
+                    worksheet.Cell(1, 2).Value = "Certificate No";
+                    worksheet.Cell(1, 3).Value = "Type";
+                    worksheet.Cell(1, 4).Value = "Issue Date";
+                    worksheet.Cell(1, 5).Value = "Expiry Date";
+                    worksheet.Cell(1, 6).Value = "Surveillance Date";
+                    worksheet.Cell(1, 7).Value = "Days Left";
+
+                    // Apply Header styling
+                    var headerRange = worksheet.Range("A1:G1");
+                    headerRange.Style.Font.Bold = true;
+                    headerRange.Style.Fill.BackgroundColor = XLColor.LightGray;
+
+                    int row = 2;
+                    foreach (var cert in data)
+                    {
+                        worksheet.Cell(row, 1).Value = cert.CertificateName;
+                        worksheet.Cell(row, 2).Value = cert.CertificateNumber;
+                        worksheet.Cell(row, 3).Value = cert.CertificateTypeName ?? "–";
+                        worksheet.Cell(row, 4).Value = cert.IssueDate.ToString("dd-MM-yyyy");
+                        worksheet.Cell(row, 5).Value = cert.ExpiryDate?.ToString("dd-MM-yyyy");
+
+                        worksheet.Cell(row, 6).Value = cert.SurveillanceDate.HasValue
+                            ? cert.SurveillanceDate.Value.ToString("dd-MM-yyyy")
+                            : "–";
+
+                        // Calculate Days Left (based on Surveillance Date, matching UI logic)
+                        if (cert.SurveillanceDate.HasValue)
+                        {
+                            int daysLeft = (cert.SurveillanceDate.Value.Date - DateTime.Today).Days;
+                            worksheet.Cell(row, 7).Value = daysLeft;
+                        }
+                        else
+                        {
+                            worksheet.Cell(row, 7).Value = "–";
+                        }
+
+                        row++;
+                    }
+
+                    // Auto-adjust columns width to fit content
+                    worksheet.Columns().AdjustToContents();
+
+                    using (var stream = new MemoryStream())
+                    {
+                        workbook.SaveAs(stream);
+                        var content = stream.ToArray();
+                        return File(
+                            content,
+                            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                            "Certificates_Export.xlsx"
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error while exporting: {ex.Message}");
+            }
+        }
+
+
+        // 8. Send test WhatsApp message
+        [HttpPost("send-test-whatsapp")]
+        public async Task<IActionResult> SendTestWhatsApp([FromBody] WhatsAppTestRequest request)
+        {
+            if (string.IsNullOrEmpty(request.PhoneNumber))
+                return BadRequest(new { success = false, message = "Phone number is required." });
+
+            var result = await _whatsAppService.SendTemplateNotificationAsync(request.PhoneNumber);
+            if (result)
+            {
+                return Ok(new { success = true, message = "WhatsApp notification sent successfully!" });
+            }
+            else
+            {
+                return StatusCode(500, new { success = false, message = "Failed to send WhatsApp notification. Check server logs." });
+            }
+        }
+
+        // DTO model for the request body
+        public class WhatsAppTestRequest
+        {
+            public string PhoneNumber { get; set; }
+        }
+
+        // =====================================
+        // GET PENDING REMINDERS
+        // =====================================
+        [HttpGet("pending-reminders")]
+        public async Task<IActionResult> GetPendingReminders()
+        {
+            try
+            {
+                var data = await _service.GetPendingRemindersAsync();
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+        // =====================================
+        // GET CUSTOM CONTACTS BY REMINDER ID
+        // =====================================
+        [HttpGet("custom-contacts/{reminderId}")]
+        public async Task<IActionResult> GetCustomContacts(int reminderId)
+        {
+            try
+            {
+                var data = await _service.GetCustomContactsAsync(reminderId);
+                return Ok(new { success = true, data });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+        // =====================================
+        // SAVE CUSTOM CONTACT
+        // =====================================
+        [HttpPost("save-custom-contact")]
+        public async Task<IActionResult> SaveCustomContact(ReminderCustomContact model)
+        {
+            try
+            {
+                var actionUser = User.FindFirst("UserFullName")?.Value ?? "System";
+                if (model.IDCustom > 0)
+                {
+                    model.U_By = actionUser;
+                }
+                else
+                {
+                    model.E_By = actionUser;
+                }
+                var resultId = await _service.SaveCustomContactAsync(model);
+                return Ok(new { success = true, data = resultId, message = "Custom contact saved successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+        // =====================================
+        // DELETE CUSTOM CONTACT
+        // =====================================
+        [HttpDelete("delete-custom-contact/{idCustom}")]
+        public async Task<IActionResult> DeleteCustomContact(int idCustom)
+        {
+            try
+            {
+                var actionUser = User.FindFirst("UserFullName")?.Value ?? "System";
+                await _service.DeleteCustomContactAsync(idCustom, actionUser);
+                return Ok(new { success = true, message = "Custom contact deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
+
+        [HttpPost("save-log")]
+        public async Task<IActionResult> SaveLog([FromBody] CertificateLog model)
+        {
+            try
+            {
+                var result = await _service.SaveCertificateLog(model);
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        [HttpGet("logs")]
+        public async Task<IActionResult> GetLogs()
+        {
+            var isSuperAdmin =
+       Convert.ToBoolean(
+           User.FindFirst("IsSuperAdmin")?.Value ?? "false"
+       );
+
+            var role =
+                User.FindFirst(
+                    System.Security.Claims.ClaimTypes.Role
+                )?.Value ?? "";
+
+            bool isAllowed =
+                isSuperAdmin ||
+                role.Equals(
+                    "Admin",
+                    StringComparison.OrdinalIgnoreCase
+                ) ||
+                role.Equals(
+                    "Approver",
+                    StringComparison.OrdinalIgnoreCase
+                );
+
+            if (!isAllowed)
+            {
+                return Forbid(
+                    "You do not have permission to view certificate logs."
+                );
+            }
+            try
+            {
+                var result = await _service.GetCertificateLogs();
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
 
     }
 }

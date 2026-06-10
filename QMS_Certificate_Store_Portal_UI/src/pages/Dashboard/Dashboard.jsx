@@ -10,10 +10,16 @@ const Dashboard = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [approvalHistory, setApprovalHistory] = useState([]);
+    const [viewLogs, setViewLogs] = useState([]);
 
     const [historyOpen, setHistoryOpen] = useState(false);
     const navigate = useNavigate();
-
+    
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const designation = (user?.designationName || "").toLowerCase().trim();
+    const isSuperAdmin = user?.isSuperAdmin === true;
+    const showViewLog = isSuperAdmin || designation === "admin" || designation === "approver";
     useEffect(() => {
         loadStats();
     }, []);
@@ -51,6 +57,24 @@ const Dashboard = () => {
             );
         }
     };
+    const loadViewLogs = async () => {
+    try {
+
+        const res =
+            await certificateService.getLogs();
+
+        if (res.success) {
+
+            setViewLogs(res.data);
+        }
+
+    } catch {
+
+        toast.error(
+            "You Don't Have Permission To See This Page"
+        );
+    }
+};
     if (loading || !stats) {
         return (
             <div className="h-[80vh] flex items-center justify-center bg-background">
@@ -77,26 +101,49 @@ const Dashboard = () => {
                         loadApprovalHistory();
                     }}
                     className="
-            px-4
-            py-2.5
-            rounded-xl
-            bg-card
-            border-2
-            border-border
-            hover:border-gold/50
-            text-xs
-            font-black
-            uppercase
-            tracking-[0.15em]
-            text-foreground
-            transition-all
-            hover:scale-[1.02]
-            shadow-lg
-        "
+                        px-4
+                        py-2.5
+                        rounded-xl
+                        bg-card
+                        border-2
+                        border-border
+                        hover:border-gold/50
+                        text-xs
+                        font-black
+                        uppercase
+                        tracking-[0.15em]
+                        text-foreground
+                        transition-all
+                        hover:scale-[1.02]
+                        shadow-lg
+                        "
                 >
                     Approval History
                 </button>
-
+                   {showViewLog && (
+    <button
+        onClick={() => navigate('/certificate-view-log')}
+       className="
+        px-4
+        py-2.5
+        rounded-xl
+        bg-card
+        border-2
+        border-border
+        hover:border-gold/50
+        text-xs
+        font-black
+        uppercase
+        tracking-[0.15em]
+        text-foreground
+        transition-all
+        hover:scale-[1.02]
+        shadow-lg
+    "
+    >
+        View Logs
+    </button>
+)}
             </div>
 
             {/* ── 4 Summary Cards ──────────────────────────────────── */}
@@ -187,9 +234,9 @@ const Dashboard = () => {
             <div className="bg-card border-2 border-border rounded-3xl shadow-2xl overflow-hidden">
                 <div className="flex items-center justify-between px-6 py-5 border-b border-border">
                     <h3 className="text-[12px] font-black uppercase tracking-widest text-foreground">Recently Added</h3>
-                    {/* <button onClick={() => navigate('/certificate')} className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-gold transition-colors flex items-center gap-1 border border-border px-3 py-1.5 rounded-lg">
+                    <button onClick={() => navigate('/certificate')} className="text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-gold transition-colors flex items-center gap-1 border border-border px-3 py-1.5 rounded-lg">
                         View all <ArrowRight size={12} />
-                    </button> */}
+                    </button>
                 </div>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">

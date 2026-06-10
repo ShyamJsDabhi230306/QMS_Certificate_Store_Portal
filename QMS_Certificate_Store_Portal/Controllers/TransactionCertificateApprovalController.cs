@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Services;
@@ -10,32 +10,45 @@ namespace QMS_Certificate_Store_Portal.Controllers
     [Route("api/transaction/[controller]")]
     public class TransactionCertificateApprovalController : ControllerBase
     {
+
         private readonly TransactionCertificateApprovalService _service;
-        public TransactionCertificateApprovalController(TransactionCertificateApprovalService service) => _service = service;
+        private readonly ApprovalNotificationService _notificationService;
+
+        public TransactionCertificateApprovalController(
+            TransactionCertificateApprovalService service,
+            ApprovalNotificationService notificationService)
+        {
+            _service = service;
+            _notificationService = notificationService;
+        }
 
         // 1. Process approval (Approve / Reject button click)
         [HttpPost("process")]
         public async Task<IActionResult> Process(
-     TransactionCertificateApproval model
- )
+            TransactionCertificateApproval model
+        )
         {
             Console.WriteLine("IDCertificate");
-
             Console.WriteLine(model.IDCertificate);
 
             // =====================================
-            // USER NAME
+            // USER NAME (who performed the action)
             // =====================================
-            model.U_By =
-                User.FindFirst("UserFullName")?.Value
-                ?? "System";
+            model.U_By = User.FindFirst("UserFullName")?.Value ?? "System";
 
             // =====================================
-            // APPROVED BY USER ID
+            // APPROVED BY USER ID (from JWT)
             // =====================================
-            model.ApprovedBy = Convert.ToInt32(
-                User.FindFirst("IDUser")?.Value ?? "0"
-            );
+        model.ApprovedBy = Convert.ToInt32(
+              User.FindFirst("IDUser")?.Value ?? "0"
+          );
+          // The JWT already contains the user id in the built‑in claim
+          // ClaimTypes.NameIdentifier (added in GenerateToken).  Read that
+          // claim instead of the non‑existent "IDUser".
+          model.ApprovedBy = Convert.ToInt32(
+              User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)
+                  ?.Value ?? "0"
+          );
 
             // =====================================
             // APPROVAL DATE
@@ -43,10 +56,20 @@ namespace QMS_Certificate_Store_Portal.Controllers
             model.ApprovalDate = DateTime.Now;
 
             // =====================================
-            // PROCESS
+            // PROCESS THE APPROVAL
             // =====================================
-            var result =
-                await _service.ProcessAsync(model);
+            var result = await _service.ProcessAsync(model);
+
+            // =====================================
+            // SEND NOTIFICATIONS (approver + creator if available)
+            // =====================================
+            // Approver phone will be fetched via UserRepo inside the notification service.
+            // Creator ID is not directly stored; assuming the certificate creator's user ID is available
+            // as a claim "CreatorId" (fallback to 0 if missing).
+            int creatorId = Convert.ToInt32(
+                User.FindFirst("CreatorId")?.Value ?? "0"
+            );
+            await _notificationService.NotifyAsync(model.ApprovedBy, creatorId, "Certificate Approval");
 
             return Ok(result);
         }

@@ -22,7 +22,25 @@ export const certificateService = {
 
     // 📊 Get Dashboard Statistics
     getDashboardStats: () => apiClient.get('/transaction/Certificate/dashboard-stats').then(res => res.data),
-   
-    
-    
+
+
+    // 📊 Export all certificates to Excel
+    exportExcel: () => apiClient.get('/transaction/Certificate/export', {
+        responseType: 'blob'
+    }).then(res => res.data),
+
+
+    // 💬 Send Test WhatsApp Notification
+    sendTestWhatsApp: (phoneNumber) => apiClient.post('/transaction/Certificate/send-test-whatsapp', { phoneNumber }).then(res => res.data),
+
+    saveLog: (data) =>
+        apiClient.post(
+            '/transaction/Certificate/save-log',
+            data
+        )
+            .then(res => res.data),
+
+    getLogs: () =>
+        apiClient.get('/transaction/Certificate/logs')
+            .then(res => res.data)
 };

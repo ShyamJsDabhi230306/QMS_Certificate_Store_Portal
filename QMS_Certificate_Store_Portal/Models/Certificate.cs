@@ -38,8 +38,8 @@ namespace QMS_Certificate_Store_Portal.Models
 
         public int? ValidForYears { get; set; }
 
-        [Required]
-        public DateTime ExpiryDate { get; set; }
+        
+        public DateTime? ExpiryDate { get; set; }
 
         public string? RenewalCategory { get; set; } = string.Empty;
 
@@ -56,7 +56,7 @@ namespace QMS_Certificate_Store_Portal.Models
 
         // Dynamic Child reminders
         public List<CertificateReminder> Reminders { get; set; } = new List<CertificateReminder>();
-
+        public List<ReminderCustomContact> CustomContacts { get; set; } = new List<ReminderCustomContact>();
         // Used to pass serialized list of reminders to the Stored Procedure
         public string? RemindersJson { get; set; }
     }
@@ -65,11 +65,14 @@ namespace QMS_Certificate_Store_Portal.Models
     {
         public int IDReminder { get; set; }
         public int IDCertificate { get; set; }
-        //public int DaysBeforeExpiry { get; set; }
         public DateTime CreatedOn { get; set; }
         public int DaysBeforeSurveillance { get; set; }
         public string Channel { get; set; } = string.Empty;
+
+        // 👈 Add this property to hold the extra custom contacts
+        public List<ReminderCustomContact> CustomContacts { get; set; } = new List<ReminderCustomContact>();
     }
+
 }
 
 

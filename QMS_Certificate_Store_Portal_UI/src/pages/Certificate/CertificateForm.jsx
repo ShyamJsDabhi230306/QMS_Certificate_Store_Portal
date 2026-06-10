@@ -16,13 +16,32 @@ import { departmentService } from "../../api/departmentService";
 import { toast } from "react-hot-toast";
 import { API_URL } from "@/Config/BaseUrl";
 
+
 const CertificateForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-
+  
   // Form State
+ useEffect(() => {
+  // Parse the user object we saved during login
+  const stored = localStorage.getItem('user');
+  if (!stored) return;                       // no user → nothing to do
+  try {
+    const parsed = JSON.parse(stored);
+    if (parsed?.idUser) {
+      // Only set if the field is still empty (preserves existing owner on edit)
+      setFormData(prev => ({
+        ...prev,
+        idOwner: prev.idOwner || parsed.idUser
+      }));
+    }
+  } catch (e) {
+    console.error('Failed to parse stored user', e);
+  }
+}, []);   
   const [formData, setFormData] = useState({
+    
     idCertificate: 0,
     certificateName: "",
     certificateNumber: "",
@@ -46,9 +65,10 @@ const CertificateForm = () => {
     notes: "",
     isActive: true,
     reminders: [
-      { daysBeforeSurveillance: 30, channel: "Email + In-App" },
-      { daysBeforeSurveillance: 15, channel: "Email + In-App" },
+      { daysBeforeSurveillance: 30, channel: "Whatsapp + PulseApp" },
+      { daysBeforeSurveillance: 15, channel: "Whatsapp + PulseApp" },
     ],
+       CustomContacts: [],
   });
 
   // Lookup Option Lists
@@ -60,6 +80,7 @@ const CertificateForm = () => {
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [testPhone, setTestPhone] = useState("");
 
   useEffect(() => {
     loadLookups();
@@ -68,19 +89,50 @@ const CertificateForm = () => {
     }
   }, [id]);
 
-  // Auto-calculate Expiry Date when IssueDate or ValidForYears changes
-  useEffect(() => {
-    if (formData.issueDate && formData.validForYears) {
-      const issue = new Date(formData.issueDate);
-      const years = parseInt(formData.validForYears);
-      if (!isNaN(years)) {
-        issue.setFullYear(issue.getFullYear() + years);
-        // Format back to YYYY-MM-DD for date input
-        const expDateStr = issue.toISOString().split("T")[0];
-        setFormData((prev) => ({ ...prev, expiryDate: expDateStr }));
-      }
+
+
+
+  const handleSendTestWhatsApp = async () => {
+    if (!testPhone) {
+      toast.error("Please enter a valid phone number");
+      return;
     }
-  }, [formData.issueDate, formData.validForYears]);
+    try {
+      toast.loading("Sending test WhatsApp message...", { id: "test-wa" });
+      const res = await certificateService.sendTestWhatsApp(testPhone);
+      if (res.success) {
+        toast.success(res.message, { id: "test-wa" });
+      } else {
+        toast.error(res.message, { id: "test-wa" });
+      }
+    } catch (error) {
+      toast.error("Error occurred while sending test message", { id: "test-wa" });
+    }
+  };
+
+  // Auto-calculate Expiry Date when IssueDate or ValidForYears changes
+useEffect(() => {
+  if (!formData.issueDate || !formData.validForYears) return;
+
+  if (formData.validForYears === "100") {
+    setFormData((prev) => ({
+      ...prev,
+      expiryDate: null,
+    }));
+    return;
+  }
+
+  const issue = new Date(formData.issueDate);
+  const years = parseInt(formData.validForYears);
+
+  issue.setFullYear(issue.getFullYear() + years);
+
+  setFormData((prev) => ({
+    ...prev,
+    expiryDate: issue.toISOString().split("T")[0],
+  }));
+}, [formData.issueDate, formData.validForYears]);
+
 
   // Load Lookup data for dropdowns
   const loadLookups = async () => {
@@ -137,7 +189,7 @@ const CertificateForm = () => {
             channel:
               r.channel ||
               r.Channel ||
-              "Email + In-App",
+              "Whatsapp + PulseApp",
           })) || [];
         // =========================================
         // SET FORM DATA
@@ -188,6 +240,7 @@ const CertificateForm = () => {
 
           idLocation: data.idLocation || data.IDLocation || "",
           reminders,
+           CustomContacts: data.customContacts || data.CustomContacts || [],
 
           // renewalMonth,
           // renewalYear,
@@ -247,7 +300,7 @@ const CertificateForm = () => {
       ...prev,
       reminders: [
         ...prev.reminders,
-        { daysBeforeExpiry: 30, channel: "Email + In-App" },
+        { daysBeforeSurveillance : 30, channel: "Whatsapp + PulseApp" },
       ],
     }));
   };
@@ -279,14 +332,26 @@ const CertificateForm = () => {
         idDepartment: formData.idDepartment
           ? parseInt(formData.idDepartment)
           : null,
-        validForYears: formData.validForYears
-          ? parseInt(formData.validForYears)
-          : null,
+         validForYears: formData.validForYears ? parseInt(formData.validForYears) : null,
+        expiryDate:
+    formData.validForYears === "100"
+      ? null
+      : formData.expiryDate,
+
+  surveillanceAuditYears:
+    formData.validForYears === "100"
+      ? 0
+      : Number(formData.surveillanceAuditYears),
+
+  surveillanceDate:
+    formData.validForYears === "100"
+      ? null
+      : formData.surveillanceDate,
         idCompany: currentUser?.idCompany || 0,
-
         idLocation: currentUser?.idLocation || 0,
-
         renewalCategory: `${formData.renewalMonth} ${formData.renewalYear}`,
+        CustomContacts: formData.CustomContacts || formData.customContacts || [],
+
       };
 
       const res = await certificateService.save(payload);
@@ -303,6 +368,48 @@ const CertificateForm = () => {
     }
   };
 
+
+
+
+     // Custom Users Management
+  const handleAddCustomUser = () => {
+    setFormData((prev) => ({
+      ...prev,
+      CustomContacts: [
+        ...(prev.CustomContacts || []),
+        { FullName: "", Contact: "", IsActive: true },
+      ],
+    }));
+  };
+
+  const handleUpdateCustomUser = (index, field, value) => {
+    const updated = [...(formData.CustomContacts || [])];
+    updated[index] = { ...updated[index], [field]: value };
+    setFormData((prev) => ({ ...prev, CustomContacts: updated }));
+  };
+
+  const handleRemoveCustomUser = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      CustomContacts: (prev.CustomContacts || []).filter((_, i) => i !== index),
+    }));
+  };
+
+
+
+  const surveillanceMaxDate = React.useMemo(() => {
+    if (!formData.issueDate || !formData.surveillanceAuditYears) {
+      return "";
+    }
+
+    const maxDate = new Date(formData.issueDate);
+
+    maxDate.setFullYear(
+      maxDate.getFullYear() + Number(formData.surveillanceAuditYears)
+    );
+
+    return maxDate.toISOString().split("T")[0];
+  }, [formData.issueDate, formData.surveillanceAuditYears]);
   // Changed to match CompanyForm.jsx
   const inputClass =
     "w-full bg-background border-2 border-border/60 rounded-xl px-4 py-3.5 text-sm font-bold text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all shadow-sm placeholder:text-muted-foreground/50";
@@ -487,6 +594,107 @@ const CertificateForm = () => {
                 </div> */}
               </div>
             </div>
+             {/* ATTACHMENT */}
+            <div
+              className="
+                     border border-border/50
+                     rounded-3xl
+                     p-5
+                     bg-background/40
+                     shadow-sm
+                    "
+            >
+              <h2
+                className="
+                     text-[13px]
+                     font-black
+                     uppercase
+                     tracking-[0.25em]
+                     text-gold
+                     mb-4
+    "
+              >
+                Attachment
+              </h2>
+              {/* SHOW EXISTING FILE */}
+              {formData.fileName && (
+                <div
+                  className="
+                     mb-4
+                     p-4
+                     rounded-2xl
+                     border border-border/50
+                     bg-background/60
+                     flex items-center justify-between
+    "
+                >
+                  <div className="min-w-0">
+                    <p className="text-sm font-bold text-foreground truncate">
+                      {formData.fileName}
+                    </p>
+
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Existing uploaded file
+                    </p>
+                  </div>
+
+                  {/* VIEW BUTTON */}
+                  <a
+                    href={`https://localhost:7294${formData.filePath}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="
+                        px-4
+                        py-2
+                        rounded-xl
+                        bg-gold
+                        text-white
+                        text-xs
+                        font-black
+                        uppercase
+                        tracking-[0.1em]
+                        hover:scale-105
+                        transition-all
+                        "
+                  >
+                    View
+                  </a>
+                </div>
+              )}
+              <div
+                onClick={() => fileInputRef.current.click()}
+                className="
+                    border-2
+                     border-dashed
+                     border-border/60
+                     rounded-3xl
+                     h-[140px]
+                     flex
+                     flex-col
+                     items-center
+                     justify-center
+                     hover:border-gold
+                     hover:bg-gold/5
+                     transition-all
+                     cursor-pointer
+                      "
+              >
+                <Upload size={34} className="text-muted-foreground mb-3" />
+
+                <p className="text-sm font-black">Upload Certificate</p>
+
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  PDF, DOC, PNG, JPG
+                </p>
+
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </div>
+            </div>
 
             {/* VALIDITY */}
             <div
@@ -529,6 +737,7 @@ const CertificateForm = () => {
                   />
                 </div>
 
+                
                 {/* VALID FOR */}
                 <div className="space-y-2">
                   <label className={labelClass}>Recertification</label>
@@ -539,6 +748,9 @@ const CertificateForm = () => {
                       setFormData({
                         ...formData,
                         validForYears: e.target.value,
+                        // Reset surveillance audit if validForYears changes
+                        surveillanceAuditYears: "",
+                        surveillanceDate: ""
                       })
                     }
                     className={inputClass}
@@ -549,62 +761,111 @@ const CertificateForm = () => {
                     <option value="3">3 Years</option>
                     <option value="5">5 Years</option>
                     <option value="10">10 Years</option>
+                    <option value="100">Lifetime</option> {/* 👈 ADDED LIFETIME OPTION */}
                   </select>
                 </div>
 
+
                 {/* EXPIRY DATE */}
-                <div className="space-y-2">
-                  <label className={labelClass}>Expiry Date</label>
-
-                  <input
-                    readOnly
-                    type="date"
-                    value={formData.expiryDate}
-                    className={`${inputClass} bg-muted/20`}
-                  />
-                </div>
-
-                {/* SURVEILLANCE AUDIT */}
-                {formData.validForYears && parseInt(formData.validForYears) > 1 && (
+                {formData.validForYears !== "100" && (
                   <div className="space-y-2">
-                    <label className={labelClass}>Surveillance Audit</label>
+                    <label className={labelClass}>Expiry Date</label>
 
-                    <select
-                      value={formData.surveillanceAuditYears}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          surveillanceAuditYears: e.target.value,
-                        })
-                      }
-                      className={inputClass}
-                    >
-                      <option value="">Select Frequency</option>
-                      <option value="1">After 1 Year</option>
-                      <option value="2">After 2 Years</option>
-                      <option value="3">After 3 Years</option>
-                    </select>
-                  </div>
-                )}
-                {formData.surveillanceAuditYears && parseInt(formData.surveillanceAuditYears) >= 1 && (
-                  <div className=" col-span-2  space-y-2">
-                    <label className={labelClass}>Surveillance Date</label>
                     <input
+                      readOnly
                       type="date"
-                      value={formData.surveillanceDate}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          surveillanceDate: e.target.value,
-                        })
-                      }
-                      className={inputClass}
+                      value={formData.expiryDate}
+                      className={`${inputClass} bg-muted/20`}
                     />
                   </div>
                 )}
 
+                {/* SURVEILLANCE AUDIT */}
+                {formData.validForYears &&
+                  formData.validForYears !== "100" &&
+                  parseInt(formData.validForYears) > 1 && (
+                    <div className="space-y-2">
+                      <label className={labelClass}>Surveillance Audit</label>
+
+                      <select
+                        value={formData.surveillanceAuditYears}
+                        onChange={(e) => {
+                          const selectedYear = Number(e.target.value);
+                          const recertificationYear = Number(formData.validForYears);
+
+                          if (selectedYear >= recertificationYear) {
+                            alert(
+                              "Surveillance Audit year must be less than Recertification year."
+                            );
+                            return;
+                          }
+
+                          setFormData({
+                            ...formData,
+                            surveillanceAuditYears: e.target.value,
+                          });
+                        }}
+                        className={inputClass}
+                      >
+                        <option value="">Select Frequency</option>
+
+                        {/* 👇 MODIFIED LOOP TO SHOW 1 TO (validForYears - 1) */}
+                        {Array.from(
+                          { length: Math.max(0, Number(formData.validForYears || 0) - 1) },
+                          (_, index) => index + 1
+                        ).map((year) => (
+                          <option key={year} value={year}>
+                            After {year} Year{year > 1 ? "s" : ""}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+
+                {/* SURVEILLANCE DATE */}
+                {formData.validForYears !== "Lifetime" &&
+                  formData.surveillanceAuditYears &&
+                  parseInt(formData.surveillanceAuditYears) >= 1 && (
+                    <div className="col-span-2 space-y-2">
+                      <label className={labelClass}>Surveillance Date</label>
+                      <input
+                        type="date"
+                        value={formData.surveillanceDate}
+                        min={formData.issueDate}
+                        max={surveillanceMaxDate}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            surveillanceDate: e.target.value,
+                          })
+                        }
+                        className={inputClass}
+                      />
+                    </div>
+                  )}
+
+
               </div>
             </div>
+            {/* <div className="mt-5 p-4 border border-border/60 rounded-2xl bg-muted/10 space-y-3">
+              <h3 className="text-xs font-black uppercase text-foreground">Test WhatsApp API</h3>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="E.g. +919876543210"
+                  value={testPhone}
+                  onChange={(e) => setTestPhone(e.target.value)}
+                  className={inputClass}
+                />
+                <button
+                  type="button"
+                  onClick={handleSendTestWhatsApp}
+                  className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black uppercase tracking-wider transition-all"
+                >
+                  Test Send
+                </button>
+              </div>
+            </div> */}
 
           </div>
 
@@ -652,7 +913,7 @@ const CertificateForm = () => {
                         onChange={(e) =>
                           handleUpdateReminder(
                             index,
-                            "daysBeforeExpiry",
+                            "daysBeforeSurveillance",
                             e.target.value,
                           )
                         }
@@ -673,11 +934,10 @@ const CertificateForm = () => {
                         }
                         className={inputClass}
                       >
-                        <option value="Email">Email</option>
+                        <option value="Whatsapp + PulseApp">Whatsapp + PulseApp</option>
+                        <option value="PulseApp">PulseApp</option>
+                        <option value="Whatsapp">Whatsapp</option>
 
-                        <option value="In-App">In-App</option>
-
-                        <option value="Email + In-App">Email + In-App</option>
                       </select>
                     </div>
 
@@ -717,109 +977,51 @@ const CertificateForm = () => {
                   + Add another reminder
                 </button>
               </div>
-            </div>
-            {/* ATTACHMENT */}
-            <div
-              className="
-    border border-border/50
-    rounded-3xl
-    p-5
-    bg-background/40
-    shadow-sm
-  "
-            >
-              <h2
-                className="
-      text-[13px]
-      font-black
-      uppercase
-      tracking-[0.25em]
-      text-gold
-      mb-4
-    "
-              >
-                Attachment
-              </h2>
-              {/* SHOW EXISTING FILE */}
-              {formData.fileName && (
-                <div
-                  className="
-      mb-4
-      p-4
-      rounded-2xl
-      border border-border/50
-      bg-background/60
-      flex items-center justify-between
-    "
-                >
-                  <div className="min-w-0">
-                    <p className="text-sm font-bold text-foreground truncate">
-                      {formData.fileName}
-                    </p>
 
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Existing uploaded file
-                    </p>
-                  </div>
-
-                  {/* VIEW BUTTON */}
-                  <a
-                    href={`https://localhost:7294${formData.filePath}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="
-        px-4
-        py-2
-        rounded-xl
-        bg-gold
-        text-white
-        text-xs
-        font-black
-        uppercase
-        tracking-[0.1em]
-        hover:scale-105
-        transition-all
-      "
+              {/* Custom Users Section */}
+                          {/* Custom Users Section */}
+              <div className="border-t border-border/30 pt-4 mt-6 space-y-4">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-gold uppercase tracking-wider">
+                    Custom Notification Contacts
+                  </label>
+                  <button
+                    type="button"
+                    onClick={handleAddCustomUser}
+                    className="text-xs font-bold text-gold hover:underline"
                   >
-                    View
-                  </a>
+                    + Add Custom User
+                  </button>
                 </div>
-              )}
-              <div
-                onClick={() => fileInputRef.current.click()}
-                className="
-      border-2
-      border-dashed
-      border-border/60
-      rounded-3xl
-      h-[140px]
-      flex
-      flex-col
-      items-center
-      justify-center
-      hover:border-gold
-      hover:bg-gold/5
-      transition-all
-      cursor-pointer
-    "
-              >
-                <Upload size={34} className="text-muted-foreground mb-3" />
-
-                <p className="text-sm font-black">Upload Certificate</p>
-
-                <p className="text-[11px] text-muted-foreground mt-1">
-                  PDF, DOC, PNG, JPG
-                </p>
-
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  onChange={handleFileUpload}
-                  className="hidden"
-                />
+                {(formData.CustomContacts || []).map((contact, cIndex) => ( // 👈 Change to CustomContacts
+                  <div key={cIndex} className="grid grid-cols-[1fr_1fr_auto] gap-2 items-center">
+                    <input
+                      type="text"
+                      placeholder="Full Name"
+                      value={contact.FullName || ""}
+                      onChange={(e) => handleUpdateCustomUser(cIndex, "FullName", e.target.value)}
+                      className={inputClass}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Contact Mobile"
+                      value={contact.Contact || ""}
+                      onChange={(e) => handleUpdateCustomUser(cIndex, "Contact", e.target.value)}
+                      className={inputClass}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveCustomUser(cIndex)}
+                      className="text-muted-foreground hover:text-red-500 p-2 transition-colors"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
               </div>
-            </div>
 
+            </div>
+           
             {/* TAGS & NOTES */}
             <div
               className="

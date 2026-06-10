@@ -92,7 +92,7 @@ const InfoPanel = ({ item, onClose, onDownload }) => {
     const dept = cert.departmentName || item.departmentName || '–';
     const issue = cert.issueDate || item.issueDate;
     // const expiry = cert.expiryDate || item.expiryDate;
-    const surveillanceDate = cert.surveillanceDate || item.surveillanceDate;
+    // const surveillanceDate = cert.surveillanceDate || item.surveillanceDate;
     const notes = cert.notes || item.notes;
     const filePath = cert.filePath || item.filePath;
 

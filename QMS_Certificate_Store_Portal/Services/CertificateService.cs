@@ -45,5 +45,43 @@ namespace QMS_Certificate_Store_Portal.Services
      locationId);
         }
 
+        // =====================================
+        // GET PENDING REMINDERS
+        // =====================================
+        public async Task<IEnumerable<CertificateReminderNotification>> GetPendingRemindersAsync()
+        {
+            return await _repo.GetPendingRemindersAsync();
+        }
+        // =====================================
+        // GET CUSTOM CONTACTS BY REMINDER ID
+        // =====================================
+        public async Task<IEnumerable<ReminderCustomContact>> GetCustomContactsAsync(int reminderId)
+        {
+            return await _repo.GetCustomContactsByReminderAsync(reminderId);
+        }
+        // =====================================
+        // SAVE CUSTOM CONTACT (INSERT / UPDATE)
+        // =====================================
+        public async Task<int> SaveCustomContactAsync(ReminderCustomContact contact)
+        {
+            return await _repo.SaveCustomContactAsync(contact);
+        }
+        // =====================================
+        // SOFT DELETE CUSTOM CONTACT
+        // =====================================
+        public async Task DeleteCustomContactAsync(int idCustom, string actionUser)
+        {
+            await _repo.DeleteCustomContactAsync(idCustom, actionUser);
+        }
+
+        public async Task<dynamic> SaveCertificateLog(CertificateLog model)
+        {
+            return await _repo.SaveCertificateLog(model);
+        }
+
+        public async Task<IEnumerable<CertificateLog>> GetCertificateLogs()
+        {
+            return await _repo.GetCertificateLogs();
+        }
     }
 }

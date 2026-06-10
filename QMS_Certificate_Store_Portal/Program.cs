@@ -1,6 +1,12 @@
-using QMS_Certificate_Store_Portal.Helpers;
-using Microsoft.IdentityModel.Tokens;
+using Hangfire;
+using Hangfire.SqlServer;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using QMS.API.Services.Notification;
+using QMS_Certificate_Store_Portal.Helpers;
+using QMS_Certificate_Store_Portal.Repositories.Notification;
+using QMS_Certificate_Store_Portal.Services;
+using QMS_Certificate_Store_Portal.WhatsappConfig;
 using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +39,21 @@ builder.Services.AddApplicationServices();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ApprovalNotificationService>();
+builder.Services.AddHttpClient<WhatsAppService>();
+builder.Services.AddScoped<ICertificateReminderProcessor,CertificateReminderProcessor>();
+builder.Services.AddScoped<ICertificateReminderRepository,CertificateReminderRepository>();
+builder.Services.AddHttpClient<INotificationApiService, NotificationApiService>();
+builder.Services.AddScoped<CertificateReminderJob>();
+builder.Services.AddHangfire(config =>
+    config.UseSqlServerStorage(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddHangfireServer();
+//builder.Services.AddScoped<IWhatsAppRepository, WhatsAppRepository>();
+//builder.Services.AddHostedService<CertificateReminderWorker>();
+
+
 
 // Update your builder.Services.AddSwaggerGen() to this:
 builder.Services.AddSwaggerGen(options =>
@@ -77,6 +97,11 @@ builder.Services.AddCors(options =>
 });
 
 var app = builder.Build();
+app.UseHangfireDashboard("/hangfire");
+RecurringJob.AddOrUpdate<CertificateReminderJob>(
+    "certificate-reminder-job",
+    x => x.Execute(),
+    Cron.Minutely());
 using (var scope = app.Services.CreateScope())
 {
     // Pass 'scope.ServiceProvider' instead of 'app.Services'

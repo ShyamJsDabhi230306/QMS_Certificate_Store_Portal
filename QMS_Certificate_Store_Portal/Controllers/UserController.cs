@@ -80,7 +80,7 @@ namespace QMS_Certificate_Store_Portal.Controllers
                 user.IDUser,
                 user.UserName ?? "",
                 user.UserFullName ?? "",
-                "User",
+                user.DesignationName ?? "User",
                 user.IDCompany ?? 0,
                 user.IDLocation ?? 0,
                 user.IsSuperAdmin

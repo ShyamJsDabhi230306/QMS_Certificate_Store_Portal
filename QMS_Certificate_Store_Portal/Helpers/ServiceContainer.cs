@@ -1,7 +1,9 @@
-using QMS_Certificate_Store_Portal.Helpers;
+﻿using QMS_Certificate_Store_Portal.Helpers;
 using QMS_Certificate_Store_Portal.Models;
 using QMS_Certificate_Store_Portal.Repositories;
+using QMS_Certificate_Store_Portal.Repositories.Notification;
 using QMS_Certificate_Store_Portal.Services;
+
 
 namespace QMS_Certificate_Store_Portal.Helpers
 {
@@ -43,6 +45,9 @@ namespace QMS_Certificate_Store_Portal.Helpers
             services.AddScoped<CertificateService>();
             services.AddScoped<TransactionCertificateApprovalService>();
             services.AddScoped<CertificateReminderService>();
+            //services.AddScoped<INotificationRepository,NotificationRepository>();
+
+
 
             return services;
         }

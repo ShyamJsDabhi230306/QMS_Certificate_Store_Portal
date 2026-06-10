@@ -2,6 +2,8 @@ import React from 'react';
 import { Award, UserStar } from 'lucide-react';
 import CertificateList from './CertificateList';
 import CertificateForm from './CertificateForm';
+import CertificateViewLog from './CertificateViewLog';
+
 
 const certificateRoutes = [
     {
@@ -21,6 +23,12 @@ const certificateRoutes = [
         title: "Edit Certificate",
         path: "/certificate/edit/:id",
         element: <CertificateForm />,
+        showInSidebar: false
+    },
+    {
+        title: "Certificate Logs",
+        path: "/certificate-view-log",
+        element: <CertificateViewLog />,
         showInSidebar: false
     }
 ];

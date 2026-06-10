@@ -78,6 +78,53 @@ const DaysLeftCell = ({ surveillanceDate }) => {
     );
 };
 
+const CertificateDaysLeftCell = ({ expiryDate }) => {
+    const today = new Date();
+
+    if (!expiryDate) {
+        return (
+            <span className="text-muted-foreground text-xs">
+                –
+            </span>
+        );
+    }
+
+    const expiry = new Date(expiryDate);
+    const daysLeft = Math.ceil(
+        (expiry - today) / (1000 * 60 * 60 * 24)
+    );
+
+    if (daysLeft < 0) {
+        return (
+            <span className="text-[12px] font-black text-red-500">
+                Expired {Math.abs(daysLeft)}d ago
+            </span>
+        );
+    }
+
+    if (daysLeft <= 30) {
+        return (
+            <span className="text-[12px] font-black text-orange-500">
+                {daysLeft}d left
+            </span>
+        );
+    }
+
+    if (daysLeft <= 90) {
+        return (
+            <span className="text-[12px] font-black text-yellow-500">
+                {daysLeft}d left
+            </span>
+        );
+    }
+
+    return (
+        <span className="text-[12px] font-black text-emerald-500">
+            {daysLeft}d left
+        </span>
+    );
+};
+
 // const StatusCell = ({ status, expiry }) => {
 //     const d = getDaysLeft(expiry);
 //     let dot = 'bg-muted-foreground', label = status || 'Unknown', color = 'text-muted-foreground';
@@ -506,7 +553,61 @@ const InfoPanel = ({ cert, onClose }) => {
         </div>
     );
 };
+const handleViewCertificate = async (item) => {
+    try {
 
+        const stored = localStorage.getItem("user");
+        const user = stored ? JSON.parse(stored) : null;
+
+        const payload = {
+            idCertificate:
+                item.idCertificate ||
+                item.IDCertificate,
+
+            idUser:
+                user?.idUser ||
+                user?.IDUser,
+
+            idDesignation:
+                user?.idDesignation ||
+                user?.IDDesignation,
+
+            idCertificateType:
+                item.idCertificateType ||
+                item.IDCertificateType
+        };
+
+        console.log("SAVE LOG PAYLOAD", payload);
+
+        certificateService.saveLog(payload)
+    .then(res => {
+        console.log("SAVE SUCCESS", res);
+    })
+    .catch(error => {
+
+        console.log("FULL ERROR", error);
+
+        console.log(
+            "RESPONSE",
+            error.response
+        );
+
+        console.log(
+            "DATA",
+            error.response?.data
+        );
+
+    });
+
+    } finally {
+
+        window.open(
+            `${API_BASE}${item.filePath}`,
+            "_blank"
+        );
+
+    }
+};
 /* ── Main Component ──────────────────────────────────── */
 const CertificateList = () => {
     const [certificates, setCertificates] = useState([]);
@@ -520,6 +621,14 @@ const CertificateList = () => {
     const navigate = useNavigate();
     const { canCreate, canEdit, canDelete } = usePermissions('Certificate ');
 
+
+    const userStr = localStorage.getItem('user');
+    const user = userStr ? JSON.parse(userStr) : null;
+    const designation = (user?.designationName || "").toLowerCase().trim();
+    const isSuperAdmin = user?.isSuperAdmin === true;
+
+    // Show only if Super Admin or designation contains 'admin' or 'approver'
+    const showExport = isSuperAdmin || designation === "admin" || designation === "approver";
     useEffect(() => { load(); }, []);
 
     const load = async () => {
@@ -567,6 +676,27 @@ const CertificateList = () => {
         }
     };
 
+    const handleExport = async () => {
+        try {
+            toast.loading('Generating Excel file...', { id: 'exporting' });
+            const data = await certificateService.exportExcel();
+
+            const blobUrl = window.URL.createObjectURL(new Blob([data]));
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.setAttribute('download', 'Certificates_Export.xlsx');
+            document.body.appendChild(link);
+            link.click();
+
+            // Cleanup
+            link.parentNode.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+
+            toast.success('Excel exported successfully!', { id: 'exporting' });
+        } catch (error) {
+            toast.error('Failed to export Excel. Please try again.', { id: 'exporting' });
+        }
+    };
 
     return (
         <div className="p-6 space-y-5 animate-in fade-in duration-500">
@@ -585,6 +715,16 @@ const CertificateList = () => {
                     <div className="flex-1 md:w-80">
                         <SearchInput value={searchTerm} onChange={setSearchTerm} placeholder="Search certificates..." />
                     </div>
+
+                    {/* 👇 CONDITIONALLY SHOW THE EXPORT BUTTON */}
+                    {showExport && (
+                        <button
+                            onClick={handleExport}
+                            className="px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-emerald-600/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap"
+                        >
+                            <Download size={18} strokeWidth={3} /> Export Excel
+                        </button>
+                    )}
                     {canCreate && (
                         <button onClick={() => navigate('/certificate/add')}
                             className="px-6 py-3 bg-gold hover:bg-gold/90 text-white rounded-xl font-black text-[14px] uppercase tracking-widest shadow-lg shadow-gold/20 flex items-center gap-2 transition-all hover:scale-105 whitespace-nowrap">
@@ -606,9 +746,35 @@ const CertificateList = () => {
                                 {/* <TH ch="Owner" />
                                 <TH ch="Department" /> */}
                                 <TH ch="Issue" />
-                                <TH ch="Expiry" />
-                                <TH ch="Serveillance Date" />
-                                <TH ch="Days Left" />
+                                <TH ch={<>
+                                        Recertification
+                                        <br />
+                                        / Expiry
+                                    </>} />
+                                                                    
+                                    <TH ch={<>
+                                        Surveillance
+                                        <br />
+                                        Date
+                                    </>} />
+                                    
+                                    <TH ch={<>
+                                        Surveillance
+                                        <br />
+                                        Years
+                                    </>} />
+                                    
+                                    <TH ch={<>
+                                        Days Left
+                                        <br />
+                                        Surveillance
+                                    </>} />
+                                    
+                                    <TH ch={<>
+                                        Days Left
+                                        <br />
+                                        Expiry
+                                    </>} />
                                 {/* <TH ch="Status" /> */}
                                 <TH ch="Actions" cls="text-center pr-5" />
                             </tr>
@@ -675,18 +841,43 @@ const CertificateList = () => {
 
                                         {/* ── Expiry date ────────────────── */}
                                         <td className="px-3 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
-                                            {fmtDate(item.expiryDate)}
+    {Number(item.validForYears) === 100
+        ? "Not Expire Lifetime"
+        : fmtDate(item.expiryDate)}
                                         </td>
                                         <td className="px-3 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
-                                            {fmtDate(item.surveillanceDate)}
+                                            {Number(item.validForYears) === 100
+                                             ? "N/A"
+                                         : item.surveillanceAuditYears}
+                                        </td>
+                                        <td className="px-3 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
+                                            
+                                            {Number(item.validForYears) === 100
+                                             ? "N/A"
+                                         : item.surveillanceAuditYears}
                                         </td>
 
                                         {/* ── Days left ─────────────────── */}
+                                     <td className="px-3 py-4 whitespace-nowrap">
+                                 {Number(item.validForYears) === 100 ? (
+                                    <span className="font-semibold text-green-600">
+                                    Lifetime
+                                 </span>
+                                ) : (
+                                    <DaysLeftCell
+                                       surveillanceDate={item.surveillanceDate}
+                                    />
+                                   )}
+                                </td>
                                         <td className="px-3 py-4 whitespace-nowrap">
-                                            <DaysLeftCell
-                                                surveillanceDate={item.surveillanceDate}
-                                            />
-                                        </td>
+    {Number(item.validForYears) === 100 ? (
+        <span className="font-semibold text-green-600">
+            Lifetime
+        </span>
+    ) : (
+        <CertificateDaysLeftCell expiryDate={item.expiryDate} />
+    )}
+</td>
 
                                         {/* ── Status ───────────────────── */}
                                         {/* <td className="px-3 py-4 whitespace-nowrap">
@@ -699,11 +890,7 @@ const CertificateList = () => {
                                                 {/* View */}
                                                 {/* View */}
                                                 <button
-                                                    onClick={() =>
-                                                        window.open(
-                                                            `${API_BASE}${item.filePath}`,
-                                                            "_blank"
-                                                        )
+                                                    onClick={() => handleViewCertificate(item)
                                                     }
                                                     title="View File"
                                                     className="
@@ -721,7 +908,7 @@ const CertificateList = () => {
                                                 </button>
 
                                                 {/* Download */}
-                                                {item.filePath ? (
+                                                {/* {item.filePath ? (
                                                     <button
                                                         onClick={() => handleDownload(item)}
                                                         title="Download"
@@ -737,7 +924,7 @@ const CertificateList = () => {
                                                     >
                                                         <FileText size={13} />
                                                     </button>
-                                                )}
+                                                )} */}
 
                                                 {/* History */}
                                                 <button
