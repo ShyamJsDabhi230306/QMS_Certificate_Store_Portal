@@ -56,12 +56,12 @@ export const userRightService = {
 
             console.error(
                 'UPDATE BULK ERROR',
-                error
+                error.response?.data || error.message
             );
 
             return {
                 success: false,
-                message: 'Failed to update rights'
+                message: error.response?.data?.message || 'Failed to update rights'
             };
 
         }
@@ -96,6 +96,71 @@ export const userRightService = {
 
         }
 
+    },
+
+
+
+    getForUser: async (idUser) => {
+        try {
+            const response = await apiClient.get(
+                `/master/UserRight/get-for-user/${idUser}`
+            );
+            return response.data;
+        } catch (error) {
+            console.error(
+                'GET FOR USER ERROR',
+                error.response?.data || error.message
+            );
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Failed to load user rights'
+            };
+        }
+    },
+
+    saveForUser: async (right) => {
+        try {
+            const response = await apiClient.post(
+                "/master/UserRight/save-for-user",
+                right
+            );
+            return response.data;
+        } catch (error) {
+            console.error(
+                'SAVE FOR USER ERROR',
+                error.response?.data || error.message
+            );
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Failed to save user rights'
+            };
+        }
+    },
+
+    removeUserOverride: async (idUser, idPage) => {
+        try {
+            const response = await apiClient.post(
+                "/master/UserRight/remove-user-override",
+                {
+                    idUser,
+                    idPage
+                }
+            );
+            return response.data;
+        } catch (error) {
+            console.error(
+                'REMOVE USER OVERRIDE ERROR',
+                error.response?.data || error.message
+            );
+            return {
+                success: false,
+                message: error.response?.data?.message || 'Failed to remove user override'
+            };
+        }
     }
+
+    
+
+
 
 };

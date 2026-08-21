@@ -11,8 +11,13 @@ import SearchInput from '../../components/SearchInput';
 import { useSearch } from '../../hooks/useSearch';
 import Pagination from '../../components/Pagination';
 import { usePermissions } from '@/hooks/usePermissions';
-
+import { Bell } from "lucide-react";
+import CertificateReminderPanel from "./CertificateReminderPanel";
 const API_BASE = 'https://localhost:7294';
+
+
+
+
 
 /* ── helpers ─────────────────────────────────────────── */
 const fmtDate = (d) =>
@@ -102,7 +107,7 @@ const CertificateDaysLeftCell = ({ expiryDate }) => {
         );
     }
 
-    if (daysLeft <= 30) {
+    if (daysLeft <= 30) {                               
         return (
             <span className="text-[12px] font-black text-orange-500">
                 {daysLeft}d left
@@ -146,13 +151,11 @@ const CertificateDaysLeftCell = ({ expiryDate }) => {
 // };
 
 const TYPE_COLORS = {
-    legal: 'bg-purple-600  text-white',
-    compliance: 'bg-blue-600    text-white',
-    security: 'bg-red-600     text-white',
-    insurance: 'bg-pink-600    text-white',
-    'domain/ssl': 'bg-emerald-600 text-white',
-    training: 'bg-yellow-600  text-black',
-    vendor: 'bg-cyan-600    text-white',
+    legal: 'bg-indigo-600 text-white',
+     testing: 'bg-rose-600 text-white',
+    training: 'bg-emerald-600 text-white',
+    valve: 'bg-sky-300 text-white',
+    
 };
 const typeColor = (t = '') =>
     TYPE_COLORS[(t || '').toLowerCase()] || 'bg-[#D4A95A]/80 text-black';
@@ -219,6 +222,8 @@ const ViewModal = ({ cert, onClose }) => {
 //         cert.u_Date && { label: 'Last Updated', user: cert.u_By || '–', date: cert.u_Date, color: 'bg-blue-500/20 text-blue-500' },
 //         cert.d_Date && { label: 'Deleted', user: cert.d_By || '–', date: cert.d_Date, color: 'bg-red-500/20 text-red-500' },
 //     ].filter(Boolean);
+
+
 
 const HistoryModal = ({ cert, onClose }) => {
 
@@ -620,6 +625,13 @@ const CertificateList = () => {
     const { currentItems, paginationProps } = usePagination(filteredItems, 10);
     const navigate = useNavigate();
     const { canCreate, canEdit, canDelete } = usePermissions('Certificate ');
+    
+  const [reminderCertificate, setReminderCertificate] =
+    useState(null);
+
+
+
+
 
 
     const userStr = localStorage.getItem('user');
@@ -629,6 +641,8 @@ const CertificateList = () => {
 
     // Show only if Super Admin or designation contains 'admin' or 'approver'
     const showExport = isSuperAdmin || designation === "admin" || designation === "approver";
+
+
     useEffect(() => { load(); }, []);
 
     const load = async () => {
@@ -698,6 +712,15 @@ const CertificateList = () => {
         }
     };
 
+const isLifetimeCertificate = (certificate) =>
+    Number(
+        certificate?.validForYears ??
+        certificate?.ValidForYears ??
+        0
+    ) === 100;
+
+
+
     return (
         <div className="p-6 space-y-5 animate-in fade-in duration-500">
 
@@ -705,7 +728,12 @@ const CertificateList = () => {
             {viewCert && <ViewModal cert={viewCert} onClose={() => setViewCert(null)} />}
             {historyCert && <HistoryModal cert={historyCert} onClose={() => setHistoryCert(null)} />}
             {infoCert && <InfoPanel cert={infoCert} onClose={() => setInfoCert(null)} />}
-
+            {reminderCertificate && (
+      <CertificateReminderPanel
+        certificate={reminderCertificate}
+        onClose={() => setReminderCertificate(null)}
+      />
+    )}
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <h1 className="text-3xl font-black text-foreground flex items-center gap-3">
@@ -841,14 +869,16 @@ const CertificateList = () => {
 
                                         {/* ── Expiry date ────────────────── */}
                                         <td className="px-3 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
-    {Number(item.validForYears) === 100
-        ? "Not Expire Lifetime"
-        : fmtDate(item.expiryDate)}
+                                         {Number(item.validForYears) === 100
+                                             ? "Not Expire Lifetime"
+                                             : fmtDate(item.expiryDate)}
                                         </td>
+
+                                        
                                         <td className="px-3 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
                                             {Number(item.validForYears) === 100
                                              ? "N/A"
-                                         : item.surveillanceAuditYears}
+                                         : fmtDate(item.surveillanceDate)}
                                         </td>
                                         <td className="px-3 py-4 text-[12px] font-bold text-foreground/70 whitespace-nowrap">
                                             
@@ -869,17 +899,24 @@ const CertificateList = () => {
                                     />
                                    )}
                                 </td>
-                                        <td className="px-3 py-4 whitespace-nowrap">
-    {Number(item.validForYears) === 100 ? (
-        <span className="font-semibold text-green-600">
-            Lifetime
-        </span>
-    ) : (
-        <CertificateDaysLeftCell expiryDate={item.expiryDate} />
-    )}
-</td>
+                                     <td className="px-3 py-4 whitespace-nowrap">
+                                   {Number(item.validForYears) === 100 ? (
+                                       <span className="font-semibold text-green-600">
+                                           Lifetime
+                                       </span>
+                                   ) : (
+                                       <CertificateDaysLeftCell expiryDate={item.expiryDate} />
+                                   )}
+                                </td>
 
-                                        {/* ── Status ───────────────────── */}
+
+
+
+
+
+
+
+                       {/* ── Status ───────────────────── */}
                                         {/* <td className="px-3 py-4 whitespace-nowrap">
                                             <StatusCell status={item.status} expiry={item.expiryDate} />
                                         </td> */}
@@ -894,19 +931,75 @@ const CertificateList = () => {
                                                     }
                                                     title="View File"
                                                     className="
-        w-7 h-7
-        rounded-lg
-        bg-muted/50
-        hover:bg-gold/20
-        hover:text-gold
-        text-muted-foreground
-        flex items-center justify-center
-        transition-all
-    "
+                                              w-7 h-7
+                                              rounded-lg
+                                              bg-muted/50
+                                              hover:bg-gold/20
+                                              hover:text-gold
+                                              text-muted-foreground
+                                              flex items-center justify-center
+                                              transition-all
+                                          "
                                                 >
                                                     <Eye size={13} strokeWidth={2.5} />
                                                 </button>
 
+
+
+                                                        {/* <div className="relative">
+  <button
+    type="button"
+    onClick={() => setReminderCertificate(item)}
+    title="Manage Reminders"
+    className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-500 transition-all hover:bg-amber-500/25"
+  >
+    <Bell size={14} strokeWidth={2.5} />
+  </button>
+
+  {Number(item.reminderCount ?? item.ReminderCount ?? 0) > 0 && (
+    <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white">
+      {item.reminderCount ?? item.ReminderCount}
+    </span>
+  )}
+</div> */}
+
+<div className="relative">
+    <button
+        type="button"
+        disabled={isLifetimeCertificate(item)}
+        onClick={() => {
+            if (!isLifetimeCertificate(item)) {
+                setReminderCertificate(item);
+            }
+        }}
+        title={
+            isLifetimeCertificate(item)
+                ? "Reminders are not available for lifetime certificates"
+                : "Manage Reminders"
+        }
+        className={`
+            flex h-8 w-8 items-center justify-center rounded-lg
+            transition-all
+            ${
+                isLifetimeCertificate(item)
+                    ? "cursor-not-allowed bg-slate-200 text-slate-400 opacity-60 dark:bg-slate-700 dark:text-slate-500"
+                    : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/25"
+            }
+        `}
+    >
+        <Bell size={14} strokeWidth={2.5} />
+    </button>
+
+    {!isLifetimeCertificate(item) &&
+        Number(item.reminderCount ?? item.ReminderCount ?? 0) > 0 && (
+            <span className="absolute -right-2 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-black text-white">
+                {item.reminderCount ?? item.ReminderCount}
+            </span>
+        )}
+</div>
+
+
+                                                        
                                                 {/* Download */}
                                                 {/* {item.filePath ? (
                                                     <button
@@ -947,7 +1040,7 @@ const CertificateList = () => {
                                                 )}
 
                                                 {/* Delete */}
-                                                {canDelete && (
+                                                {/* {canDelete && (
                                                     <button
                                                         onClick={() => handleDelete(item.idCertificate)}
                                                         title="Delete"
@@ -955,7 +1048,7 @@ const CertificateList = () => {
                                                     >
                                                         <Trash2 size={13} strokeWidth={2.5} />
                                                     </button>
-                                                )}
+                                                )} */}
                                             </div>
                                         </td>
                                     </tr>

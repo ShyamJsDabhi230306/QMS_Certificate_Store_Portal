@@ -27,22 +27,17 @@ const getRights = () => {
 // 2. ALL routes (unfiltered) — used by AppRoutes.jsx so every path is reachable
 export const allRoutes = [
     {
-        title: "Dashboard",
-        path: "/dashboard",
-        element: <Dashboard />,
-        showInSidebar: true,
-        icon: <LayoutDashboard size={18} strokeWidth={2.5} />
-    },
-    // {
-    //     title: "Theme Settings",
-    //     path: "/theme-settings",
-    //     element: <ThemeSettings />,
-    //     showInSidebar: true,
-    //     icon: <Settings size={18} strokeWidth={2.5} />
-    // },
+    title: "Dashboard",
+    pageCode: "DASHBOARD",
+    path: "/dashboard",
+    element: <Dashboard />,
+    showInSidebar: true,
+    icon: <LayoutDashboard size={18} strokeWidth={2.5} />
+},
+ 
 
     ...companyRoutes,
-    ...locationRoutes,
+    // ...locationRoutes,
     // ...departmentRoutes,
     ...designationRoutes,
     ...userRoutes,
@@ -54,31 +49,88 @@ export const allRoutes = [
     // ...reminderRoutes
 ];
 
-// 3. FILTERED routes — used by Sidebar.jsx to show only permitted pages
-// export const navConfig = allRoutes.filter(route => {
-//     // Always show Dashboard and Certificate pages
-//     if (route.title === "Dashboard") return true;
-//     // if (route.title === "Certificate") return true;
-//     // if (route.title === "Add Certificate") return true;
-//     // if (route.title === "Edit Certificate") return true;
-//     // if (route.title === "CertificateType") return true;
-//     // if (route.title === "Theme Settings") return true; // 🎨 Add this line!
+export const navConfig = allRoutes.filter((route) => {
+    try {
+        const user = JSON.parse(
+            localStorage.getItem("user") || "{}"
+        );
 
+        if (user.isSuperAdmin === true) {
+            return true;
+        }
+
+        const userRights = getRights();
+
+        const permission = userRights.find((right) => {
+            const databasePageCode = String(
+                right.pageCode ||
+                right.PageCode ||
+                ""
+            )
+                .trim()
+                .toUpperCase();
+
+            const frontendPageCode = String(
+                route.pageCode || ""
+            )
+                .trim()
+                .toUpperCase();
+
+            return (
+                databasePageCode !== "" &&
+                databasePageCode === frontendPageCode
+            );
+        });
+
+        return (
+            permission?.canView === true ||
+            permission?.CanView === true ||
+            permission?.canView === 1 ||
+            permission?.CanView === 1 ||
+            permission?.canView === "1" ||
+            permission?.CanView === "1"
+        );
+    } catch {
+        return false;
+    }
+});
+
+
+// export const navConfig = allRoutes.filter(route => {
+//     // Always show Dashboard
+//     if (route.title === "Dashboard") return true;
+//     // 👇 ADD THIS ADMIN BYPASS BLOCK
+//     try {
+//         const user = JSON.parse(localStorage.getItem('user'));
+//         if (user && user.isSuperAdmin === true) return true; // Admin sees ALL sidebar links
+//     } catch (e) { }
+
+
+
+    
 //     const userRights = getRights();
 
-//     // Find the permission (case-insensitive)
-//     const permission = userRights.find(r => {
-//         const dbName = (r.pageName || r.PageName || "").toLowerCase().trim();
-//         const uiName = (route.title || "").toLowerCase().trim();
-//         if (dbName === uiName) return true;
-//         // 2. Prevent the word "Certificate" from accidentally granting access to "Certificate Type"
-//         if (dbName === "certificate" && uiName === "certificate type") return false;
-//         if (uiName === "certificate" && dbName === "certificate type") return false;
-//         return dbName === uiName || uiName.includes(dbName) || dbName.includes(uiName);
+
+//     const permission = userRights.find((right) => {
+//     const databasePageCode = (
+//         right.pageCode ||
+//         right.PageCode ||
+//         ""
+//     ).trim().toUpperCase();
+
+//     const frontendPageCode = (
+//         route.pageCode ||
+//         ""
+//     ).trim().toUpperCase();
+
+//     return (
+//         databasePageCode !== "" &&
+//         frontendPageCode !== "" &&
+//         databasePageCode === frontendPageCode
+//     );
+
 //     });
-
 //     if (!permission) return false;
-
 //     // Check for View permission
 //     return (
 //         permission.canView === true ||
@@ -87,31 +139,3 @@ export const allRoutes = [
 //         permission.CanView === 1
 //     );
 // });
-export const navConfig = allRoutes.filter(route => {
-    // Always show Dashboard
-    if (route.title === "Dashboard") return true;
-    // 👇 ADD THIS ADMIN BYPASS BLOCK
-    try {
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user && user.isSuperAdmin === true) return true; // Admin sees ALL sidebar links
-    } catch (e) { }
-    const userRights = getRights();
-    // Find the permission (case-insensitive)
-    const permission = userRights.find(r => {
-        const dbName = (r.pageName || r.PageName || "").toLowerCase().trim();
-        const uiName = (route.title || "").toLowerCase().trim();
-        if (dbName === uiName) return true;
-        // Prevent the word "Certificate" from accidentally granting access to "Certificate Type"
-        if (dbName === "certificate" && uiName === "certificate type") return false;
-        if (uiName === "certificate" && dbName === "certificate type") return false;
-        return dbName === uiName || uiName.includes(dbName) || dbName.includes(uiName);
-    });
-    if (!permission) return false;
-    // Check for View permission
-    return (
-        permission.canView === true ||
-        permission.CanView === true ||
-        permission.canView === 1 ||
-        permission.CanView === 1
-    );
-});

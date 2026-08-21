@@ -51,7 +51,19 @@ namespace QMS_Certificate_Store_Portal.Repositories
                 param.Add("@CreatedOn", model.CreatedOn);
                 param.Add("@Remarks", model.Remarks);
                 param.Add("@IsActive", model.IsActive);
-                param.Add("@ActionUser", model.UserAction); // 👈 Maps to @ActionUser in your SP
+                param.Add("@ActionUser", model.UserAction);
+
+                param.Add("@AiraCompanyId", model.AiraCompanyId);
+                param.Add("@CompanyCode", model.CompanyCode);
+                param.Add("@FactoryAddress", model.FactoryAddress);
+                param.Add("@City", model.City);
+                param.Add("@State", model.State);
+                param.Add("@Country", model.Country);
+                param.Add("@Pincode", model.Pincode);
+                param.Add("@LogoFileName", model.LogoFileName);
+                param.Add("@LogoBase64", model.LogoBase64);
+                param.Add("@AiraLastSyncUtc", model.AiraLastSyncUtc);
+                param.Add("@IsAiraSynced", model.IsAiraSynced);// 👈 Maps to @ActionUser in your SP
 
                 return await _dapper.QueryFirstOrDefaultAsync<SaveResult>("usp_Master_Company_Save", param) 
                        ?? new SaveResult { Result = -1, Message = "Database error" };

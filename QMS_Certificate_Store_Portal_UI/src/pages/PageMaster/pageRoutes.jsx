@@ -4,8 +4,9 @@ import PageForm from './PageForm';
 import { Layout } from "lucide-react";
 
 export const pageRoutes = [
-    {
+     {
         title: "Page Master",
+        pageCode: "PAGE_MASTER",
         path: "/page-master",
         element: <PageList />,
         showInSidebar: true,
@@ -13,12 +14,14 @@ export const pageRoutes = [
     },
     {
         title: "Add Page",
+        pageCode: "PAGE_MASTER",
         path: "/page-master/add",
         element: <PageForm />,
         showInSidebar: false
     },
     {
         title: "Edit Page",
+        pageCode: "PAGE_MASTER",
         path: "/page-master/edit/:id",
         element: <PageForm />,
         showInSidebar: false

@@ -5,6 +5,135 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/master/aira-company/get-all": {
+      "get": {
+        "tags": [
+          "AiraCompany"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/aira-company/sync": {
+      "post": {
+        "tags": [
+          "AiraCompany"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/aira-company/aira-list": {
+      "get": {
+        "tags": [
+          "AiraCompany"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/aira-company/sync-selected": {
+      "post": {
+        "tags": [
+          "AiraCompany"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncAiraCompanyRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncAiraCompanyRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncAiraCompanyRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/otp/send": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendOtpRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendOtpRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SendOtpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/auth/otp/verify": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyOtpRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/transaction/Certificate/get-all": {
       "get": {
         "tags": [
@@ -152,6 +281,247 @@
         "tags": [
           "Certificate"
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/export": {
+      "get": {
+        "tags": [
+          "Certificate"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/send-test-whatsapp": {
+      "post": {
+        "tags": [
+          "Certificate"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhatsAppTestRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhatsAppTestRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/WhatsAppTestRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/pending-reminders": {
+      "get": {
+        "tags": [
+          "Certificate"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/custom-contacts/{reminderId}": {
+      "get": {
+        "tags": [
+          "Certificate"
+        ],
+        "parameters": [
+          {
+            "name": "reminderId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/save-custom-contact": {
+      "post": {
+        "tags": [
+          "Certificate"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReminderCustomContact"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReminderCustomContact"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReminderCustomContact"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/delete-custom-contact/{idCustom}": {
+      "delete": {
+        "tags": [
+          "Certificate"
+        ],
+        "parameters": [
+          {
+            "name": "idCustom",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/save-log": {
+      "post": {
+        "tags": [
+          "Certificate"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateLog"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateLog"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CertificateLog"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/Certificate/logs": {
+      "get": {
+        "tags": [
+          "Certificate"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/CertificateReminder/pending-reminders": {
+      "get": {
+        "tags": [
+          "CertificateReminder"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/CertificateReminder/by-certificate/{idCertificate}": {
+      "get": {
+        "tags": [
+          "CertificateReminder"
+        ],
+        "parameters": [
+          {
+            "name": "idCertificate",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/CertificateReminder/save": {
+      "post": {
+        "tags": [
+          "CertificateReminder"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveCertificateReminderRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveCertificateReminderRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveCertificateReminderRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -693,6 +1063,115 @@
         }
       }
     },
+    "/internal/live-session/revoke/{umId}": {
+      "post": {
+        "tags": [
+          "QMS_Certificate_Store_Portal"
+        ],
+        "parameters": [
+          {
+            "name": "umId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/TransactionCertificateApproval/process": {
+      "post": {
+        "tags": [
+          "TransactionCertificateApproval"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCertificateApproval"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCertificateApproval"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCertificateApproval"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/TransactionCertificateApproval/pending": {
+      "get": {
+        "tags": [
+          "TransactionCertificateApproval"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/TransactionCertificateApproval/change-status": {
+      "put": {
+        "tags": [
+          "TransactionCertificateApproval"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCertificateApproval"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCertificateApproval"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCertificateApproval"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/transaction/TransactionCertificateApproval/history": {
+      "get": {
+        "tags": [
+          "TransactionCertificateApproval"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/master/user/get-all": {
       "get": {
         "tags": [
@@ -782,6 +1261,132 @@
         }
       }
     },
+    "/api/master/user/get-for-rights": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/user/aira-employees": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/user/import-bulk": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportAiraUsersRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportAiraUsersRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportAiraUsersRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/user/assign-designation": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignDesignationRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignDesignationRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignDesignationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/user/save-from-aira": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveAiraUserRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveAiraUserRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SaveAiraUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/api/master/user/login": {
       "post": {
         "tags": [
@@ -813,14 +1418,14 @@
         }
       }
     },
-    "/api/master/UserRight/get-by-user/{idUser}": {
+    "/api/master/UserRight/get-by-designation/{idDesignation}": {
       "get": {
         "tags": [
           "UserRight"
         ],
         "parameters": [
           {
-            "name": "idUser",
+            "name": "idDesignation",
             "in": "path",
             "required": true,
             "schema": {
@@ -829,6 +1434,37 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/UserRight/update": {
+      "post": {
+        "tags": [
+          "UserRight"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -876,8 +1512,31 @@
         }
       }
     },
-    "/api/master/UserRight/initialize/{idUser}": {
+    "/api/master/UserRight/initialize/{idDesignation}": {
       "post": {
+        "tags": [
+          "UserRight"
+        ],
+        "parameters": [
+          {
+            "name": "idDesignation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/UserRight/get-for-user/{idUser}": {
+      "get": {
         "tags": [
           "UserRight"
         ],
@@ -892,6 +1551,68 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/UserRight/save-for-user": {
+      "post": {
+        "tags": [
+          "UserRight"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/master/UserRight/remove-user-override": {
+      "post": {
+        "tags": [
+          "UserRight"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MasterUserRight"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK"
@@ -941,11 +1662,24 @@
   },
   "components": {
     "schemas": {
+      "AssignDesignationRequest": {
+        "type": "object",
+        "properties": {
+          "idUserManagement": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idDesignation": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
       "Certificate": {
         "required": [
           "certificateName",
           "certificateNumber",
-          "expiryDate",
           "idCertificateType",
           "issueDate"
         ],
@@ -1033,6 +1767,16 @@
             "format": "int32",
             "nullable": true
           },
+          "idCompany": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idLocation": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
           "departmentName": {
             "type": "string",
             "nullable": true
@@ -1048,7 +1792,8 @@
           },
           "expiryDate": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "renewalCategory": {
             "type": "string",
@@ -1056,6 +1801,16 @@
           },
           "tags": {
             "type": "string",
+            "nullable": true
+          },
+          "surveillanceAuditYears": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "surveillanceDate": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           },
           "fileName": {
@@ -1074,6 +1829,10 @@
             "type": "string",
             "nullable": true
           },
+          "reminderCount": {
+            "type": "integer",
+            "format": "int32"
+          },
           "reminders": {
             "type": "array",
             "items": {
@@ -1081,8 +1840,75 @@
             },
             "nullable": true
           },
+          "customContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReminderCustomContact"
+            },
+            "nullable": true
+          },
           "remindersJson": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CertificateLog": {
+        "type": "object",
+        "properties": {
+          "idLog": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idCertificate": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idUser": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idDesignation": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idCertificateType": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "certificateNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "certificateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "certificateTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "userFullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "designationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "logDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "logTime": {
+            "type": "string",
+            "format": "date-span",
             "nullable": true
           }
         },
@@ -1099,12 +1925,23 @@
             "type": "integer",
             "format": "int32"
           },
-          "daysBeforeExpiry": {
+          "createdOn": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "daysBeforeSurveillance": {
             "type": "integer",
             "format": "int32"
           },
           "channel": {
             "type": "string",
+            "nullable": true
+          },
+          "customContacts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ReminderCustomContact"
+            },
             "nullable": true
           }
         },
@@ -1183,10 +2020,6 @@
             "type": "string",
             "nullable": true
           },
-          "isActive": {
-            "type": "boolean",
-            "nullable": true
-          },
           "e_Date": {
             "type": "string",
             "format": "date-time",
@@ -1218,6 +2051,11 @@
             "type": "string",
             "nullable": true
           },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "idCompany": {
             "type": "integer",
             "format": "int32"
@@ -1246,9 +2084,54 @@
             "type": "string",
             "nullable": true
           },
-          "createdOn": {
+          "airaCompanyId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "companyCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "factoryAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "state": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "pincode": {
+            "type": "string",
+            "nullable": true
+          },
+          "logoFileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "logoBase64": {
+            "type": "string",
+            "nullable": true
+          },
+          "airaLastSyncUtc": {
             "type": "string",
             "format": "date-time",
+            "nullable": true
+          },
+          "isAiraSynced": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
             "nullable": true
           }
         },
@@ -1320,6 +2203,10 @@
           "locationName": {
             "type": "string",
             "nullable": true
+          },
+          "companyName": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1381,6 +2268,20 @@
           },
           "designationName": {
             "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ImportAiraUsersRequest": {
+        "type": "object",
+        "properties": {
+          "idUserManagement": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
             "nullable": true
           }
         },
@@ -1528,6 +2429,10 @@
           "pageName": {
             "type": "string",
             "nullable": true
+          },
+          "pageCode": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1591,11 +2496,19 @@
             "type": "integer",
             "format": "int32"
           },
+          "idDesignation": {
+            "type": "integer",
+            "format": "int32"
+          },
           "idPage": {
             "type": "integer",
             "format": "int32"
           },
           "pageName": {
+            "type": "string",
+            "nullable": true
+          },
+          "pageCode": {
             "type": "string",
             "nullable": true
           },
@@ -1610,6 +2523,288 @@
           },
           "canDelete": {
             "type": "boolean"
+          },
+          "hasUserOverride": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "ReminderCustomContact": {
+        "type": "object",
+        "properties": {
+          "idCustom": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idReminder": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fullName": {
+            "type": "string",
+            "nullable": true
+          },
+          "contact": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "e_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "e_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "u_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "u_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDelete": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "d_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "d_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaveAiraUserRequest": {
+        "type": "object",
+        "properties": {
+          "idUserManagement": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idDesignation": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idCompany": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idLocation": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SaveCertificateReminderRequest": {
+        "type": "object",
+        "properties": {
+          "idCertificate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "deletedReminderIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "deletedContactIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "nullable": true
+          },
+          "reminders": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CertificateReminder"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SendOtpRequest": {
+        "type": "object",
+        "properties": {
+          "employeeCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SyncAiraCompanyRequest": {
+        "type": "object",
+        "properties": {
+          "idCompany": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TransactionCertificateApproval": {
+        "type": "object",
+        "properties": {
+          "userAction": {
+            "type": "string",
+            "nullable": true
+          },
+          "remarks": {
+            "type": "string",
+            "nullable": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "e_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "e_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "u_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "u_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "isDelete": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "d_Date": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "d_By": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdOn": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "idTrasaction_Certificate_Approval": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "idCertificate": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "approvedBy": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "approvalStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvalComment": {
+            "type": "string",
+            "nullable": true
+          },
+          "approvalDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "approvalLevel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "certificate": {
+            "$ref": "#/components/schemas/Certificate"
+          },
+          "certificateName": {
+            "type": "string",
+            "nullable": true
+          },
+          "certificateNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "certificateTypeName": {
+            "type": "string",
+            "nullable": true
+          },
+          "ownerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "departmentName": {
+            "type": "string",
+            "nullable": true
+          },
+          "expiryDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "issueDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "filePath": {
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "surveillanceDate": {
+            "type": "string",
+            "format": "date-time"
           }
         },
         "additionalProperties": false
@@ -1681,7 +2876,12 @@
             "type": "string",
             "nullable": true
           },
-          "idDepartment": {
+          "idCompany": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "idLocation": {
             "type": "integer",
             "format": "int32",
             "nullable": true
@@ -1699,11 +2899,83 @@
             "type": "string",
             "nullable": true
           },
-          "departmentName": {
+          "locationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "companyName": {
             "type": "string",
             "nullable": true
           },
           "designationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "isSuperAdmin": {
+            "type": "boolean"
+          },
+          "idUserManagement": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "airaSecurityStamp": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
+          },
+          "airaLastSyncUtc": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "airaEmployeeCode": {
+            "type": "string",
+            "nullable": true
+          },
+          "airaName": {
+            "type": "string",
+            "nullable": true
+          },
+          "airaContactNo": {
+            "type": "string",
+            "nullable": true
+          },
+          "airaImageFileURL": {
+            "type": "string",
+            "nullable": true
+          },
+          "airaRoleId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "airaRoleName": {
+            "type": "string",
+            "nullable": true
+          },
+          "airaIsActive": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "isSync": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "VerifyOtpRequest": {
+        "type": "object",
+        "properties": {
+          "idUser": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "otp": {
+            "type": "string",
+            "nullable": true
+          },
+          "employeeCode": {
             "type": "string",
             "nullable": true
           }
@@ -1727,6 +2999,16 @@
             "readOnly": true
           },
           "summary": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "WhatsAppTestRequest": {
+        "type": "object",
+        "properties": {
+          "phoneNumber": {
             "type": "string",
             "nullable": true
           }

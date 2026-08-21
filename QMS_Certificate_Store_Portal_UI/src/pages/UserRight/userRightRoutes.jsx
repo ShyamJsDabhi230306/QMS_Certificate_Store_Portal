@@ -5,6 +5,7 @@ import { ShieldCheck } from "lucide-react";
 export const userRightRoutes = [
     {
         title: "User Rights",
+        pageCode: "USER_RIGHTS",
         path: "/user-rights",
         element: <UserRightForm />,
         showInSidebar: true,

@@ -53,6 +53,24 @@ namespace QMS_Certificate_Store_Portal.Models
         public string Status { get; set; } = "Draft";
 
         public string? Notes { get; set; }
+        public int ReminderCount { get; set; }
+
+
+
+        public sealed class SaveCertificateReminderRequest
+        {
+            public int IDCertificate { get; set; }
+
+
+            // Existing reminders deleted by the user
+            public List<int> DeletedReminderIds { get; set; }
+                = new List<int>();
+
+            // Existing contacts deleted by the user
+            public List<int> DeletedContactIds { get; set; }
+                = new List<int>();
+            public List<CertificateReminder> Reminders { get; set; } = new List<CertificateReminder>();
+        }
 
         // Dynamic Child reminders
         public List<CertificateReminder> Reminders { get; set; } = new List<CertificateReminder>();
@@ -68,6 +86,7 @@ namespace QMS_Certificate_Store_Portal.Models
         public DateTime CreatedOn { get; set; }
         public int DaysBeforeSurveillance { get; set; }
         public string Channel { get; set; } = string.Empty;
+       
 
         // 👈 Add this property to hold the extra custom contacts
         public List<ReminderCustomContact> CustomContacts { get; set; } = new List<ReminderCustomContact>();

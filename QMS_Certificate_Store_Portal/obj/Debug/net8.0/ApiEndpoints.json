@@ -1,5 +1,83 @@
 [
   {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.AuthController",
+    "Method": "SendOtp",
+    "RelativePath": "api/auth/otp/send",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Models.UserMgmtOtp.SendOtpRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.AuthController",
+    "Method": "VerifyOtp",
+    "RelativePath": "api/auth/otp/verify",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Models.UserMgmtOtp.VerifyOtpRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.AiraCompanyController",
+    "Method": "GetAiraCompanies",
+    "RelativePath": "api/master/aira-company/aira-list",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.AiraCompanyController",
+    "Method": "GetAll",
+    "RelativePath": "api/master/aira-company/get-all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.AiraCompanyController",
+    "Method": "SyncCompanies",
+    "RelativePath": "api/master/aira-company/sync",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.AiraCompanyController",
+    "Method": "SyncSelectedCompany",
+    "RelativePath": "api/master/aira-company/sync-selected",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Models.SyncAiraCompanyRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateTypeController",
     "Method": "Delete",
     "RelativePath": "api/master/CertificateType/delete/{id}",
@@ -349,6 +427,32 @@
   },
   {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
+    "Method": "GetAiraEmployees",
+    "RelativePath": "api/master/user/aira-employees",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
+    "Method": "AssignDesignation",
+    "RelativePath": "api/master/user/assign-designation",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Models.AssignDesignationRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
     "Method": "Delete",
     "RelativePath": "api/master/user/delete/{id}",
     "HttpMethod": "DELETE",
@@ -391,6 +495,38 @@
   },
   {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
+    "Method": "GetForRights",
+    "RelativePath": "api/master/user/get-for-rights",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "search",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
+    "Method": "ImportBulk",
+    "RelativePath": "api/master/user/import-bulk",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Models.ImportAiraUsersRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
     "Method": "Login",
     "RelativePath": "api/master/user/login",
     "HttpMethod": "POST",
@@ -422,9 +558,41 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserController",
+    "Method": "SaveFromAira",
+    "RelativePath": "api/master/user/save-from-aira",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Models.UserMgmtOtp.SaveAiraUserRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
-    "Method": "GetByUserId",
-    "RelativePath": "api/master/UserRight/get-by-user/{idUser}",
+    "Method": "GetByDesignationId",
+    "RelativePath": "api/master/UserRight/get-by-designation/{idDesignation}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idDesignation",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
+    "Method": "GetForUser",
+    "RelativePath": "api/master/UserRight/get-for-user/{idUser}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -440,14 +608,62 @@
   {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
     "Method": "Initialize",
-    "RelativePath": "api/master/UserRight/initialize/{idUser}",
+    "RelativePath": "api/master/UserRight/initialize/{idDesignation}",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "idUser",
+        "Name": "idDesignation",
         "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
+    "Method": "RemoveUserOverride",
+    "RelativePath": "api/master/UserRight/remove-user-override",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.MasterUserRight",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
+    "Method": "SaveForUser",
+    "RelativePath": "api/master/UserRight/save-for-user",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.MasterUserRight",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.UserRightController",
+    "Method": "Update",
+    "RelativePath": "api/master/UserRight/update",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.MasterUserRight",
         "IsRequired": true
       }
     ],
@@ -471,12 +687,44 @@
   },
   {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "GetCustomContacts",
+    "RelativePath": "api/transaction/Certificate/custom-contacts/{reminderId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "reminderId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
     "Method": "GetDashboardStats",
     "RelativePath": "api/transaction/Certificate/dashboard-stats",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
     "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "DeleteCustomContact",
+    "RelativePath": "api/transaction/Certificate/delete-custom-contact/{idCustom}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idCustom",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
     "ReturnTypes": []
   },
   {
@@ -513,6 +761,16 @@
   },
   {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "ExportToExcel",
+    "RelativePath": "api/transaction/Certificate/export",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
     "Method": "GetAll",
     "RelativePath": "api/transaction/Certificate/get-all",
     "HttpMethod": "GET",
@@ -539,6 +797,26 @@
   },
   {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "GetLogs",
+    "RelativePath": "api/transaction/Certificate/logs",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "GetPendingReminders",
+    "RelativePath": "api/transaction/Certificate/pending-reminders",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
     "Method": "Save",
     "RelativePath": "api/transaction/Certificate/save",
     "HttpMethod": "POST",
@@ -548,6 +826,54 @@
       {
         "Name": "model",
         "Type": "QMS_Certificate_Store_Portal.Models.Certificate",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "SaveCustomContact",
+    "RelativePath": "api/transaction/Certificate/save-custom-contact",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.ReminderCustomContact",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "SaveLog",
+    "RelativePath": "api/transaction/Certificate/save-log",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.CertificateLog",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateController",
+    "Method": "SendTestWhatsApp",
+    "RelativePath": "api/transaction/Certificate/send-test-whatsapp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Controllers.CertificateController\u002BWhatsAppTestRequest",
         "IsRequired": true
       }
     ],
@@ -568,6 +894,122 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateReminderController",
+    "Method": "GetByCertificate",
+    "RelativePath": "api/transaction/CertificateReminder/by-certificate/{idCertificate}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "idCertificate",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateReminderController",
+    "Method": "GetPendingReminders",
+    "RelativePath": "api/transaction/CertificateReminder/pending-reminders",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.CertificateReminderController",
+    "Method": "Add",
+    "RelativePath": "api/transaction/CertificateReminder/save",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "QMS_Certificate_Store_Portal.Models.Certificate\u002BSaveCertificateReminderRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.TransactionCertificateApprovalController",
+    "Method": "ChangeStatus",
+    "RelativePath": "api/transaction/TransactionCertificateApproval/change-status",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.TransactionCertificateApproval",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.TransactionCertificateApprovalController",
+    "Method": "GetApprovalHistory",
+    "RelativePath": "api/transaction/TransactionCertificateApproval/history",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.TransactionCertificateApprovalController",
+    "Method": "GetPending",
+    "RelativePath": "api/transaction/TransactionCertificateApproval/pending",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "QMS_Certificate_Store_Portal.Controllers.TransactionCertificateApprovalController",
+    "Method": "Process",
+    "RelativePath": "api/transaction/TransactionCertificateApproval/process",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "model",
+        "Type": "QMS_Certificate_Store_Portal.Models.TransactionCertificateApproval",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "Aira.LiveSession.AiraLiveSessionExtensions\u002B\u003C\u003Ec__DisplayClass1_0",
+    "Method": "\u003CMapAiraLiveSession\u003Eb__0",
+    "RelativePath": "internal/live-session/revoke/{umId:int}",
+    "HttpMethod": "POST",
+    "IsController": false,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "umId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Void",
+        "MediaTypes": [],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "QMS_Certificate_Store_Portal.Controllers.WeatherForecastController",

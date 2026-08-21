@@ -20,6 +20,7 @@ namespace QMS_Certificate_Store_Portal.Helpers
             // repository Layer for registration
             services.AddScoped<UserRepo>();
             services.AddScoped<CompanyRepo>();
+            services.AddScoped<AiraCompanyRepo>();
             services.AddScoped<LocationRepo>();
             services.AddScoped<DepartmentRepo>();
             services.AddScoped<DesignationRepo>();
@@ -34,10 +35,13 @@ namespace QMS_Certificate_Store_Portal.Helpers
             // Master Services Layer for registration 
             services.AddScoped<UserService>();
             services.AddScoped<CompanyService>();
+            services.AddScoped<CompanyService>();
+            services.AddScoped<AiraCompanyService>();
             services.AddScoped<LocationService>();
             services.AddScoped<DepartmentService>();
             services.AddScoped<DesignationService>();
             services.AddScoped<PageService>();
+            services.AddScoped<PageCatalogService>();
             services.AddScoped<UserRightService>();
             services.AddScoped<CertificateTypeService>();
 

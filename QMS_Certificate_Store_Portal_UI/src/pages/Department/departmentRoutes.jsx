@@ -4,8 +4,9 @@ import DepartmentForm from './DepartmentForm';
 import { Layers } from "lucide-react";
 
 export const departmentRoutes = [
-    {
+     {
         title: "Department Master",
+        pageCode: "DEPARTMENT",
         path: "/department",
         element: <DepartmentList />,
         showInSidebar: true,
@@ -13,12 +14,14 @@ export const departmentRoutes = [
     },
     {
         title: "Add Department",
+        pageCode: "DEPARTMENT",
         path: "/department/add",
         element: <DepartmentForm />,
         showInSidebar: false
     },
     {
         title: "Edit Department",
+        pageCode: "DEPARTMENT",
         path: "/department/edit/:id",
         element: <DepartmentForm />,
         showInSidebar: false

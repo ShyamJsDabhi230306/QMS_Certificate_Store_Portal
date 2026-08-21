@@ -31,27 +31,25 @@ namespace QMS_Certificate_Store_Portal.Repositories.Notification
                     commandType:
                     CommandType.StoredProcedure);
 
-            return result.ToList();
+             return result.ToList();
         }
 
         public async Task<List<NotificationRecipientDto>>
-            GetRecipientsAsync(int idCertificate)
-            {
-            using var connection =
-                new SqlConnection(
-                    _configuration.GetConnectionString(
-                        "DefaultConnection"));
+     GetRecipientsAsync(
+         int idCertificate,
+         int idReminder)
+        {
+            using var connection = new SqlConnection(
+                _configuration.GetConnectionString("DefaultConnection"));
 
-            var result =
-                await connection.QueryAsync<
-                    NotificationRecipientDto>(
-                    "usp_Transaction_Certificate_Reminder_GetRecipients",
-                    new
-                    {
-                        IDCertificate = idCertificate
-                    },
-                    commandType:
-                    CommandType.StoredProcedure);
+            var result = await connection.QueryAsync<NotificationRecipientDto>(
+                "usp_Transaction_Certificate_Reminder_GetRecipients",
+                new
+                {
+                    IDCertificate = idCertificate,
+                    IDReminder = idReminder
+                }
+                );
 
             return result.ToList();
         }

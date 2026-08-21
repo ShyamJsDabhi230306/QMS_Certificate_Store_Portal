@@ -37,110 +37,70 @@
     --color-neutral-50: #fafafa;
 }
 
-
-/* =========================================================
-   LIGHT MODE
-========================================================= */
-
 :root {
+    --background: #F4F7FB;
+    --foreground: #172033;
+    --card: #FFFFFF;
 
-    /* =========================================================
-       PROFESSIONAL LIGHT MODE
-    ========================================================= */
+    --sidebar: #0F1B2D;
+    --sidebar-foreground: #B8C7D9;
+    --sidebar-active: #0F9D8A;
 
-    /* Main Background */
-    --background: #eceff3;
+    --border: #D9E2EC;
+    --muted: #EAF1F7;
+    --muted-foreground: #62748A;
 
-    /* Main Text */
-    --foreground: #1e293b;
+    --radius: 0.75rem;
 
-    /* Card / Container */
-    --card: #f8fafc;
+    --gold: #0F9D8A;
+    --gold-hover: #0B806F;
+    --gold-text: #087A6B;
+    --gold-foreground: #FFFFFF;
 
-    /* Sidebar */
-    --sidebar: #e2e8f0;
-    --sidebar-foreground: #334155;
-    --sidebar-active: #c5a059;
+    --success: #16845B;
+    --warning: #C47A16;
+    --danger: #D64545;
+    --info: #2563EB;
 
-    /* Borders */
-    --border: #cbd5e1;
-
-    /* Muted Sections */
-    --muted: #dde5ec;
-    --muted-foreground: #64748b;
-
-    /* Radius */
-    --radius: 1rem;
-
-    /* Gold Theme */
-    --gold: #c5a059;
-    --gold-hover: #b48e46;
-    --gold-text: #8b6e3a;
-    --gold-foreground: #ffffff;
-
-    /* Status Colors */
-    --success: #15803d;
-    --warning: #d97706;
-    --danger: #dc2626;
-    --info: #2563eb;
-
-    /* Professional Shadows */
-    --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.06);
+    --shadow-sm: 0 1px 3px rgba(15, 27, 45, 0.06);
 
     --shadow-md:
-        0 4px 10px rgba(15, 23, 42, 0.08),
-        0 2px 4px rgba(15, 23, 42, 0.04);
+        0 4px 12px rgba(15, 27, 45, 0.08),
+        0 2px 4px rgba(15, 27, 45, 0.04);
 
     --shadow-lg:
-        0 10px 25px rgba(15, 23, 42, 0.10),
-        0 4px 10px rgba(15, 23, 42, 0.05);
+        0 12px 30px rgba(15, 27, 45, 0.12);
 }
 
 
-/* =========================================================
-   DARK MODE
-========================================================= */
 
 .dark {
+    --background: #0B1220;
+    --foreground: #EAF2F8;
+    --card: #121D2E;
 
-    /* Main Layout */
-    --background: #0f172a;
-    --foreground: #f8fafc;
+    --sidebar: #0A1424;
+    --sidebar-foreground: #B7C6D8;
+    --sidebar-active: #20B8A4;
 
-    /* Cards */
-    --card: #111827;
+    --border: #26384E;
+    --muted: #17263A;
+    --muted-foreground: #92A4B8;
 
-    /* Sidebar */
-    --sidebar: #111827;
-    --sidebar-foreground: #cbd5e1;
-    --sidebar-active: #c5a059;
+    --gold: #20B8A4;
+    --gold-hover: #15917F;
+    --gold-text: #75E6D4;
+    --gold-foreground: #FFFFFF;
 
-    /* Borders */
-    --border: #1f2937;
+    --success: #2DBB78;
+    --warning: #F0A83B;
+    --danger: #F26B6B;
+    --info: #60A5FA;
 
-    /* Muted Areas */
-    --muted: #1e293b;
-    --muted-foreground: #94a3b8;
-
-    /* Brand Accent */
-    --gold: #d4af63;
-    --gold-hover: #c59b45;
-    --gold-text: #f4d58d;
-    --gold-foreground: #0f172a;
-
-    /* Optional Extra Colors */
-    --success: #22c55e;
-    --warning: #fbbf24;
-    --danger: #ef4444;
-    --info: #3b82f6;
-
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.25);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
-    --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.45);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 5px 15px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 14px 35px rgba(0, 0, 0, 0.4);
 }
-
-
 /* =========================================================
    BASE LAYER
 ========================================================= */

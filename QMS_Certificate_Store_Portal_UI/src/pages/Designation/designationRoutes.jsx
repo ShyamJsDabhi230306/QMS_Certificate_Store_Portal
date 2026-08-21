@@ -4,8 +4,9 @@ import DesignationForm from './DesignationForm';
 import { Award, IdCard } from "lucide-react";
 
 export const designationRoutes = [
-    {
+   {
         title: "Designation Master",
+        pageCode: "DESIGNATION",
         path: "/designation",
         element: <DesignationList />,
         showInSidebar: true,
@@ -13,12 +14,14 @@ export const designationRoutes = [
     },
     {
         title: "Add Designation",
+        pageCode: "DESIGNATION",
         path: "/designation/add",
         element: <DesignationForm />,
         showInSidebar: false
     },
     {
         title: "Edit Designation",
+        pageCode: "DESIGNATION",
         path: "/designation/edit/:id",
         element: <DesignationForm />,
         showInSidebar: false

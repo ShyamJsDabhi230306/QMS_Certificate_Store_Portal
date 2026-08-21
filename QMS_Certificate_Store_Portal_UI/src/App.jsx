@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import AppRoutes from './routes/AppRoutes.jsx';
 import { Toaster } from 'react-hot-toast';
+import LiveSessionListener from './components/auth/LiveSessionListener.jsx';
 
 
 function App() {
@@ -49,6 +50,8 @@ function App() {
       />
 
       <AppRoutes />
+
+        <LiveSessionListener />
     </>
   );
 }

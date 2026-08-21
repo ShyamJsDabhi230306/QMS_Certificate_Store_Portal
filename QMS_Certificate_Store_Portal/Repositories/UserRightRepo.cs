@@ -209,5 +209,63 @@ namespace QMS_Certificate_Store_Portal.Repositories
         }
 
         #endregion
+
+
+
+        public async Task<IEnumerable<MasterUserRight>>
+    GetForUserAsync(int idUser)
+        {
+            var param = new DynamicParameters();
+            param.Add("@IDUser", idUser, DbType.Int32);
+
+            return await _dapper.QueryAsync<MasterUserRight>(
+                "usp_Master_UserRight_SelectForUser",
+                param);
+        }
+
+        public async Task<SaveResult>
+            SaveForUserAsync(
+                MasterUserRight model,
+                string actionUser)
+        {
+            var param = new DynamicParameters();
+
+            param.Add("@IDUser", model.IDUser);
+            param.Add("@IDPage", model.IDPage);
+            param.Add("@IDDesignation", model.IDDesignation);
+            param.Add("@CanView", model.CanView);
+            param.Add("@CanCreate", model.CanCreate);
+            param.Add("@CanEdit", model.CanEdit);
+            param.Add("@CanDelete", model.CanDelete);
+            param.Add("@ActionUser", actionUser);
+            param.Add("@Remarks", model.Remarks);
+
+            return await _dapper.QueryFirstOrDefaultAsync<SaveResult>(
+                "usp_Master_UserRight_SaveForUser",
+                param
+            ) ?? SaveResult.Fail("Database error.");
+        }
+
+        public async Task<SaveResult>
+            RemoveUserOverrideAsync(
+                int idUser,
+                int idPage,
+                string actionUser)
+        {
+            var param = new DynamicParameters();
+
+            param.Add("@IDUser", idUser);
+            param.Add("@IDPage", idPage);
+            param.Add("@ActionUser", actionUser);
+
+            return await _dapper.QueryFirstOrDefaultAsync<SaveResult>(
+                "usp_Master_UserRight_RemoveUserOverride",
+                param
+            ) ?? SaveResult.Fail("Database error.");
+        }
+
+
+       
+
     }
 }

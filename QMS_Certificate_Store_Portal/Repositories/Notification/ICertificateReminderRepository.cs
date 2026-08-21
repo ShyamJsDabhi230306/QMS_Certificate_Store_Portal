@@ -7,8 +7,12 @@ namespace QMS_Certificate_Store_Portal.Repositories.Notification
         Task<List<CertificateReminderDto>>
             GetDueRemindersAsync();
 
+
         Task<List<NotificationRecipientDto>>
-            GetRecipientsAsync(int idCertificate);
+            GetRecipientsAsync(
+                int idCertificate,
+                int idReminder
+            );
 
         Task MarkReminderSentAsync(int idReminder);
     }

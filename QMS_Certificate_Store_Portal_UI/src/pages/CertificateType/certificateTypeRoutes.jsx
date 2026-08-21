@@ -4,8 +4,9 @@ import CertificateTypeList from './CertificateTypeList';
 import CertificateTypeForm from './CertificateTypeForm';
 
 const certificateTypeRoutes = [
-    {
+     {
         title: "Certificate Type",
+        pageCode: "CERTIFICATE_TYPE",
         path: "/certificate-type",
         element: <CertificateTypeList />,
         showInSidebar: true,
@@ -13,12 +14,14 @@ const certificateTypeRoutes = [
     },
     {
         title: "Add Certificate Type",
+        pageCode: "CERTIFICATE_TYPE",
         path: "/certificate-type/add",
         element: <CertificateTypeForm />,
         showInSidebar: false
     },
     {
         title: "Edit Certificate Type",
+        pageCode: "CERTIFICATE_TYPE",
         path: "/certificate-type/edit/:id",
         element: <CertificateTypeForm />,
         showInSidebar: false

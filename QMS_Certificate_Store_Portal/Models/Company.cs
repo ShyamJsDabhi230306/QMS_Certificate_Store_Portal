@@ -11,6 +11,29 @@ namespace QMS_Certificate_Store_Portal.Models
         public string? Email { get; set; }
         public string? PanNo { get; set; }
         public string? GSTNo { get; set; }
-        public DateTime? CreatedOn { get; set; }
+        //public DateTime? CreatedOn { get; set; }
+        public int? AiraCompanyId { get; set; }
+
+        public string? CompanyCode { get; set; }
+
+        public string? FactoryAddress { get; set; }
+
+        public string? City { get; set; }
+
+        public string? State { get; set; }
+
+        public string? Country { get; set; }
+
+        public string? Pincode { get; set; }
+
+        public string? LogoFileName { get; set; }
+
+        public string? LogoBase64 { get; set; }
+
+        public DateTime? AiraLastSyncUtc { get; set; }
+
+        public bool? IsAiraSynced { get; set; }
+        public bool? IsActive { get; set; }
+
     }
 }

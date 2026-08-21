@@ -4,8 +4,9 @@ import LocationForm from './LocationForm';
 import { MapPin } from "lucide-react";
 
 export const locationRoutes = [
-    {
+   {
         title: "Location Master",
+        pageCode: "LOCATION",
         path: "/location",
         element: <LocationList />,
         showInSidebar: true,
@@ -13,12 +14,14 @@ export const locationRoutes = [
     },
     {
         title: "Add Location",
+        pageCode: "LOCATION",
         path: "/location/add",
         element: <LocationForm />,
         showInSidebar: false
     },
     {
         title: "Edit Location",
+        pageCode: "LOCATION",
         path: "/location/edit/:id",
         element: <LocationForm />,
         showInSidebar: false

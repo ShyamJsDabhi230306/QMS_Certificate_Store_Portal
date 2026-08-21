@@ -1,1 +1,46 @@
+
+# Repository-level Visual Studio and IDE caches
 .vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Visual Studio/Copilot index databases
+CodeChunks.db
+CodeChunks.db-shm
+CodeChunks.db-wal
+SemanticSymbols.db
+*.db-shm
+*.db-wal
+
+# .NET generated output in any project
+**/[Bb]in/
+**/[Oo]bj/
+**/[Dd]ebug/
+**/[Rr]elease/
+**/[Aa]rtifacts/
+
+# Frontend dependencies and generated bundles
+**/node_modules/
+**/.vite/
+**/dist/
+**/dist-ssr/
+
+# Runtime files
+**/logs/
+**/wwwroot/uploads/
+debug_log.txt
+*.log
+
+# Local archives and deployment bundles
+*.zip
+*.7z
+*.rar
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini

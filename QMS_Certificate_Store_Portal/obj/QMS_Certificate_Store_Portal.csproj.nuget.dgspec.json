@@ -27,8 +27,10 @@
           "net8.0"
         ],
         "sources": {
+          "C:\\AiraNuGetPackages": {},
           "C:\\Program Files (x86)\\DevExpress 20.2\\Components\\System\\Components\\Packages": {},
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\CORRECT_V3_INDEX_URL": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -53,9 +55,29 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "dependencies": {
+            "Aira.LiveSession": {
+              "target": "Package",
+              "version": "[1.1.2, )"
+            },
+            "ClosedXML": {
+              "target": "Package",
+              "version": "[0.105.0, )"
+            },
             "Dapper": {
               "target": "Package",
               "version": "[2.1.72, )"
+            },
+            "Hangfire.AspNetCore": {
+              "target": "Package",
+              "version": "[1.8.23, )"
+            },
+            "Hangfire.Core": {
+              "target": "Package",
+              "version": "[1.8.23, )"
+            },
+            "Hangfire.SqlServer": {
+              "target": "Package",
+              "version": "[1.8.23, )"
             },
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
@@ -64,6 +86,10 @@
             "Microsoft.Data.SqlClient": {
               "target": "Package",
               "version": "[7.0.1, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.4, )"
             },
             "Swashbuckle.AspNetCore": {
               "target": "Package",
@@ -93,7 +119,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.108/PortableRuntimeIdentifierGraph.json",
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.111/PortableRuntimeIdentifierGraph.json",
           "packagesToPrune": {
             "Microsoft.AspNetCore": "(, 8.0.32767]",
             "Microsoft.AspNetCore.Antiforgery": "(, 8.0.32767]",

@@ -115,14 +115,14 @@ const PageList = () => {
                                                     <Edit2 size={14} />
                                                 </button>
                                             )}
-                                            {canDelete && (
+                                            {/* {canDelete && (
                                                 <button
                                                     onClick={() => handleDelete(item.idPage || item.IDPage)}
                                                     className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
                                                 >
                                                     <Trash2 size={14} />
                                                 </button>
-                                            )}
+                                            )} */}
                                         </div>
                                     </td>
                                 </tr>

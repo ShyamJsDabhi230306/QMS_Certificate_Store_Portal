@@ -6,8 +6,9 @@ import CertificateViewLog from './CertificateViewLog';
 
 
 const certificateRoutes = [
-    {
+     {
         title: "Certificate",
+        pageCode: "CERTIFICATE",
         path: "/certificate",
         element: <CertificateList />,
         showInSidebar: true,
@@ -15,18 +16,21 @@ const certificateRoutes = [
     },
     {
         title: "Add Certificate",
+        pageCode: "CERTIFICATE",
         path: "/certificate/add",
         element: <CertificateForm />,
         showInSidebar: false
     },
     {
         title: "Edit Certificate",
+        pageCode: "CERTIFICATE",
         path: "/certificate/edit/:id",
         element: <CertificateForm />,
         showInSidebar: false
     },
     {
         title: "Certificate Logs",
+        pageCode: "CERTIFICATE",
         path: "/certificate-view-log",
         element: <CertificateViewLog />,
         showInSidebar: false

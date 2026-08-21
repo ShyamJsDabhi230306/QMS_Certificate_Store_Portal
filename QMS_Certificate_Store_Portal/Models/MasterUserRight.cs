@@ -20,9 +20,11 @@ namespace QMS_Certificate_Store_Portal.Models
         [JsonPropertyName("idPage")]
         public int IDPage { get; set; }
 
-        // REMOVE JsonIgnore
         [JsonPropertyName("pageName")]
         public string PageName { get; set; } = string.Empty;
+
+        [JsonPropertyName("pageCode")]
+        public string PageCode { get; set; } = string.Empty;
 
         // RIGHTS
 
@@ -37,5 +39,8 @@ namespace QMS_Certificate_Store_Portal.Models
 
         [JsonPropertyName("canDelete")]
         public bool CanDelete { get; set; }
+
+        [JsonPropertyName("hasUserOverride")]
+        public bool HasUserOverride { get; set; }
     }
 }

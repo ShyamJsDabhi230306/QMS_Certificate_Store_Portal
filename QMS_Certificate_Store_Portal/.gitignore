@@ -1,0 +1,129 @@
+# ================================================================
+# QMS Certificate Store Portal - ASP.NET Core backend
+# ================================================================
+
+# Build output
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+[Aa]rtifacts/
+publish/
+Published/
+
+# Visual Studio / VS Code / JetBrains local state
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+*.DotSettings.user
+_ReSharper*/
+*.ReSharper
+
+# Rider
+*.sln.iml
+
+# User-specific publish profiles and deployment credentials
+Properties/PublishProfiles/
+*.pubxml.user
+*.publishproj
+*.publish.xml
+
+# Local configuration and secrets
+# Keep a sanitized appsettings.Example.json in Git for setup guidance.
+appsettings.json
+appsettings.*.json
+!appsettings.Example.json
+!appsettings.Template.json
+secrets.json
+*.secrets.json
+.env
+.env.*
+!.env.example
+
+# ASP.NET Core Data Protection keys
+DataProtection-Keys/
+keys/
+*.pfx
+*.p12
+*.key
+*.pem
+
+# Runtime logs, diagnostics and crash dumps
+logs/
+log/
+*.log
+*.log.*
+stdout_*.log
+debug_log.txt
+*.dmp
+*.dump
+*.stackdump
+
+# User-uploaded/runtime-generated files
+wwwroot/uploads/
+wwwroot/Uploads/
+wwwroot/temp/
+wwwroot/tmp/
+
+# Test results and code coverage
+[Tt]est[Rr]esult*/
+[Tt]est[Rr]esults/
+coverage/
+coverage.*
+*.coverage
+*.coveragexml
+*.trx
+*.testlog
+
+# NuGet/local package output
+packages/
+*.nupkg
+*.snupkg
+project.lock.json
+artifacts.json
+
+# Local databases and generated data
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+*.mdf
+*.ldf
+*.bak
+
+# Temporary/cache files
+.cache/
+.temp/
+.tmp/
+tmp/
+temp/
+*.tmp
+*.temp
+*.cache
+*.bak
+*.old
+*.orig
+*.swp
+*.swo
+*~
+
+# Generated API/build metadata
+ApiEndpoints.json
+EndpointInfo/
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Local archives and deployment bundles
+*.zip
+*.7z
+*.rar

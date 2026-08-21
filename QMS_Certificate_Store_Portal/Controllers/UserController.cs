@@ -1,10 +1,12 @@
-﻿using QMS_Certificate_Store_Portal.Helpers;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using QMS_Certificate_Store_Portal.Helpers;
 using QMS_Certificate_Store_Portal.Models;
+using QMS_Certificate_Store_Portal.Models.UserMgmtOtp;
 using QMS_Certificate_Store_Portal.Services;
 using System.Data;
-using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace QMS_Certificate_Store_Portal.Controllers
 {
@@ -60,6 +62,191 @@ namespace QMS_Certificate_Store_Portal.Controllers
             var result = await _service.DeleteAsync(id, currentUserName);
            return Ok(result);
          }
+
+        [HttpGet("get-for-rights")]
+        public async Task<IActionResult> GetForRights(
+   [FromQuery] string? search)
+        {
+            var data = await _service.GetForRightsAsync(search);
+
+            return Ok(new
+            {
+                success = true,
+                data
+            });
+        }
+
+
+        [HttpGet("aira-employees")]
+        public async Task<IActionResult> GetAiraEmployees(
+     CancellationToken cancellationToken)
+        {
+            if (!IsQmsAdministrator())
+            {
+                return Forbid();
+            }
+
+            var result =
+                await _service.GetAvailableAiraEmployeesAsync(
+                    cancellationToken
+                );
+
+            return Ok(new
+            {
+                success = result.Success,
+                message = result.Message,
+                data = result.Data
+            });
+        }
+        [HttpPost("import-bulk")]
+        public async Task<IActionResult> ImportBulk(
+    [FromBody] ImportAiraUsersRequest request,
+    CancellationToken cancellationToken)
+        {
+            if (!IsQmsAdministrator())
+            {
+                return Forbid();
+            }
+
+            if (request.IDUserManagement == null ||
+                request.IDUserManagement.Count == 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Select at least one Aira employee."
+                });
+            }
+
+            var actionUser =
+                User.FindFirst("UserFullName")?.Value
+                ?? "System";
+
+            var result =
+                await _service.ImportUsersAsync(
+                    request.IDUserManagement,
+                    actionUser,
+                    cancellationToken
+                );
+
+            return Ok(new
+            {
+                success = result.Result == 1,
+                result = result.Result,
+                message = result.Message
+            });
+        }
+        [HttpPost("assign-designation")]
+        public async Task<IActionResult> AssignDesignation(
+    [FromBody] AssignDesignationRequest request)
+        {
+            if (!IsQmsAdministrator())
+            {
+                return Forbid();
+            }
+
+            if (request.IDUserManagement <= 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Aira user ID is required."
+                });
+            }
+
+            if (request.IDDesignation <= 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Designation is required."
+                });
+            }
+
+            var actionUser =
+                User.FindFirst("UserFullName")?.Value
+                ?? "System";
+
+            var result =
+                await _service.AssignDesignationAsync(
+                    request,
+                    actionUser
+                );
+
+            return Ok(new
+            {
+                success = result.Result == 1,
+                result = result.Result,
+                message = result.Message
+            });
+        }
+        [HttpPost("save-from-aira")]
+        public async Task<IActionResult> SaveFromAira(
+            [FromBody] SaveAiraUserRequest request,
+            CancellationToken cancellationToken)
+        {
+            if (!IsQmsAdministrator())
+            {
+                return Forbid();
+            }
+
+            if (request.IDUserManagement <= 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Aira user ID is required."
+                });
+            }
+
+            var actionUser =
+                User.FindFirst("UserFullName")?.Value
+                ?? "System";
+
+            var result =
+                await _service.SaveSelectedAiraEmployeeAsync(
+                    request,
+                    actionUser,
+                    cancellationToken
+                );
+
+            return Ok(new
+            {
+                success = result.Result == 1,
+                result = result.Result,
+                message = result.Message
+            });
+        }
+
+
+        private bool IsQmsAdministrator()
+        {
+            var isSuperAdmin =
+                bool.TryParse(
+                    User.FindFirst("IsSuperAdmin")?.Value,
+                    out var parsedSuperAdmin
+                ) && parsedSuperAdmin;
+
+            var role =
+                User.FindFirst(ClaimTypes.Role)?.Value
+                ?? User.FindFirst("role")?.Value
+                ?? User.FindFirst("Role")?.Value;
+
+            var isAdmin =
+                string.Equals(
+                    role,
+                    "Admin",
+                    StringComparison.OrdinalIgnoreCase
+                )
+                ||
+                string.Equals(
+                    role,
+                    "MASTER_ADMIN",
+                    StringComparison.OrdinalIgnoreCase
+                );
+
+            return isSuperAdmin || isAdmin;
+        }
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest request)

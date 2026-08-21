@@ -22,5 +22,43 @@ namespace QMS_Certificate_Store_Portal.Models
         public string? DesignationName { get; set; }
 
         public bool IsSuperAdmin { get; set; }
+
+
+        // this is the Aira user management fields, which are used to link the local user with the Aira user
+        public int? IDUserManagement { get; set; }
+
+        public Guid? AiraSecurityStamp { get; set; }
+
+        public DateTime? AiraLastSyncUtc { get; set; }
+
+        public string? AiraEmployeeCode { get; set; }
+
+        public string? AiraName { get; set; }
+
+        public string? AiraContactNo { get; set; }
+
+        public string? AiraImageFileURL { get; set; }
+
+        public int? AiraRoleId { get; set; }
+
+        public string? AiraRoleName { get; set; }
+
+        public bool? AiraIsActive { get; set; }
+
+        public bool IsSync { get; set; }
+    }
+
+  
+    public sealed class AssignDesignationRequest
+    {
+        public int IDUserManagement { get; set; }
+
+        public int IDDesignation { get; set; }
+    }
+    
+
+    public sealed class ImportAiraUsersRequest
+    {
+        public List<int> IDUserManagement { get; set; } = new();
     }
 }

@@ -26,7 +26,8 @@ namespace QMS_Certificate_Store_Portal.Repositories.Notification
                 var recipients =
                     await _reminderRepository
                         .GetRecipientsAsync(
-                            reminder.IDCertificate);
+                          reminder.IDCertificate,
+                          reminder.IDReminder);
 
                 var phones = recipients
                     .Where(x => !string.IsNullOrWhiteSpace(x.Phone))

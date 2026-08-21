@@ -47,7 +47,7 @@ const DashboardLayout = ({ children }) => {
                             </div> */}
 
                             {/* Company Name */}
-                            <div className="text-left hidden sm:block">
+                            {/* <div className="text-left hidden sm:block">
                                 <p
                                     className="
                 text-xl
@@ -70,11 +70,11 @@ const DashboardLayout = ({ children }) => {
                 tracking-[0.2em]
                 mt-1.5
                 leading-none
-                "
+                "gie me f
                                 >
                                     Pvt. Ltd.
                                 </p>
-                            </div>
+                            </div> */}
                         </div>
                     </div>
                 </header>

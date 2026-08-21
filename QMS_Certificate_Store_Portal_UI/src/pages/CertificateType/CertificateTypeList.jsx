@@ -15,7 +15,7 @@ const CertificateTypeList = () => {
     const { searchTerm, setSearchTerm, filteredItems } = useSearch(certificateTypes);
     const { currentItems, paginationProps } = usePagination(filteredItems, 10);
     const navigate = useNavigate();
-    const { canCreate, canEdit, canDelete } = usePermissions("Certificate Type");
+    const { canCreate, canEdit, canDelete } = usePermissions("CERTIFICATE_TYPE");
 
     useEffect(() => { loadCertificateTypes(); }, []);
 
@@ -119,14 +119,14 @@ const CertificateTypeList = () => {
                                                 <Edit2 size={14} />
                                             </button>
                                         )}
-                                        {canDelete && (
+                                        {/* {canDelete && (
                                             <button
                                                 onClick={() => handleDelete(item.idCertificateType)}
                                                 className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"
                                             >
                                                 <Trash2 size={14} />
                                             </button>
-                                        )}
+                                        )} */}
                                     </div>
                                 </td>
                             </tr>

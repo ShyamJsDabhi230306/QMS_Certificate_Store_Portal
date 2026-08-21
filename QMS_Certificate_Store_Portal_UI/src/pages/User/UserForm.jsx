@@ -1,426 +1,729 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Save, ChevronLeft, Loader2, XCircle } from "lucide-react";
+import {
+  ChevronLeft,
+  Loader2,
+  Save,
+  Search,
+  UserRound,
+  XCircle,
+} from "lucide-react";
+import { toast } from "react-hot-toast";
+
 import { userApi } from "../../api/userApi";
-// import { departmentService } from "../../api/departmentService";
-import { companyService } from "../../api/companyService"; // 👈 Add this
+import { companyService } from "../../api/companyService";
 import { locationService } from "../../api/locationService";
 import { designationService } from "../../api/designationService";
-import { toast } from "react-hot-toast";
+import "../../css/UserCss/UserForm.css";
+
+const Field = ({ label, children, className = "" }) => (
+  <div className={`user-field ${className}`}>
+    <label className="user-field-label">{label}</label>
+    {children}
+  </div>
+);
+
+const Section = ({ eyebrow, title, description, children }) => (
+  <section className="user-form-section">
+    <div className="user-section-heading">
+      <span>{eyebrow}</span>
+      <h2>{title}</h2>
+      {description && <p>{description}</p>}
+    </div>
+
+    {children}
+  </section>
+);
 
 const UserForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const isEditMode = Boolean(id);
 
-  // const [departments, setDepartments] = useState([]);
   const [companies, setCompanies] = useState([]);
   const [locations, setLocations] = useState([]);
   const [designations, setDesignations] = useState([]);
+
+  const [airaEmployees, setAiraEmployees] = useState([]);
+  const [airaSearch, setAiraSearch] = useState("");
+  const [airaDropdownOpen, setAiraDropdownOpen] =
+    useState(false);
+  const [airaLoading, setAiraLoading] = useState(false);
+  const [selectedAiraEmployee, setSelectedAiraEmployee] =
+    useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   const [formData, setFormData] = useState({
     idUser: 0,
     userFullName: "",
     userName: "",
-    password: "", // 🟢 Changed from userPassword
     email: "",
     phone: "",
-    // idDepartment: "",
-    idCompany: "",      // 👈 Added Company
-    idLocation: "",     // 👈 Added Location
+    idCompany: "",
+    idLocation: "",
     idDesignation: "",
     isActive: true,
+
+    idUserManagement: "",
+    airaEmployeeCode: "",
+    airaRoleId: "",
+    airaRoleName: "",
+    airaImageFileURL: "",
   });
 
-  const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(true);
-
   useEffect(() => {
-    loadData();
+    loadPageData();
   }, [id]);
 
-  const loadData = async () => {
+  const loadPageData = async () => {
     try {
       setLoading(true);
 
-      const [compRes, locRes, desigRes] = await Promise.all([
-        companyService.getAll(),
-        locationService.getAll(),
-        // departmentService.getAll(),
-        designationService.getAll(),
-      ]);
-      if (compRes.success) setCompanies(compRes.data);
-      if (locRes.success) setLocations(locRes.data);
+      const [companyResponse, locationResponse, designationResponse] =
+        await Promise.all([
+          companyService.getAll(),
+          locationService.getAll(),
+          designationService.getAll(),
+        ]);
 
-      // if (deptRes.success) setDepartments(deptRes.data);
-      if (desigRes.success) setDesignations(desigRes.data);
-
-      if (id) {
-        const response = await userApi.getById(id);
-        if (response.success) {
-          const data = response.data;
-          setFormData({
-            idUser: data.idUser || 0,
-            userFullName: data.userFullName || "",
-            userName: data.userName || "",
-            password: data.password || "", // 🟢 Map password so it's visible
-            email: data.email || "", // 🟢 Map email
-            phone: data.phone || "", // 🟢 Map phone
-            // idDepartment: data.idDepartment || "",
-            idCompany: data.idCompany || "",      // 👈 Added Company
-            idLocation: data.idLocation || "",    // 👈
-            idDesignation: data.idDesignation || "",
-            isActive: data.isActive ?? true,
-          });
-        }
+      if (companyResponse.success) {
+        setCompanies(companyResponse.data || []);
       }
+
+      if (locationResponse.success) {
+        setLocations(locationResponse.data || []);
+      }
+
+      if (designationResponse.success) {
+        setDesignations(designationResponse.data || []);
+      }
+
+      if (isEditMode) {
+        const response = await userApi.getById(id);
+
+        if (!response.success) {
+          toast.error(
+            response.message ||
+              "User details could not be loaded."
+          );
+          return;
+        }
+
+        const data = response.data;
+
+        setFormData({
+          idUser: data.idUser || 0,
+          userFullName: data.userFullName || "",
+          userName: data.userName || "",
+          email: data.email || "",
+          phone: data.phone || "",
+          idCompany: data.idCompany || "",
+          idLocation: data.idLocation || "",
+          idDesignation: data.idDesignation || "",
+          isActive: data.isActive ?? true,
+
+          idUserManagement: data.idUserManagement || "",
+          airaEmployeeCode: data.airaEmployeeCode || "",
+          airaRoleId: data.airaRoleId || "",
+          airaRoleName: data.airaRoleName || "",
+          airaImageFileURL: data.airaImageFileURL || "",
+        });
+
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+      loadAiraEmployees();
     } catch (error) {
-      toast.error("Error loading master data");
-    } finally {
+      console.error("USER FORM LOAD ERROR:", error);
+      toast.error("Unable to load user form.");
       setLoading(false);
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setSaving(true);
-  //   try {
-  //     const response = await userApi.save(formData);
+  const loadAiraEmployees = async () => {
+    try {
+      setAiraLoading(true);
 
-  //     // 🟢 Fix: Check for both 'success' OR 'result' to be safe
-  //     if (response.success || response.result == 1||   response.result === "1") {
-  //       toast.success(response.message);
-  //       navigate("/users");
-  //     } else {
-  //       toast.error(response.message || "Failed to update user");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Operation failed");
-  //   } finally {
-  //     setSaving(false);
-  //   }
-  // };
-  const handleSubmit = async (e) => {
+      const response = await userApi.getAiraEmployees();
 
-    e.preventDefault();
+      if (response.success) {
+        setAiraEmployees(response.data || []);
+      } else {
+        toast.error(
+          response.message ||
+            "Aira employees could not be loaded."
+        );
+      }
+    } catch (error) {
+      console.error("AIRA EMPLOYEE ERROR:", error);
 
-    setSaving(true);
+      toast.error(
+        "Aira employees could not be loaded. Please refresh."
+      );
+    } finally {
+      setAiraLoading(false);
+    }
+  };
+
+  const filteredAiraEmployees = useMemo(() => {
+    const search = airaSearch.toLowerCase().trim();
+
+    const result = !search
+      ? airaEmployees
+      : airaEmployees.filter((employee) => {
+          const code = String(
+            employee.employeeCode || ""
+          ).toLowerCase();
+
+          const name = String(
+            employee.name || ""
+          ).toLowerCase();
+
+          return (
+            code.includes(search) ||
+            name.includes(search)
+          );
+        });
+
+    return result.slice(0, 50);
+  }, [airaEmployees, airaSearch]);
+
+  const handleSearchChange = (event) => {
+    setAiraSearch(event.target.value);
+    setAiraDropdownOpen(true);
+
+    if (selectedAiraEmployee) {
+      setSelectedAiraEmployee(null);
+
+      setFormData((current) => ({
+        ...current,
+        idUserManagement: "",
+        userFullName: "",
+        userName: "",
+        phone: "",
+        airaEmployeeCode: "",
+        airaRoleId: "",
+        airaRoleName: "",
+        airaImageFileURL: "",
+      }));
+    }
+  };
+
+  const handleEmployeeSelect = (employee) => {
+    setSelectedAiraEmployee(employee);
+    setAiraDropdownOpen(false);
+
+    setAiraSearch(
+      `${employee.employeeCode} — ${employee.name}`
+    );
+
+    setFormData((current) => ({
+      ...current,
+      idUserManagement: employee.idUser,
+      userFullName: employee.name || "",
+      userName: String(employee.employeeCode || ""),
+      phone: employee.contactNo || "",
+      airaEmployeeCode: String(
+        employee.employeeCode || ""
+      ),
+      airaRoleId: employee.idRole || "",
+      airaRoleName: employee.umRoleName || "",
+      airaImageFileURL: employee.imageFileURL || "",
+    }));
+  };
+
+  const updateField = (field, value) => {
+    setFormData((current) => ({
+      ...current,
+      [field]: value,
+    }));
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    if (!isEditMode && !formData.idUserManagement) {
+      toast.error("Please select an Aira employee.");
+      return;
+    }
+
+    if (!formData.idDesignation) {
+      toast.error("Please select a designation.");
+      return;
+    }
+
+    if (!formData.idCompany) {
+      toast.error("Please select a company.");
+      return;
+    }
+
+    if (!formData.idLocation) {
+      toast.error("Please select a location.");
+      return;
+    }
 
     try {
+      setSaving(true);
 
-      const response =
-        await userApi.save(formData);
+      let response;
 
-      console.log(
-        "SAVE RESPONSE",
-        response
-      );
+      if (!isEditMode) {
+        response = await userApi.saveFromAira({
+          idUserManagement: Number(
+            formData.idUserManagement
+          ),
+          idDesignation: Number(
+            formData.idDesignation
+          ),
+          idCompany: Number(formData.idCompany),
+          idLocation: Number(formData.idLocation),
+          email: formData.email || null,
+        });
+      } else {
+        response = await userApi.save({
+          ...formData,
+          idUser: Number(formData.idUser),
+          idDesignation: formData.idDesignation
+            ? Number(formData.idDesignation)
+            : null,
+          idCompany: formData.idCompany
+            ? Number(formData.idCompany)
+            : null,
+          idLocation: formData.idLocation
+            ? Number(formData.idLocation)
+            : null,
+        });
+      }
 
       if (
-        response.success === true ||
-        response.result === 1 ||
-        response.result === "1"
+        response?.success === true ||
+        response?.result === 1 ||
+        response?.result === "1"
       ) {
-
         toast.success(
-          response.message || "Saved Successfully"
+          response.message || "User saved successfully."
         );
 
         navigate("/users");
-
-      }
-      else {
-
+      } else {
         toast.error(
-          response.message || "Failed to save user"
+          response?.message || "User could not be saved."
         );
-
       }
-
-    }
-    catch (error) {
-
-      console.error(
-        "SAVE ERROR",
-        error
-      );
+    } catch (error) {
+      console.error("USER SAVE ERROR:", error);
 
       toast.error(
         error?.response?.data?.message ||
-        error?.message ||
-        "Operation failed"
+          error?.message ||
+          "Operation failed."
       );
-
-    }
-    finally {
-
+    } finally {
       setSaving(false);
-
     }
-
   };
-  const inputClass =
-    "w-full bg-background border-2 border-border/60 rounded-xl px-4 py-3.5 text-sm font-bold text-foreground focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold transition-all shadow-sm";
 
-  if (loading)
+  const filteredLocations = locations.filter(
+    (location) =>
+      String(location.idCompany) ===
+      String(formData.idCompany)
+  );
+
+  if (loading) {
     return (
-      <div className="h-[60vh] flex items-center justify-center">
-        <Loader2 className="animate-spin text-gold" size={48} />
+      <div className="user-form-loader">
+        <Loader2 size={38} className="animate-spin" />
+        <span>Loading user form...</span>
       </div>
     );
+  }
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-6 animate-in slide-in-from-bottom-10 duration-700">
-      <button
-        onClick={() => navigate("/users")}
-        className="flex items-center gap-2 text-[10px] font-black uppercase text-muted-foreground hover:text-gold tracking-widest"
-      >
-        <ChevronLeft size={16} /> Back to registry
-      </button>
-
-      <h1 className="text-4xl font-black tracking-tight  ">
-        {id ? "Modify User" : "Add New User"}
-      </h1>
-
-      <form
-        onSubmit={handleSubmit}
-        className="bg-card border-2 border-border shadow-2xl p-8 md:p-12 rounded-[2.5rem] space-y-8"
-      >
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Full Identity Name
-            </label>
-            <input
-              required
-              type="text"
-              value={formData.userFullName}
-              onChange={(e) =>
-                setFormData({ ...formData, userFullName: e.target.value })
-              }
-              className={inputClass}
-              placeholder="e.g. John Doe"
-            />
-          </div>
-          {/* Email Identity */}
-          <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Email Address
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className={inputClass}
-              placeholder="example@mail.com"
-            />
-          </div>
-
-          {/* Phone Number */}
-          <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Phone Number
-            </label>
-            <input
-              type="text"
-              value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
-              className={inputClass}
-              placeholder="98765 43210"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Access ID (Username)
-            </label>
-            <input
-              required
-              type="text"
-              value={formData.userName}
-              onChange={(e) =>
-                setFormData({ ...formData, userName: e.target.value })
-              }
-              className={inputClass}
-              placeholder="username123"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Secure Passkey
-            </label>
-            <input
-              required={!id}
-              type="password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              className={inputClass}
-              placeholder={
-                id ? "•••••••• (Leave blank to keep current)" : "••••••••"
-              }
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Role (Designation)
-            </label>
-            <select
-              required
-              value={formData.idDesignation}
-              onChange={(e) =>
-                setFormData({ ...formData, idDesignation: e.target.value })
-              }
-              className={inputClass}
+    <div className="user-form-page">
+      <div className="user-form-container">
+        <div className="user-form-top">
+          <div>
+            <button
+              type="button"
+              className="user-back-button"
+              onClick={() => navigate("/users")}
             >
-              <option value="">-- Select Designation --</option>
-              {designations.map((d) => (
-                <option key={d.idDesignation} value={d.idDesignation}>
-                  {d.designationName}
-                </option>
-              ))}
-            </select>
+              <ChevronLeft size={18} />
+              Back to User Management
+            </button>
+
+            <div className="user-page-eyebrow">
+              User Master
+            </div>
+
+            <h1 className="user-page-title">
+              {isEditMode ? "Modify User" : "Add New User"}
+            </h1>
+
+            <p className="user-page-description">
+              {isEditMode
+                ? "Update user organization and access information."
+                : "Select an Aira employee and assign QMS access."}
+            </p>
           </div>
-          {/* <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Sector (Department)
-            </label>
 
-            <select
-              required
-              value={formData.idDepartment}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  idDepartment: e.target.value,
-                })
-              }
-              className={inputClass}
+          <div className="user-page-badge">
+            <UserRound size={17} />
+            QMS User Management
+          </div>
+        </div>
+
+        <form
+          className="user-form-card"
+          onSubmit={handleSubmit}
+        >
+          {!isEditMode && (
+            <Section
+              eyebrow="Aira User Management"
+              title="Select Employee"
+              description="Search by employee name or employee code."
             >
-              <option value="">-- Select Department --</option>
+              <div className="user-dropdown">
+                <Search
+                  size={18}
+                  className="user-search-icon"
+                />
 
-              {Object.entries(
-                departments.reduce((acc, dept) => {
-                  const company = dept.companyName || "Unknown Company";
-
-                  if (!acc[company]) {
-                    acc[company] = [];
+                <input
+                  required
+                  type="text"
+                  value={airaSearch}
+                  onChange={handleSearchChange}
+                  onFocus={() =>
+                    setAiraDropdownOpen(true)
                   }
+                  onBlur={() =>
+                    setTimeout(
+                      () => setAiraDropdownOpen(false),
+                      200
+                    )
+                  }
+                  autoComplete="off"
+                  className="user-input user-search-input"
+                  placeholder={
+                    airaLoading
+                      ? "Loading Aira employees..."
+                      : "Search employee name or code..."
+                  }
+                />
 
-                  acc[company].push(dept);
+                {airaDropdownOpen && (
+                  <div className="user-dropdown-menu">
+                    {airaLoading ? (
+                      <div className="user-dropdown-empty">
+                        <Loader2
+                          size={17}
+                          className="animate-spin"
+                        />
+                        Loading employees...
+                      </div>
+                    ) : filteredAiraEmployees.length === 0 ? (
+                      <div className="user-dropdown-empty">
+                        No employee found.
+                      </div>
+                    ) : (
+                      filteredAiraEmployees.map((employee) => (
+                        <button
+                          key={employee.idUser}
+                          type="button"
+                          className="user-dropdown-item"
+                          onMouseDown={() =>
+                            handleEmployeeSelect(
+                              employee
+                            )
+                          }
+                        >
+                          <span className="user-avatar-small">
+                            <UserRound size={16} />
+                          </span>
 
-                  return acc;
-                }, {}),
-              ).map(([company, depts]) => (
-                <optgroup key={company} label={company}>
-                  {depts.map((d) => (
-                    <option key={d.idDepartment} value={d.idDepartment}>
-                      {d.locationName} → {d.departmentName}
+                          <span className="user-dropdown-details">
+                            <strong>{employee.name}</strong>
+                            <small>
+                              Employee Code:{" "}
+                              {employee.employeeCode}
+                            </small>
+                          </span>
+
+                          <span className="user-role-pill">
+                            {employee.umRoleName ||
+                              "Aira User"}
+                          </span>
+                        </button>
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {selectedAiraEmployee && (
+                <div className="aira-summary">
+                  <div>
+                    <span>Employee Code</span>
+                    <strong>
+                      {selectedAiraEmployee.employeeCode}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Aira Role</span>
+                    <strong>
+                      {selectedAiraEmployee.umRoleName ||
+                        "N/A"}
+                    </strong>
+                  </div>
+
+                  <div>
+                    <span>Registered Mobile</span>
+                    <strong>
+                      {selectedAiraEmployee.contactNo ||
+                        "N/A"}
+                    </strong>
+                  </div>
+                </div>
+              )}
+            </Section>
+          )}
+
+          <Section
+            eyebrow="Employee Details"
+            title="Employee Information"
+            description="Employee identity details are received from Aira."
+          >
+            <div className="user-fields-grid">
+              <Field label="Full Name">
+                <input
+                  required
+                  value={formData.userFullName}
+                  readOnly={!isEditMode}
+                  onChange={(event) =>
+                    updateField(
+                      "userFullName",
+                      event.target.value
+                    )
+                  }
+                  className="user-input"
+                  placeholder="Employee full name"
+                />
+              </Field>
+
+              <Field label="Employee Code">
+                <input
+                  required
+                  value={formData.userName}
+                  readOnly={!isEditMode}
+                  onChange={(event) =>
+                    updateField(
+                      "userName",
+                      event.target.value
+                    )
+                  }
+                  className="user-input"
+                  placeholder="Employee code"
+                />
+              </Field>
+
+              <Field label="Registered Mobile">
+                <input
+                  value={formData.phone}
+                  readOnly={!isEditMode}
+                  onChange={(event) =>
+                    updateField(
+                      "phone",
+                      event.target.value
+                    )
+                  }
+                  className="user-input"
+                  placeholder="Registered mobile number"
+                />
+              </Field>
+
+              <Field label="Email Address">
+                <input
+                  type="email"
+                  value={formData.email}
+                  onChange={(event) =>
+                    updateField(
+                      "email",
+                      event.target.value
+                    )
+                  }
+                  className="user-input"
+                  placeholder="employee@example.com"
+                />
+              </Field>
+
+              {formData.airaRoleName && (
+                <Field label="Aira Role">
+                  <input
+                    value={formData.airaRoleName}
+                    readOnly
+                    className="user-input user-readonly"
+                  />
+                </Field>
+              )}
+
+              {formData.airaEmployeeCode && (
+                <Field label="Aira Employee Code">
+                  <input
+                    value={formData.airaEmployeeCode}
+                    readOnly
+                    className="user-input user-readonly"
+                  />
+                </Field>
+              )}
+            </div>
+          </Section>
+
+          <Section
+            eyebrow="QMS Access"
+            title="Organization Assignment"
+            description="These values are controlled by the QMS administrator."
+          >
+            <div className="user-fields-grid user-fields-three">
+              <Field label="Designation">
+                <select
+                  required
+                  value={formData.idDesignation}
+                  onChange={(event) =>
+                    updateField(
+                      "idDesignation",
+                      event.target.value
+                    )
+                  }
+                  className="user-input"
+                >
+                  <option value="">
+                    Select Designation
+                  </option>
+
+                  {designations.map((item) => (
+                    <option
+                      key={item.idDesignation}
+                      value={item.idDesignation}
+                    >
+                      {item.designationName}
                     </option>
                   ))}
-                </optgroup>
-              ))}
-            </select>
-          </div> */}
-          {/* Company */}
-          <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Company
-            </label>
-            <select
-              required
-              value={formData.idCompany}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  idCompany: e.target.value,
-                  idLocation: "" // 👈 Reset location when company changes
-                })
-              }
-              className={inputClass}
-            >
-              <option value="">-- Select Company --</option>
-              {companies.map((c) => (
-                <option key={c.idCompany} value={c.idCompany}>
-                  {c.companyName}
-                </option>
-              ))}
-            </select>
-          </div>
+                </select>
+              </Field>
 
-          {/* Location */}
-          <div className="space-y-2">
-            <label className="text-[14px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">
-              Location
-            </label>
-            <select
-              required
-              value={formData.idLocation}
-              onChange={(e) =>
-                setFormData({ ...formData, idLocation: e.target.value })
-              }
-              className={inputClass}
-              disabled={!formData.idCompany} // Disable if no company selected
-            >
-              <option value="">-- Select Location --</option>
-              {locations
-                .filter((l) => l.idCompany == formData.idCompany) // 👈 Filter locations based on selected company
-                .map((l) => (
-                  <option key={l.idLocation} value={l.idLocation}>
-                    {l.locationName}
+              <Field label="Company">
+                <select
+                  required
+                  value={formData.idCompany}
+                  onChange={(event) =>
+                    setFormData((current) => ({
+                      ...current,
+                      idCompany: event.target.value,
+                      idLocation: "",
+                    }))
+                  }
+                  className="user-input"
+                >
+                  <option value="">
+                    Select Company
                   </option>
-                ))}
-            </select>
-          </div>
 
+                  {companies.map((item) => (
+                    <option
+                      key={item.idCompany}
+                      value={item.idCompany}
+                    >
+                      {item.companyName}
+                    </option>
+                  ))}
+                </select>
+              </Field>
 
+              <Field label="Location">
+                <select
+                  required
+                  disabled={!formData.idCompany}
+                  value={formData.idLocation}
+                  onChange={(event) =>
+                    updateField(
+                      "idLocation",
+                      event.target.value
+                    )
+                  }
+                  className="user-input"
+                >
+                  <option value="">
+                    Select Location
+                  </option>
 
+                  {filteredLocations.map((item) => (
+                    <option
+                      key={item.idLocation}
+                      value={item.idLocation}
+                    >
+                      {item.locationName}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
 
-          <div className="flex items-center gap-3 pt-8">
-            <label className="flex items-center gap-3 cursor-pointer group">
+            <label className="user-active-box">
               <input
                 type="checkbox"
                 checked={formData.isActive}
-                onChange={(e) =>
-                  setFormData({ ...formData, isActive: e.target.checked })
+                onChange={(event) =>
+                  updateField(
+                    "isActive",
+                    event.target.checked
+                  )
                 }
-                className="accent-gold w-6 h-6 rounded cursor-pointer"
               />
-              <span className="text-[14px] font-black uppercase tracking-widest text-muted-foreground group-hover:text-foreground transition-colors">
-                Authorization Active
+
+              <span>
+                <strong>User is active</strong>
+                <small>
+                  Inactive users cannot access QMS.
+                </small>
               </span>
             </label>
+          </Section>
+
+          <div className="user-form-actions">
+            <button
+              type="button"
+              className="user-cancel-button"
+              onClick={() => navigate("/users")}
+            >
+              <XCircle size={17} />
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              disabled={saving || airaLoading}
+              className="user-save-button"
+            >
+              {saving ? (
+                <Loader2
+                  size={17}
+                  className="animate-spin"
+                />
+              ) : (
+                <Save size={17} />
+              )}
+
+              {isEditMode ? "Update User" : "Save User"}
+            </button>
           </div>
-        </div>
-
-        <div className="flex items-center justify-end gap-4 pt-6 border-t border-border mt-4">
-          {/* 🔴 Abort Button Added Back */}
-          <button
-            type="button"
-            onClick={() => navigate("/users")}
-            className="px-8 py-4 bg-muted text-foreground border-2 border-border rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-red-500/10 hover:text-red-500 hover:border-red-500/20 transition-all flex items-center gap-2"
-          >
-            <XCircle size={18} /> Cancel
-          </button>
-
-          <button
-            disabled={saving}
-            className="px-10 py-4 bg-gold hover:bg-gold-hover text-white rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl shadow-gold/20 hover:scale-105 transition-all flex items-center gap-3 active:scale-95"
-          >
-            {saving ? (
-              <Loader2 className="animate-spin" size={18} />
-            ) : (
-              <Save size={18} strokeWidth={3} />
-            )}
-            {id ? "Commit Changes" : "Save User "}
-          </button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

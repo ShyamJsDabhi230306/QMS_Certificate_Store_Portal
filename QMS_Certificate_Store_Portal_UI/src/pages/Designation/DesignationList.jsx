@@ -13,7 +13,7 @@ const DesignationList = () => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const { searchTerm, setSearchTerm, filteredItems } = useSearch(designations);
-    const { canCreate, canEdit, canDelete } = usePermissions("Designation")
+    const { canCreate, canEdit, canDelete } = usePermissions("DESIGNATION")
     const { currentItems, paginationProps } = usePagination(filteredItems, 10);
 
     useEffect(() => { loadDesignations(); }, []);
@@ -92,7 +92,7 @@ const DesignationList = () => {
                                 <td className="px-6 py-4 text-right">
                                     <div className="flex justify-end gap-2">
                                         {canEdit && (<button onClick={() => navigate(`/designation/edit/${item.idDesignation}`)} className="p-2 bg-gold/10 text-gold rounded-lg hover:bg-gold hover:text-white transition-all"><Edit2 size={14} /></button>)}
-                                        {canDelete && (<button onClick={() => handleDelete(item.idDesignation)} className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"><Trash2 size={14} /></button>)}
+                                        {/* {canDelete && (<button onClick={() => handleDelete(item.idDesignation)} className="p-2 bg-red-500/10 text-red-500 rounded-lg hover:bg-red-500 hover:text-white transition-all"><Trash2 size={14} /></button>)} */}
                                     </div>
                                 </td>
                             </tr>

@@ -110,5 +110,79 @@ namespace QMS_Certificate_Store_Portal.Controllers
         }
 
         #endregion
+
+
+        [HttpGet("get-for-user/{idUser}")]
+        public async Task<IActionResult> GetForUser(int idUser)
+        {
+            var data = await _service.GetForUserAsync(idUser);
+
+            return Ok(new
+            {
+                success = true,
+                data
+            });
+        }
+
+
+        [HttpPost("save-for-user")]
+        public async Task<IActionResult> SaveForUser(
+                [FromBody] MasterUserRight model)
+        {
+            var actionUser =
+                User.FindFirst("UserFullName")?.Value
+                ?? "System";
+
+            var result = await _service.SaveForUserAsync(
+                model,
+                actionUser);
+
+            return Ok(new
+            {
+                success = result.Result == 1,
+                message = result.Message
+            });
+        }
+
+
+
+
+
+
+        [HttpPost("remove-user-override")]
+        public async Task<IActionResult> RemoveUserOverride(
+    [FromBody] MasterUserRight model)
+        {
+            if (model.IDUser <= 0)
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Valid user is required."
+                });
+            }
+
+            var actionUser =
+                User.FindFirst("UserFullName")?.Value
+                ?? "System";
+
+            var result =
+                await _service.RemoveUserOverrideAsync(
+                    model.IDUser,
+                    model.IDPage,
+                    actionUser);
+
+            return Ok(new
+            {
+                success = result.Result == 1,
+                message = result.Message
+            });
+        }
+
+
+
+       
     }
+
+
 }
